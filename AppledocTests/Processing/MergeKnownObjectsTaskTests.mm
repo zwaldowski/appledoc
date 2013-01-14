@@ -75,6 +75,7 @@ static id createCategory(NSString *name, id extendingClass) {
 TEST_BEGIN(MergeKnownObjectsTaskTests)
 
 describe(@"method groups:", ^{
+#define GBCategory() info[@"category"]; [StoreMocks add:extendee asExtendedClassOf:category]
 	__block id store;
 	__block id settings;
 	
@@ -84,7 +85,6 @@ describe(@"method groups:", ^{
 	});
 
 	sharedExamplesFor(@"examples", ^(NSDictionary *info) {
-#define GBCategory() info[@"category"]; [StoreMocks add:extendee asExtendedClassOf:category]
 		it(@"should merge class & instance methods and properties to empty class", ^{
 			runWithTask(store, settings, ^(MergeKnownObjectsTask *task, id store, id settings) {
 				// setup
@@ -105,13 +105,13 @@ describe(@"method groups:", ^{
 			});
 		});
 		
-		it(@"should merge class & instance methods and properties to non-empty class", ^{
+		it(@"should merge class & instance methods and properties to class with methods but without groups", ^{
 			runWithTask(store, settings, ^(MergeKnownObjectsTask *task, id store, id settings) {
 				// setup
 				ClassInfo *extendee = [StoreMocks createClass:^(ClassInfo *object) {
-					[object.interfaceClassMethods addObject:[StoreMocks createMethod:@"+method1" block:^(MethodInfo *object) { }]];
-					[object.interfaceInstanceMethods addObject:[StoreMocks createMethod:@"-method1" block:^(MethodInfo *object) { }] ];
-					[object.interfaceProperties addObject:[StoreMocks createProperty:@"property1" block:^(PropertyInfo *object) { }] ];
+					[StoreMocks add:[StoreMocks createMethod:@"+method1" block:^(MethodInfo *object) { }] asClassMethodOf:object];
+					[StoreMocks add:[StoreMocks createMethod:@"-method1" block:^(MethodInfo *object) { }] asInstanceMethodOf:object];
+					[StoreMocks add:[StoreMocks createProperty:@"property1" block:^(PropertyInfo *object) { }] asPropertyOf:object];
 				}];
 				id category = GBCategory();
 				id categoryClassMethod = createMethod(@"+method");
@@ -123,6 +123,35 @@ describe(@"method groups:", ^{
 				// verify
 				GBGroupsCount(1);
 				GBGroup(0, @"group1", categoryClassMethod, categoryInstanceMethod, categoryProperty);
+				GBMembers(GBClassMethods(), extendee.interfaceClassMethods[0], categoryClassMethod);
+				GBMembers(GBInstanceMethods(), extendee.interfaceInstanceMethods[0], categoryInstanceMethod);
+				GBMembers(GBProperties(), extendee.interfaceProperties[0], categoryProperty);
+			});
+		});
+		
+		it(@"should merge class & instance methods and properties to class with methods and groups", ^{
+			runWithTask(store, settings, ^(MergeKnownObjectsTask *task, id store, id settings) {
+				// setup
+				ClassInfo *extendee = [StoreMocks createClass:^(ClassInfo *object) {
+					addGroups(object, @{
+						@"group1" : @[
+							[StoreMocks createMethod:@"+method1" block:^(MethodInfo *object) { }],
+							[StoreMocks createMethod:@"-method1" block:^(MethodInfo *object) { }],
+							[StoreMocks createProperty:@"property1" block:^(PropertyInfo *object) { }]
+						]
+					});
+				}];
+				id category = GBCategory();
+				id categoryClassMethod = createMethod(@"+method");
+				id categoryInstanceMethod = createMethod(@"-method");
+				id categoryProperty = createProperty(@"property");
+				addGroups(category, @{ @"group2":@[categoryClassMethod,categoryInstanceMethod,categoryProperty] });
+				// execute
+				[task runTask];
+				// verify
+				GBGroupsCount(2);
+				GBGroup(0, @"group1", extendee.interfaceClassMethods[0], extendee.interfaceInstanceMethods[0], extendee.interfaceProperties[0]);
+				GBGroup(1, @"group2", categoryClassMethod, categoryInstanceMethod, categoryProperty);
 				GBMembers(GBClassMethods(), extendee.interfaceClassMethods[0], categoryClassMethod);
 				GBMembers(GBInstanceMethods(), extendee.interfaceInstanceMethods[0], categoryInstanceMethod);
 				GBMembers(GBProperties(), extendee.interfaceProperties[0], categoryProperty);

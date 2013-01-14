@@ -253,7 +253,9 @@
 #pragma mark - Helper methods
 
 + (BOOL)isMock:(id)objectOrMock {
-	return ![objectOrMock isKindOfClass:[ObjectInfoBase class]];
+	if ([objectOrMock isKindOfClass:[ObjectInfoBase class]]) return NO;
+	if ([objectOrMock isKindOfClass:[MethodGroupInfo class]]) return NO;
+	return YES;
 }
 
 @end
