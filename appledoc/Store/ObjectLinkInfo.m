@@ -17,6 +17,10 @@
 	return result;
 }
 
+- (NSString *)description {
+	return self.nameOfObject;
+}
+
 @end
 
 #pragma mark - 

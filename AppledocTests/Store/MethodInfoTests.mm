@@ -104,6 +104,7 @@ describe(@"class or interface method helpers:", ^{
 			// execute & verify
 			info.isClassMethod should equal(YES);
 			info.isInstanceMethod should equal(NO);
+			info.isProperty should equal(NO);
 		});
 	});
 
@@ -114,6 +115,7 @@ describe(@"class or interface method helpers:", ^{
 			// execute & verify
 			info.isClassMethod should equal(NO);
 			info.isInstanceMethod should equal(YES);
+			info.isProperty should equal(NO);
 		});
 	});
 });

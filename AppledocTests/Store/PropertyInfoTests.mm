@@ -30,6 +30,17 @@ describe(@"lazy accessors:", ^{
 	});
 });
 
+describe(@"method and property info:", ^{
+	it(@"should return YES for property, NO for method", ^{
+		runWithPropertyInfo(^(PropertyInfo *info) {
+			// execute & verify
+			info.isProperty should equal(YES);
+			info.isClassMethod should equal(NO);
+			info.isInstanceMethod should equal(NO);
+		});
+	});
+});
+
 describe(@"getter and setter selectors:", ^{
 	it(@"should return default name if no attribute is given", ^{
 		runWithPropertyInfo(^(PropertyInfo *info) {

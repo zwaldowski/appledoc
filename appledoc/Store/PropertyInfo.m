@@ -68,6 +68,10 @@
 	return _propertyDescriptors;
 }
 
+- (BOOL)isProperty {
+	return YES;
+}
+
 @end
 
 #pragma mark - 

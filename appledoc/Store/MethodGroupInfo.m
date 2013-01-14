@@ -25,6 +25,10 @@
 	return _methodGroupMethods;
 }
 
+- (NSString *)description {
+	return self.nameOfMethodGroup;
+}
+
 @end
 
 #pragma mark - 

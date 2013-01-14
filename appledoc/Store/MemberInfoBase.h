@@ -17,5 +17,8 @@
 - (NSString *)descriptionWithParent;
 
 @property (nonatomic, assign) InterfaceInfoBase *memberParent;
+@property (nonatomic, assign) BOOL isClassMethod;
+@property (nonatomic, assign) BOOL isInstanceMethod;
+@property (nonatomic, assign) BOOL isProperty;
 
 @end

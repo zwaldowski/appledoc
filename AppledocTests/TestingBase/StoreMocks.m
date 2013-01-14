@@ -13,6 +13,17 @@
 
 @implementation StoreMocks
 
+#pragma mark - Common objects
+
++ (ObjectLinkInfo *)link:(id)nameOrObject {
+	ObjectLinkInfo *result = [[ObjectLinkInfo alloc] init];
+	if ([nameOrObject isKindOfClass:[NSString class]])
+		result.nameOfObject = nameOrObject;
+	else
+		result.linkToObject = nameOrObject;
+	return result;
+}
+
 #pragma mark - Real interfaces
 
 + (InterfaceInfoBase *)createInterface:(void(^)(InterfaceInfoBase *object))handler {
@@ -58,10 +69,6 @@
 	return result;
 }
 
-+ (MethodInfo *)createMethod:(NSString *)uniqueID {
-	return [self createMethod:uniqueID block:^(MethodInfo *object) { }];
-}
-
 + (PropertyInfo *)createProperty:(NSString *)uniqueID block:(void(^)(PropertyInfo *object))handler {
 	PropertyInfo *result = [[PropertyInfo alloc] init];
 	result.propertyName = uniqueID;
@@ -69,16 +76,10 @@
 	return result;
 }
 
-+ (PropertyInfo *)createProperty:(NSString *)uniqueID {
-	return [self createProperty:uniqueID block:^(PropertyInfo *object) { }];
-}
-
-+ (ObjectLinkInfo *)link:(id)nameOrObject {
-	ObjectLinkInfo *result = [[ObjectLinkInfo alloc] init];
-	if ([nameOrObject isKindOfClass:[NSString class]])
-		result.nameOfObject = nameOrObject;
-	else
-		result.linkToObject = nameOrObject;
++ (MethodGroupInfo *)createMethodGroup:(NSString *)name block:(void(^)(MethodGroupInfo *object))handler {
+	MethodGroupInfo *result = [[MethodGroupInfo alloc] init];
+	result.nameOfMethodGroup = name;
+	handler(result);
 	return result;
 }
 
@@ -91,11 +92,10 @@
 	return result;
 }
 
-+ (id)mockCategory:(NSString *)name onClass:(NSString *)className block:(GBCreateObjectBlock)handler {
++ (id)mockCategory:(NSString *)name onClass:(id)classNameOrObject block:(GBCreateObjectBlock)handler {
 	id result = mock([CategoryInfo class]);
 	[given([result nameOfCategory]) willReturn:name];
-	[given([result nameOfClass]) willReturn:className];
-	[given([result categoryClass]) willReturn:[self link:className]];
+	[self add:classNameOrObject asExtendedClassOf:result];
 	handler(result);
 	return result;
 }
@@ -109,24 +109,31 @@
 
 #pragma mark - Mock members
 
-+ (id)mockMethod:(NSString *)uniqueID {
-	return [self mockMethod:uniqueID block:^(id object) { }];
-}
-
 + (id)mockMethod:(NSString *)uniqueID block:(void(^)(id object))handler {
+	BOOL isClassMethod = [uniqueID hasPrefix:@"+"];
 	id result = mock([MethodInfo class]);
+	[given([result methodType]) willReturn:(isClassMethod ? GBStoreTypes.classMethod : GBStoreTypes.instanceMethod)];
+	[given([result isClassMethod]) willReturnBool:isClassMethod];
+	[given([result isInstanceMethod]) willReturnBool:!isClassMethod];
+	[given([result isProperty]) willReturnBool:NO];
 	[given([result uniqueObjectID]) willReturn:uniqueID];
 	handler(result);
 	return result;
 }
 
-+ (id)mockProperty:(NSString *)uniqueID {
-	return [self mockProperty:uniqueID block:^(id object) { }];
-}
-
 + (id)mockProperty:(NSString *)uniqueID block:(void(^)(id object))handler {
 	id result = mock([PropertyInfo class]);
+	[given([result isClassMethod]) willReturnBool:NO];
+	[given([result isInstanceMethod]) willReturnBool:NO];
+	[given([result isProperty]) willReturnBool:YES];
 	[given([result uniqueObjectID]) willReturn:uniqueID];
+	handler(result);
+	return result;
+}
+
++ (id)mockMethodGroup:(NSString *)name block:(GBCreateObjectBlock)handler {
+	id result = mock([MethodGroupInfo class]);
+	[given([result nameOfMethodGroup]) willReturn:name];
 	handler(result);
 	return result;
 }
@@ -139,6 +146,16 @@
 		[given([objectOrMock comment]) willReturn:comment];
 	else
 		[objectOrMock setComment:comment];
+}
+
++ (void)add:(id)classOrName asExtendedClassOf:(id)categoryOrMock {
+	if (!classOrName) return;
+	if ([self isMock:categoryOrMock]) {
+		if ([classOrName isKindOfClass:[NSString class]]) [given([categoryOrMock nameOfClass]) willReturn:classOrName];
+		[given([categoryOrMock categoryClass]) willReturn:[self link:classOrName]];
+	} else {
+		[categoryOrMock extend:classOrName];
+	}
 }
 
 + (void)add:(id)classOrMock asDerivedClassFrom:(id)baseOrMock {
@@ -178,6 +195,63 @@
 		[[interfaceOrMock interfaceProperties] addObject:propertyOrMock];
 }
 
++ (void)add:(id)memberOrArray asMembersOfGroup:(id)groupOrMock {
+	NSArray *array = [memberOrArray isKindOfClass:[NSArray class]] ? memberOrArray : @[ memberOrArray ];
+	if ([self isMock:groupOrMock])
+		[given([groupOrMock methodGroupMethods]) willReturn:array];
+	else
+		[[groupOrMock methodGroupMethods] addObjectsFromArray:array];
+}
+
++ (void)add:(NSDictionary *)groups asMethodGroupsOf:(id)interfaceOrMock {
+	BOOL createMocks = [self isMock:interfaceOrMock];
+	NSMutableArray *groupsArray = [@[] mutableCopy];
+	
+	[groups enumerateKeysAndObjectsUsingBlock:^(NSString *groupName, NSArray *groupMembers, BOOL *stop) {
+		id group = nil;
+		if (createMocks)
+			group = [self mockMethodGroup:groupName block:^(id object) { }];
+		else
+			group = [self createMethodGroup:groupName block:^(MethodGroupInfo *object) { }];
+		[self add:groupMembers asMembersOfGroup:group];
+		[groupsArray addObject:group];
+	}];
+	
+	if (createMocks)
+		[given([interfaceOrMock interfaceMethodGroups]) willReturn:groupsArray];
+	else
+		[[interfaceOrMock interfaceMethodGroups] addObjectsFromArray:groupsArray];
+}
+
++ (void)add:(NSDictionary *)groups asMembersOf:(id)interfaceOrMock {
+	NSMutableArray *classMethods = [@[] mutableCopy];
+	NSMutableArray *instanceMethods = [@[] mutableCopy];
+	NSMutableArray *properties = [@[] mutableCopy];
+	[groups enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSArray *members, BOOL *stop) {
+		[members enumerateObjectsUsingBlock:^(id member, NSUInteger idx, BOOL *stop) {
+			NSString *selector = [member uniqueObjectID];
+			if ([selector hasPrefix:@"+"])
+				[classMethods addObject:member];
+			else if ([selector hasPrefix:@"-"])
+				[instanceMethods addObject:member];
+			else
+				[properties addObject:member];
+		}];
+	}];
+	
+	if ([self isMock:interfaceOrMock]) {
+		[given([interfaceOrMock interfaceClassMethods]) willReturn:classMethods];
+		[given([interfaceOrMock interfaceInstanceMethods]) willReturn:instanceMethods];
+		[given([interfaceOrMock interfaceProperties]) willReturn:properties];
+	} else {
+		[[interfaceOrMock interfaceClassMethods] addObjectsFromArray:classMethods];
+		[[interfaceOrMock interfaceInstanceMethods] addObjectsFromArray:instanceMethods];
+		[[interfaceOrMock interfaceProperties] addObjectsFromArray:properties];
+	}
+}
+
+#pragma mark - Helper methods
+
 + (BOOL)isMock:(id)objectOrMock {
 	return ![objectOrMock isKindOfClass:[ObjectInfoBase class]];
 }
@@ -205,8 +279,13 @@
 
 @implementation CategoryInfo (UnitTestsMocks)
 
-- (void)extend:(NSString *)name {
-	self.categoryClass.nameOfObject = name;
+- (void)extend:(id)nameOrClass {
+	if ([nameOrClass isKindOfClass:[NSString class]]) {
+		self.categoryClass.nameOfObject = nameOrClass;
+	} else {
+		self.categoryClass.nameOfObject = [nameOrClass nameOfCategory];
+		self.categoryClass.linkToObject = nameOrClass;
+	}
 }
 
 @end
