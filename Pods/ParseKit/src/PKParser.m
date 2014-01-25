@@ -39,10 +39,8 @@
 
 
 - (void)dealloc {
-#ifdef TARGET_OS_SNOW_LEOPARD
     self.assemblerBlock = nil;
     self.preassemblerBlock = nil;
-#endif
     self.assembler = nil;
     self.assemblerSelector = nil;
     self.preassembler = nil;
@@ -99,32 +97,26 @@
 
 - (NSSet *)matchAndAssemble:(NSSet *)inAssemblies {
     NSParameterAssert(inAssemblies);
-
-#ifdef TARGET_OS_SNOW_LEOPARD
+    
     if (preassemblerBlock) {
         for (PKAssembly *a in inAssemblies) {
             preassemblerBlock(self, a);
         }
-    } else 
-#endif
-    if (preassembler) {
-        NSAssert2([preassembler respondsToSelector:preassemblerSelector], @"provided preassembler %@ should respond to %s", preassembler, preassemblerSelector);
+    } else if (preassembler) {
+        NSAssert2([preassembler respondsToSelector:preassemblerSelector], @"provided preassembler %@ should respond to %@", preassembler, NSStringFromSelector(preassemblerSelector));
         for (PKAssembly *a in inAssemblies) {
             [preassembler performSelector:preassemblerSelector withObject:self withObject:a];
         }
     }
-    
+
     NSSet *outAssemblies = [self allMatchesFor:inAssemblies];
 
-#ifdef TARGET_OS_SNOW_LEOPARD
     if (assemblerBlock) {
         for (PKAssembly *a in outAssemblies) {
             assemblerBlock(self, a);
         }
-    } else 
-#endif
-    if (assembler) {
-        NSAssert2([assembler respondsToSelector:assemblerSelector], @"provided assembler %@ should respond to %s", assembler, assemblerSelector);
+    } else if (assembler) {
+        NSAssert2([assembler respondsToSelector:assemblerSelector], @"provided assembler %@ should respond to %@", assembler, NSStringFromSelector(assemblerSelector));
         for (PKAssembly *a in outAssemblies) {
             [assembler performSelector:assemblerSelector withObject:self withObject:a];
         }
@@ -160,10 +152,8 @@
     }
 }
 
-#ifdef TARGET_OS_SNOW_LEOPARD
 @synthesize assemblerBlock;
 @synthesize preassemblerBlock;
-#endif
 @synthesize assembler;
 @synthesize assemblerSelector;
 @synthesize preassembler;
@@ -173,18 +163,45 @@
 
 @implementation PKParser (PKParserFactoryAdditions)
 
-- (id)parse:(NSString *)s {
-    PKTokenizer *t = self.tokenizer;
-    if (!t) {
-        t = [PKTokenizer tokenizer];
+- (id)parse:(NSString *)s error:(NSError **)outError {
+    id result = nil;
+    
+    @try {
+        
+        PKTokenizer *t = self.tokenizer;
+        if (!t) t = [PKTokenizer tokenizer];
+
+        t.string = s;
+        PKAssembly *a = [self completeMatchFor:[PKTokenAssembly assemblyWithTokenizer:t]];
+        if (a.target) {
+            result = a.target;
+        } else {
+            result = [a pop];
+        }
+        
+        [result retain];
     }
-    t.string = s;
-    PKAssembly *a = [self completeMatchFor:[PKTokenAssembly assemblyWithTokenizer:t]];
-    if (a.target) {
-        return a.target;
-    } else {
-        return [a pop];
+    @catch (NSException *ex) {
+        if (outError) {
+            NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:[ex userInfo]];
+            
+            // get reason
+            NSString *reason = [ex reason];
+            if ([reason length]) [userInfo setObject:reason forKey:NSLocalizedFailureReasonErrorKey];
+            
+            // get domain
+            NSString *exName = [ex name];
+            NSString *domain = exName ? exName : @"PKParseException";
+            
+            // convert to NSError
+            NSError *err = [NSError errorWithDomain:domain code:47 userInfo:[[userInfo copy] autorelease]];
+            *outError = err;
+        } else {
+            [ex raise];
+        }
     }
+
+    return [result autorelease];
 }
 
 

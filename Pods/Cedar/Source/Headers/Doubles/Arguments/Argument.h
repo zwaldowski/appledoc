@@ -2,7 +2,7 @@
 #import "CompareEqual.h"
 #import "CedarStringifiers.h"
 #import "CedarComparators.h"
-#import <tr1/memory>
+#import <memory>
 
 namespace Cedar { namespace Doubles {
 
@@ -17,8 +17,15 @@ namespace Cedar { namespace Doubles {
 
         virtual bool matches_encoding(const char *) const = 0;
         virtual bool matches_bytes(void *) const = 0;
+        bool operator==(const Argument &other_argument) const {
+            return this->matches_encoding(other_argument.value_encoding()) && this->matches_bytes(other_argument.value_bytes());
+        };
 
-        typedef std::tr1::shared_ptr<Argument> shared_ptr_t;
+        bool operator!=(const Argument &other_argument) const {
+            return !(*this == other_argument);
+        };
+
+        typedef std::shared_ptr<Argument> shared_ptr_t;
     };
 
     inline /* virtual */ Argument::~Argument() {}

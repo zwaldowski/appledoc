@@ -8,41 +8,28 @@
 
 #import <Foundation/Foundation.h>
 
-@class PKGrammarParser;
-@class PKToken;
-@class PKTokenizer;
 @class PKParser;
-@class PKCollectionParser;
+@class PKAST;
 
 void PKReleaseSubparserTree(PKParser *p);
 
 typedef enum {
-    PKParserFactoryAssemblerSettingBehaviorOnAll        = 1 << 1, // Default
-    PKParserFactoryAssemblerSettingBehaviorOnTerminals  = 1 << 2,
-    PKParserFactoryAssemblerSettingBehaviorOnExplicit   = 1 << 3,
-    PKParserFactoryAssemblerSettingBehaviorOnNone       = 1 << 4
+    PKParserFactoryAssemblerSettingBehaviorAll        = 0, // Default
+    PKParserFactoryAssemblerSettingBehaviorNone       = 1,
+    PKParserFactoryAssemblerSettingBehaviorTerminals  = 2,
+    PKParserFactoryAssemblerSettingBehaviorExplicit   = 3,
+    PKParserFactoryAssemblerSettingBehaviorSyntax     = 4,
 } PKParserFactoryAssemblerSettingBehavior;
 
-@interface PKParserFactory : NSObject {
-    PKParserFactoryAssemblerSettingBehavior assemblerSettingBehavior;
-    PKGrammarParser *grammarParser;
-    id assembler;
-    id preassembler;
-    NSMutableDictionary *parserTokensTable;
-    NSMutableDictionary *parserClassTable;
-    NSMutableDictionary *selectorTable;
-    PKToken *equals;
-    PKToken *curly;
-    PKToken *paren;
-    BOOL isGatheringClasses;
-}
+@interface PKParserFactory : NSObject
 
 + (PKParserFactory *)factory;
 
-- (PKParser *)parserFromGrammar:(NSString *)s assembler:(id)a;
-- (PKParser *)parserFromGrammar:(NSString *)s assembler:(id)a preassembler:(id)pa;
+- (PKParser *)parserFromGrammar:(NSString *)g assembler:(id)a error:(NSError **)outError;
+- (PKParser *)parserFromGrammar:(NSString *)g assembler:(id)a preassembler:(id)pa error:(NSError **)outError;
 
-- (PKCollectionParser *)exprParser;
+- (PKAST *)ASTFromGrammar:(NSString *)g error:(NSError **)outError;
 
-@property (nonatomic) PKParserFactoryAssemblerSettingBehavior assemblerSettingBehavior;
+@property (nonatomic, assign) PKParserFactoryAssemblerSettingBehavior assemblerSettingBehavior;
+@property (nonatomic, assign) BOOL collectTokenKinds;
 @end

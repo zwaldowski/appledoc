@@ -8,6 +8,7 @@
 @implementation CDRExampleGroup
 
 @synthesize examples = examples_;
+@synthesize subjectActionBlock = subjectActionBlock_;
 
 + (id)groupWithText:(NSString *)text {
     return [[[[self class] alloc] initWithText: text] autorelease];
@@ -31,12 +32,28 @@
     [afterBlocks_ release];
     [examples_ release];
     [beforeBlocks_ release];
+    self.subjectActionBlock = nil;
     [super dealloc];
 }
 
 #pragma mark Public interface
 - (NSString *)description {
-    return [NSString stringWithFormat:@"Example Group: %@", self.text];
+    return [NSString stringWithFormat:@"Example Group: \"%@\"", self.fullText];
+}
+
+- (CDRSpecBlock)subjectActionBlock {
+    CDRSpecBlock parentsubjectActionBlock = self.parent.subjectActionBlock;
+    if (subjectActionBlock_) {
+        if (parentsubjectActionBlock) {
+            @throw([NSException exceptionWithName:NSInternalInconsistencyException
+                                           reason:[NSString stringWithFormat:@"%@ has more than one subject action block", self]
+                                         userInfo:nil]);
+        } else {
+            return subjectActionBlock_;
+        }
+    } else {
+        return parentsubjectActionBlock;
+    }
 }
 
 - (void)add:(CDRExampleBase *)example {

@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCIsSame.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -14,23 +14,17 @@
 
 @implementation HCIsSame
 
-+ (id)isSameAs:(id)anObject
++ (instancetype)isSameAs:(id)anObject
 {
-    return [[[self alloc] initSameAs:anObject] autorelease];
+    return [[self alloc] initSameAs:anObject];
 }
 
-- (id)initSameAs:(id)anObject
+- (instancetype)initSameAs:(id)anObject
 {
     self = [super init];
     if (self)
-        object = [anObject retain];
+        object = anObject;
     return self;
-}
-
-- (void)dealloc
-{
-    [object release];
-    [super dealloc];
 }
 
 - (BOOL)matches:(id)item
@@ -42,22 +36,20 @@
 {
     [mismatchDescription appendText:@"was "];
     if (item)
-        [mismatchDescription appendText:[NSString stringWithFormat:@"0x%0x ", item]];
+        [mismatchDescription appendText:[NSString stringWithFormat:@"%p ", (__bridge void *)item]];
     [mismatchDescription appendDescriptionOf:item];
 }
 
 - (void)describeTo:(id<HCDescription>)description
 {
-    [[description appendText:[NSString stringWithFormat:@"same instance as 0x%0x ", object]]
+    [[description appendText:[NSString stringWithFormat:@"same instance as %p ", (__bridge void *)object]]
          appendDescriptionOf:object];
 }
 
 @end
 
 
-#pragma mark -
-
-id<HCMatcher> HC_sameInstance(id object)
+id HC_sameInstance(id object)
 {
     return [HCIsSame isSameAs:object];
 }

@@ -56,21 +56,21 @@
     NSNumber *key = [NSNumber numberWithInteger:c];
     PKSymbolNode *child = [p->children objectForKey:key];
     if (!child) {
-        child = [[PKSymbolNode alloc] initWithParent:p character:c];
+        child = [[[PKSymbolNode alloc] initWithParent:p character:c] autorelease];
         [p->children setObject:child forKey:key];
-        [child release];
     }
-
-    NSString *rest = nil;
     
     NSUInteger len = [s length];
-    if (0 == len) {
-        return;
-    } else if (len > 1) {
-        rest = [s substringFromIndex:1];
+
+    if (len) {
+        NSString *rest = nil;
+
+        if (len > 1) {
+            rest = [s substringFromIndex:1];
+        }
+        
+        [self addWithFirst:[s characterAtIndex:0] rest:rest parent:child];
     }
-    
-    [self addWithFirst:[s characterAtIndex:0] rest:rest parent:child];
 }
 
 
@@ -102,7 +102,7 @@
 
 - (NSString *)nextWithFirst:(PKUniChar)c rest:(PKReader *)r parent:(PKSymbolNode *)p {
     NSParameterAssert(p);
-    NSString *result = [NSString stringWithFormat:@"%C", c];
+    NSString *result = [NSString stringWithFormat:@"%C", (unichar)c];
 
     // this also works.
 //    NSString *result = [[[NSString alloc] initWithCharacters:(const unichar *)&c length:1] autorelease];

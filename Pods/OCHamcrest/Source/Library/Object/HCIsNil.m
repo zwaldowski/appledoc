@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCIsNil.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -15,9 +15,9 @@
 
 @implementation HCIsNil
 
-+ (id)isNil
++ (instancetype)isNil
 {
-    return [[[self alloc] init] autorelease];
+    return [[self alloc] init];
 }
 
 - (BOOL)matches:(id)item
@@ -33,14 +33,12 @@
 @end
 
 
-#pragma mark -
-
-id<HCMatcher> HC_nilValue()
+id HC_nilValue()
 {
     return [HCIsNil isNil];
 }
 
-id<HCMatcher> HC_notNilValue()
+id HC_notNilValue()
 {
     return HC_isNot([HCIsNil isNil]);
 }

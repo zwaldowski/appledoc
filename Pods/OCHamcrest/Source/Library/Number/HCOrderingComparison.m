@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCOrderingComparison.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -14,22 +14,21 @@
 
 @implementation HCOrderingComparison
 
-+ (id)compare:(id)expectedValue
-   minCompare:(NSComparisonResult)min
-   maxCompare:(NSComparisonResult)max
-   comparisonDescription:(NSString *)description
++ (instancetype)compare:(id)expectedValue
+             minCompare:(NSComparisonResult)min
+             maxCompare:(NSComparisonResult)max
+  comparisonDescription:(NSString *)description
 {
-    return [[[self alloc] initComparing:expectedValue
+    return [[self alloc] initComparing:expectedValue
                              minCompare:min
                              maxCompare:max
-                  comparisonDescription:description]
-            autorelease];
+                  comparisonDescription:description];
 }
 
-- (id)initComparing:(id)expectedValue
-         minCompare:(NSComparisonResult)min
-         maxCompare:(NSComparisonResult)max
-         comparisonDescription:(NSString *)description
+- (instancetype)initComparing:(id)expectedValue
+                   minCompare:(NSComparisonResult)min
+                   maxCompare:(NSComparisonResult)max
+        comparisonDescription:(NSString *)description
 {
     if (![expectedValue respondsToSelector:@selector(compare:)])
     {
@@ -41,19 +40,12 @@
     self = [super init];
     if (self)
     {
-        expected = [expectedValue retain];
+        expected = expectedValue;
         minCompare = min;
         maxCompare = max;
         comparisonDescription = [description copy];
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [expected release];
-    [comparisonDescription release];
-    [super dealloc];
 }
 
 - (BOOL)matches:(id)item
@@ -76,9 +68,7 @@
 @end
 
 
-#pragma mark -
-
-id<HCMatcher> HC_greaterThan(id aValue)
+id HC_greaterThan(id aValue)
 {
     return [HCOrderingComparison compare:aValue
                               minCompare:NSOrderedAscending
@@ -86,7 +76,7 @@ id<HCMatcher> HC_greaterThan(id aValue)
                    comparisonDescription:@"greater than"];
 }
 
-id<HCMatcher> HC_greaterThanOrEqualTo(id aValue)
+id HC_greaterThanOrEqualTo(id aValue)
 {
     return [HCOrderingComparison compare:aValue
                               minCompare:NSOrderedAscending
@@ -94,7 +84,7 @@ id<HCMatcher> HC_greaterThanOrEqualTo(id aValue)
                    comparisonDescription:@"greater than or equal to"];
 }
 
-id<HCMatcher> HC_lessThan(id aValue)
+id HC_lessThan(id aValue)
 {
     return [HCOrderingComparison compare:aValue
                               minCompare:NSOrderedDescending
@@ -102,7 +92,7 @@ id<HCMatcher> HC_lessThan(id aValue)
                    comparisonDescription:@"less than"];
 }
 
-id<HCMatcher> HC_lessThanOrEqualTo(id aValue)
+id HC_lessThanOrEqualTo(id aValue)
 {
     return [HCOrderingComparison compare:aValue
                               minCompare:NSOrderedSame

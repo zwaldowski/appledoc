@@ -28,14 +28,15 @@
 @implementation PKSymbolNode
 
 - (id)initWithParent:(PKSymbolNode *)p character:(PKUniChar)c {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.parent = p;
         self.character = c;
         self.children = [NSMutableDictionary dictionary];
 
         // this private property is an optimization. 
         // cache the NSString for the char to prevent it being constantly recreated in -determineAncestry
-        self.string = [NSString stringWithFormat:@"%C", character];
+        self.string = [NSString stringWithFormat:@"%C", (unichar)character];
 
         [self determineAncestry];
     }

@@ -15,7 +15,6 @@
  */
 
 #include "buffer.h"
-#include "autolink.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -133,7 +132,7 @@ autolink_delim(uint8_t *data, size_t link_end, size_t offset, size_t size)
 }
 
 static size_t
-check_domain(uint8_t *data, size_t size, int allow_short)
+check_domain(uint8_t *data, size_t size)
 {
 	size_t i, np = 0;
 
@@ -145,27 +144,13 @@ check_domain(uint8_t *data, size_t size, int allow_short)
 		else if (!isalnum(data[i]) && data[i] != '-') break;
 	}
 
-	if (allow_short) {
-		/* We don't need a valid domain in the strict sense (with
-		 * least one dot; so just make sure it's composed of valid
-		 * domain characters and return the length of the the valid
-		 * sequence. */
-		return i;
-	} else {
-		/* a valid domain needs to have at least a dot.
-		 * that's as far as we get */
-		return np ? i : 0;
-	}
+	/* a valid domain needs to have at least a dot.
+	 * that's as far as we get */
+	return np ? i : 0;
 }
 
 size_t
-sd_autolink__www(
-	size_t *rewind_p,
-	struct buf *link,
-	uint8_t *data,
-	size_t offset,
-	size_t size,
-	unsigned int flags)
+sd_autolink__www(size_t *rewind_p, struct buf *link, uint8_t *data, size_t offset, size_t size)
 {
 	size_t link_end;
 
@@ -175,7 +160,7 @@ sd_autolink__www(
 	if (size < 4 || memcmp(data, "www.", strlen("www.")) != 0)
 		return 0;
 
-	link_end = check_domain(data, size, 0);
+	link_end = check_domain(data, size);
 
 	if (link_end == 0)
 		return 0;
@@ -195,13 +180,7 @@ sd_autolink__www(
 }
 
 size_t
-sd_autolink__email(
-	size_t *rewind_p,
-	struct buf *link,
-	uint8_t *data,
-	size_t offset,
-	size_t size,
-	unsigned int flags)
+sd_autolink__email(size_t *rewind_p, struct buf *link, uint8_t *data, size_t offset, size_t size)
 {
 	size_t link_end, rewind;
 	int nb = 0, np = 0;
@@ -250,13 +229,7 @@ sd_autolink__email(
 }
 
 size_t
-sd_autolink__url(
-	size_t *rewind_p,
-	struct buf *link,
-	uint8_t *data,
-	size_t offset,
-	size_t size,
-	unsigned int flags)
+sd_autolink__url(size_t *rewind_p, struct buf *link, uint8_t *data, size_t offset, size_t size)
 {
 	size_t link_end, rewind = 0, domain_len;
 
@@ -268,14 +241,9 @@ sd_autolink__url(
 
 	if (!sd_autolink_issafe(data - rewind, size + rewind))
 		return 0;
-
 	link_end = strlen("://");
 
-	domain_len = check_domain(
-		data + link_end,
-		size - link_end,
-		flags & SD_AUTOLINK_SHORT_DOMAINS);
-
+	domain_len = check_domain(data + link_end, size - link_end);
 	if (domain_len == 0)
 		return 0;
 

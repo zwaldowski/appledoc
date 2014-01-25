@@ -1,6 +1,9 @@
 //
 //  OCMockito - MKTOngoingStubbing.m
-//  Copyright 2012 Jonathan M. Reid. See LICENSE.txt
+//  Copyright 2013 Jonathan M. Reid. See LICENSE.txt
+//
+//  Created by: Jon Reid, http://qualitycoding.org/
+//  Source: https://github.com/jonreid/OCMockito
 //
 
 #import "MKTOngoingStubbing.h"
@@ -8,40 +11,30 @@
 #import "MKTInvocationContainer.h"
 
 
-@interface MKTOngoingStubbing ()
-@property (nonatomic, retain) MKTInvocationContainer *invocationContainer;
-@end
-
-
 @implementation MKTOngoingStubbing
+{
+    MKTInvocationContainer *_invocationContainer;
+}
 
-@synthesize invocationContainer;
-
-- (id)initWithInvocationContainer:(MKTInvocationContainer *)anInvocationContainer
+- (instancetype)initWithInvocationContainer:(MKTInvocationContainer *)invocationContainer
 {
     self = [super init];
     if (self)
-        invocationContainer = [anInvocationContainer retain];
+        _invocationContainer = invocationContainer;
     return self;
-}
-
-- (void)dealloc
-{
-    [invocationContainer release];
-    [super dealloc];
 }
 
 - (MKTOngoingStubbing *)willReturn:(id)object
 {
-    [invocationContainer addAnswer:object];
+    [_invocationContainer addAnswer:object];
     return self;
 }
 
-#define DEFINE_RETURN_METHOD(type, typeName)                                        \
-    - (MKTOngoingStubbing *)willReturn ## typeName:(type)value                      \
-    {                                                                               \
-        [invocationContainer addAnswer:[NSNumber numberWith ## typeName:value]];    \
-        return self;                                                                \
+#define DEFINE_RETURN_METHOD(type, typeName)                        \
+    - (MKTOngoingStubbing *)willReturn ## typeName:(type)value      \
+    {                                                               \
+        [_invocationContainer addAnswer:@(value)];                  \
+        return self;                                                \
     }
 
 DEFINE_RETURN_METHOD(BOOL, Bool)
@@ -65,7 +58,7 @@ DEFINE_RETURN_METHOD(double, Double)
 
 - (id)withMatcher:(id <HCMatcher>)matcher forArgument:(NSUInteger)index
 {
-    [invocationContainer setMatcher:matcher atIndex:index+2];
+    [_invocationContainer setMatcher:matcher atIndex:index+2];
     return self;
 }
 

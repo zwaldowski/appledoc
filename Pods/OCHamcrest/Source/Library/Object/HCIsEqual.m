@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCIsEqual.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -14,23 +14,17 @@
 
 @implementation HCIsEqual
 
-+ (id)isEqualTo:(id)anObject
++ (instancetype)isEqualTo:(id)anObject
 {
-    return [[[self alloc] initEqualTo:anObject] autorelease];
+    return [[self alloc] initEqualTo:anObject];
 }
 
-- (id)initEqualTo:(id)anObject
+- (instancetype)initEqualTo:(id)anObject
 {
     self = [super init];
     if (self)
-        object = [anObject retain];
+        object = anObject;
     return self;
-}
-
-- (void)dealloc
-{
-    [object release];
-    [super dealloc];
 }
 
 - (BOOL)matches:(id)item
@@ -56,9 +50,7 @@
 @end
 
 
-#pragma mark -
-
-id<HCMatcher> HC_equalTo(id object)
+id HC_equalTo(id object)
 {
     return [HCIsEqual isEqualTo:object];
 }

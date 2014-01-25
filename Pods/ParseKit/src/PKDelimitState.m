@@ -20,8 +20,15 @@
 #import <ParseKit/PKSymbolRootNode.h>
 #import <ParseKit/PKTypes.h>
 
+#import "PKDelimitDescriptorCollection.h"
+#import "PKDelimitDescriptor.h"
+
 @interface PKToken ()
 @property (nonatomic, readwrite) NSUInteger offset;
+@end
+
+@interface PKTokenizer ()
+- (NSInteger)tokenKindForStringValue:(NSString *)str;
 @end
 
 @interface PKTokenizerState ()
@@ -30,25 +37,21 @@
 - (void)appendString:(NSString *)s;
 - (NSString *)bufferedString;
 - (PKTokenizerState *)nextTokenizerStateFor:(PKUniChar)c tokenizer:(PKTokenizer *)t;
+- (void)addStartMarker:(NSString *)start endMarker:(NSString *)end allowedCharacterSet:(NSCharacterSet *)set tokenKind:(NSInteger)kind;
 @end
 
 @interface PKDelimitState ()
-- (NSString *)endMarkerForStartMarker:(NSString *)startMarker;
-- (NSCharacterSet *)allowedCharacterSetForStartMarker:(NSString *)startMarker;
 @property (nonatomic, retain) PKSymbolRootNode *rootNode;
-@property (nonatomic, retain) NSMutableArray *startMarkers;
-@property (nonatomic, retain) NSMutableArray *endMarkers;
-@property (nonatomic, retain) NSMutableArray *characterSets;
+@property (nonatomic, retain) PKDelimitDescriptorCollection *collection;
 @end
 
 @implementation PKDelimitState
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.rootNode = [[[PKSymbolRootNode alloc] init] autorelease];
-        self.startMarkers = [NSMutableArray array];
-        self.endMarkers = [NSMutableArray array];
-        self.characterSets = [NSMutableArray array];
+        self.collection = [[[PKDelimitDescriptorCollection alloc] init] autorelease];
     }
     return self;
 }
@@ -56,66 +59,24 @@
 
 - (void)dealloc {
     self.rootNode = nil;
-    self.startMarkers = nil;
-    self.endMarkers = nil;
-    self.characterSets = nil;
+    self.collection = nil;
     [super dealloc];
 }
 
 
 - (void)addStartMarker:(NSString *)start endMarker:(NSString *)end allowedCharacterSet:(NSCharacterSet *)set {
     NSParameterAssert([start length]);
+
+    // add markers to root node
     [rootNode add:start];
-    [startMarkers addObject:start];
-    
     if ([end length]) {
         [rootNode add:end];
-        [endMarkers addObject:end];
-    } else {
-        [endMarkers addObject:[NSNull null]];
     }
-
-    if (set) {
-        [characterSets addObject:set];
-    } else {
-        [characterSets addObject:[NSNull null]];
-    }
-}
-
-
-- (void)removeStartMarker:(NSString *)start {
-    NSParameterAssert([start length]);
-    [rootNode remove:start];
-    NSUInteger i = [startMarkers indexOfObject:start];
-    if (NSNotFound != i) {
-        [startMarkers removeObject:start];
-        [characterSets removeObjectAtIndex:i];
-        
-        id endOrNull = [endMarkers objectAtIndex:i];
-        if ([NSNull null] != endOrNull) {
-            [rootNode remove:endOrNull];
-        }
-        [endMarkers removeObjectAtIndex:i]; // this should always be in range.
-    }
-}
-
-
-- (NSString *)endMarkerForStartMarker:(NSString *)startMarker {
-    NSParameterAssert([startMarkers containsObject:startMarker]);
-    NSUInteger i = [startMarkers indexOfObject:startMarker];
-    return [endMarkers objectAtIndex:i];
-}
-
-
-- (NSCharacterSet *)allowedCharacterSetForStartMarker:(NSString *)startMarker {
-    NSParameterAssert([startMarkers containsObject:startMarker]);
-    NSCharacterSet *characterSet = nil;
-    NSUInteger i = [startMarkers indexOfObject:startMarker];
-    id csOrNull = [characterSets objectAtIndex:i];
-    if ([NSNull null] != csOrNull) {
-        characterSet = csOrNull;
-    }
-    return characterSet;
+    
+    // add descriptor to collection
+    PKDelimitDescriptor *desc = [PKDelimitDescriptor descriptorWithStartMarker:start endMarker:end characterSet:set];
+    NSAssert(collection, @"");
+    [collection add:desc];
 }
 
 
@@ -124,39 +85,52 @@
     NSParameterAssert(t);
     
     NSString *startMarker = [rootNode nextSymbol:r startingWith:cin];
-
-    if (![startMarker length] || ![startMarkers containsObject:startMarker]) {
-        [r unread:[startMarker length] - 1];
-        return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
+    NSArray *descs = nil;
+    
+    if ([startMarker length]) {
+        descs = [collection descriptorsForStartMarker:startMarker];
+        
+        if (![descs count]) {
+            [r unread:[startMarker length] - 1];
+            return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
+        }
     }
     
     [self resetWithReader:r];
     [self appendString:startMarker];
-
-    id endMarkerOrNull = [self endMarkerForStartMarker:startMarker];
-    NSString *endMarker = nil;
-    NSCharacterSet *characterSet = [self allowedCharacterSetForStartMarker:startMarker];
     
-    PKUniChar c, e;
-    if ([NSNull null] == endMarkerOrNull) {
-        e = PKEOF;
-    } else {
-        endMarker = endMarkerOrNull;
-        e = [endMarker characterAtIndex:0];
+    NSUInteger count = [descs count];
+    BOOL hasEndMarkers = NO;
+    PKUniChar endChars[count];
+    PKDelimitDescriptor *selectedDesc = nil;
+
+    NSUInteger i = 0;
+    for (PKDelimitDescriptor *desc in descs) {
+        NSString *endMarker = desc.endMarker;
+        PKUniChar e = PKEOF;
+        
+        if ([endMarker length]) {
+            e = [endMarker characterAtIndex:0];
+            hasEndMarkers = YES;
+        }
+        endChars[i++] = e;
     }
-    while (1) {
+    
+    PKUniChar c;
+    for (;;) {
         c = [r read];
+        //NSLog(@"%C", (UniChar)c);
         if (PKEOF == c) {
-            if (balancesEOFTerminatedStrings && endMarker) {
-                [self appendString:endMarker];
-            } else if (endMarker && !allowsUnbalancedStrings) {
+            if (hasEndMarkers && balancesEOFTerminatedStrings) {
+                [self appendString:[descs[0] endMarker]];
+            } else if (hasEndMarkers) {
                 [r unread:[[self bufferedString] length] - 1];
                 return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
             }
             break;
         }
         
-        if (!endMarker && [t.whitespaceState isWhitespaceChar:c]) {
+        if (!hasEndMarkers && [t.whitespaceState isWhitespaceChar:c]) {
             // if only the start marker was matched, dont return delimited string token. instead, defer tokenization
             if ([startMarker isEqualToString:[self bufferedString]]) {
                 [r unread:[startMarker length] - 1];
@@ -165,32 +139,57 @@
             // else, return delimited string tok
             break;
         }
+
+        BOOL done = NO;
+        NSString *endMarker = nil;
+        NSCharacterSet *charSet = nil;
         
-        if (e == c) {
-            NSString *peek = [rootNode nextSymbol:r startingWith:e];
-            if (endMarker && [endMarker isEqualToString:peek]) {
-                [self appendString:endMarker];
-                c = [r read];
-                break;
-            } else {
-                [r unread:[peek length] - 1];
-                if (e != [peek characterAtIndex:0]) {
-                    [self append:c];
+        for (NSUInteger i = 0; i < count; ++i) {
+            PKUniChar e = endChars[i];
+            
+            if (e == c) {
+                selectedDesc = descs[i];
+                endMarker = [selectedDesc endMarker];
+                charSet = [selectedDesc characterSet];
+                
+                NSString *peek = [rootNode nextSymbol:r startingWith:e];
+                if (endMarker && [endMarker isEqualToString:peek]) {
+                    [self appendString:endMarker];
                     c = [r read];
+                    done = YES;
+                    break;
+                } else {
+                    [r unread:[peek length] - 1];
+                    if (e != [peek characterAtIndex:0]) {
+                        [self append:c];
+                        c = [r read];
+                    }
                 }
             }
         }
 
-        // check if char is not in allowed character set (if given)
-        if (characterSet && ![characterSet characterIsMember:c]) {
-            if (allowsUnbalancedStrings) {
-                break;
-            } else {
-                // if not, unwind and return a symbol tok for cin
-                [r unread:[[self bufferedString] length]];
-                return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
+        if (done) {
+            if (charSet) {
+                NSString *contents = [self bufferedString];
+                NSUInteger loc = [startMarker length];
+                NSUInteger len = [contents length] - (loc + [endMarker length]);
+                contents = [contents substringWithRange:NSMakeRange(loc, len)];
+                
+                for (NSUInteger i = 0; i < len; ++i) {
+                    PKUniChar c = [contents characterAtIndex:i];
+
+                    // check if char is not in allowed character set (if given)
+                    if (![charSet characterIsMember:c]) {
+                        // if not, unwind and return a symbol tok for cin
+                        [r unread:[[self bufferedString] length] - 1];
+                        return [[self nextTokenizerStateFor:cin tokenizer:t] nextTokenFromReader:r startingWith:cin tokenizer:t];
+                    }
+                }
             }
+
+            break;
         }
+        
         
         [self append:c];
     }
@@ -201,13 +200,15 @@
     
     PKToken *tok = [PKToken tokenWithTokenType:PKTokenTypeDelimitedString stringValue:[self bufferedString] floatValue:0.0];
     tok.offset = offset;
+    
+    NSString *tokenKindKey = [NSString stringWithFormat:@"%@,%@", selectedDesc.startMarker, selectedDesc.endMarker];
+    NSInteger tokenKind = [t tokenKindForStringValue:tokenKindKey];
+    tok.tokenKind = tokenKind; //selectedDesc.tokenKind;
+
     return tok;
 }
 
 @synthesize rootNode;
 @synthesize balancesEOFTerminatedStrings;
-@synthesize allowsUnbalancedStrings;
-@synthesize startMarkers;
-@synthesize endMarkers;
-@synthesize characterSets;
+@synthesize collection;
 @end

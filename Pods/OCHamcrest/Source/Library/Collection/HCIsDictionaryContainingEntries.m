@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCIsDictionaryContainingEntries.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -15,29 +15,22 @@
 
 @implementation HCIsDictionaryContainingEntries
 
-+ (id)isDictionaryContainingKeys:(NSArray *)theKeys
-                   valueMatchers:(NSArray *)theValueMatchers
++ (instancetype)isDictionaryContainingKeys:(NSArray *)theKeys
+                             valueMatchers:(NSArray *)theValueMatchers
 {
-    return [[[self alloc] initWithKeys:theKeys valueMatchers:theValueMatchers] autorelease];
+    return [[self alloc] initWithKeys:theKeys valueMatchers:theValueMatchers];
 }
 
-- (id)initWithKeys:(NSArray *)theKeys
-     valueMatchers:(NSArray *)theValueMatchers
+- (instancetype)initWithKeys:(NSArray *)theKeys
+               valueMatchers:(NSArray *)theValueMatchers
 {
     self = [super init];
     if (self)
     {
-        keys = [theKeys retain];
-        valueMatchers = [theValueMatchers retain];
+        keys = theKeys;
+        valueMatchers = theValueMatchers;
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [valueMatchers release];
-    [keys release];
-    [super dealloc];
 }
 
 - (BOOL)matches:(id)item
@@ -56,8 +49,8 @@
     NSUInteger count = [keys count];
     for (NSUInteger index = 0; index < count; ++index)
     {
-        id key = [keys objectAtIndex:index];
-        if ([dict objectForKey:key] == nil)
+        id key = keys[index];
+        if (dict[key] == nil)
         {
             [[[[mismatchDescription appendText:@"no "]
                                     appendDescriptionOf:key]
@@ -66,8 +59,8 @@
             return NO;
         }
 
-        id valueMatcher = [valueMatchers objectAtIndex:index];
-        id actualValue = [dict objectForKey:key];
+        id valueMatcher = valueMatchers[index];
+        id actualValue = dict[key];
         
         if (![valueMatcher matches:actualValue])
         {
@@ -89,9 +82,9 @@
 
 - (void)describeKeyValueAtIndex:(NSUInteger)index to:(id<HCDescription>)description
 {
-    [[[[description appendDescriptionOf:[keys objectAtIndex:index]]
+    [[[[description appendDescriptionOf:keys[index]]
                     appendText:@" = "]
-                    appendDescriptionOf:[valueMatchers objectAtIndex:index]]
+                    appendDescriptionOf:valueMatchers[index]]
                     appendText:@"; "];
 }
 
@@ -109,8 +102,6 @@
 @end
 
 
-#pragma mark -
-
 static void requirePairedObject(id obj)
 {
     if (obj == nil)
@@ -122,7 +113,7 @@ static void requirePairedObject(id obj)
 }
 
 
-id<HCMatcher> HC_hasEntries(id keysAndValueMatch, ...)
+id HC_hasEntries(id keysAndValueMatch, ...)
 {
     va_list args;
     va_start(args, keysAndValueMatch);

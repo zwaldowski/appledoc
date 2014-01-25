@@ -1,0 +1,1 @@
+PODS_APPLEDOC_PARSEKIT_OTHER_LDFLAGS = -licucore -framework Foundation

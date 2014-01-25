@@ -6,6 +6,8 @@
 #import <objc/runtime.h>
 #import "OCPartialMockRecorder.h"
 #import "OCPartialMockObject.h"
+#import "NSMethodSignature+OCMAdditions.h"
+#import "NSObject+OCMAdditions.h"
 
 
 @interface OCPartialMockObject (Private)
@@ -30,20 +32,29 @@ static NSMutableDictionary *mockTable;
 
 + (void)rememberPartialMock:(OCPartialMockObject *)mock forObject:(id)anObject
 {
-	[mockTable setObject:[NSValue valueWithNonretainedObject:mock] forKey:[NSValue valueWithNonretainedObject:anObject]];
+    @synchronized(mockTable)
+    {
+        [mockTable setObject:[NSValue valueWithNonretainedObject:mock] forKey:[NSValue valueWithNonretainedObject:anObject]];
+    }
 }
 
 + (void)forgetPartialMockForObject:(id)anObject
 {
-	[mockTable removeObjectForKey:[NSValue valueWithNonretainedObject:anObject]];
+    @synchronized(mockTable)
+    {
+        [mockTable removeObjectForKey:[NSValue valueWithNonretainedObject:anObject]];
+    }
 }
 
 + (OCPartialMockObject *)existingPartialMockForObject:(id)anObject
 {
-	OCPartialMockObject *mock = [[mockTable objectForKey:[NSValue valueWithNonretainedObject:anObject]] nonretainedObjectValue];
-	if(mock == nil)
-		[NSException raise:NSInternalInconsistencyException format:@"No partial mock for object %p", anObject];
-	return mock;
+    @synchronized(mockTable)
+    {
+        OCPartialMockObject *mock = [[mockTable objectForKey:[NSValue valueWithNonretainedObject:anObject]] nonretainedObjectValue];
+        if(mock == nil)
+            [NSException raise:NSInternalInconsistencyException format:@"No partial mock for object %p", anObject];
+        return mock;
+    }
 }
 
 
@@ -82,6 +93,8 @@ static NSMutableDictionary *mockTable;
 	[realObject release];
 	[[self class] forgetPartialMockForObject:realObject];
 	realObject = nil;
+    
+    [super stopMocking];
 }
 
 
@@ -91,28 +104,77 @@ static NSMutableDictionary *mockTable;
 {
 	Class realClass = [anObject class];
 	double timestamp = [NSDate timeIntervalSinceReferenceDate];
-	const char *className = [[NSString stringWithFormat:@"%@-%p-%f", realClass, anObject, timestamp] UTF8String];
+	const char *className = [[NSString stringWithFormat:@"%@-%p-%f", NSStringFromClass(realClass), anObject, timestamp] UTF8String];
 	Class subclass = objc_allocateClassPair(realClass, className, 0);
 	objc_registerClassPair(subclass);
 	object_setClass(anObject, subclass);
-	
+
 	Method myForwardInvocationMethod = class_getInstanceMethod([self class], @selector(forwardInvocationForRealObject:));
 	IMP myForwardInvocationImp = method_getImplementation(myForwardInvocationMethod);
 	const char *forwardInvocationTypes = method_getTypeEncoding(myForwardInvocationMethod);
 	class_addMethod(subclass, @selector(forwardInvocation:), myForwardInvocationImp, forwardInvocationTypes);
+
+
+    Method myForwardingTargetForSelectorMethod = class_getInstanceMethod([self class], @selector(forwardingTargetForSelectorForRealObject:));
+    IMP myForwardingTargetForSelectorImp = method_getImplementation(myForwardingTargetForSelectorMethod);
+    const char *forwardingTargetForSelectorTypes = method_getTypeEncoding(myForwardingTargetForSelectorMethod);
+
+    IMP originalForwardingTargetForSelectorImp = [realClass instanceMethodForSelector:@selector(forwardingTargetForSelector:)];
+
+    class_addMethod(subclass, @selector(forwardingTargetForSelector:), myForwardingTargetForSelectorImp, forwardingTargetForSelectorTypes);
+    class_addMethod(subclass, @selector(forwardingTargetForSelector_Original:), originalForwardingTargetForSelectorImp, forwardingTargetForSelectorTypes);
+    
+    /* We also override the -class method to return the original class */
+    Method myObjectClassMethod = class_getInstanceMethod([self class], @selector(classForRealObject));
+    const char *objectClassTypes = method_getTypeEncoding(myObjectClassMethod);
+    IMP myObjectClassImp = method_getImplementation(myObjectClassMethod);
+    IMP originalClassImp = [realClass instanceMethodForSelector:@selector(class)];
+    
+    class_addMethod(subclass, @selector(class), myObjectClassImp, objectClassTypes);
+    class_addMethod(subclass, @selector(class_Original), originalClassImp, objectClassTypes);
 }
 
 - (void)setupForwarderForSelector:(SEL)selector
 {
-	Class subclass = [[self realObject] class];
-	Method originalMethod = class_getInstanceMethod([subclass superclass], selector);
+	Class subclass = object_getClass([self realObject]);
+	Method originalMethod = class_getInstanceMethod([self mockedClass], selector);
 	IMP originalImp = method_getImplementation(originalMethod);
+    IMP forwarderImp = [[self mockedClass] instanceMethodForwarderForSelector:selector];
 
-	IMP forwarderImp = [subclass instanceMethodForSelector:@selector(aMethodThatMustNotExist)];
-	class_addMethod(subclass, method_getName(originalMethod), forwarderImp, method_getTypeEncoding(originalMethod)); 
+	const char *types = method_getTypeEncoding(originalMethod);
+	/* Might be NULL if the selector is forwarded to another class */
+    // TODO: check the fallback implementation is actually sufficient
+    if(types == NULL)
+        types = ([[[self mockedClass] instanceMethodSignatureForSelector:selector] fullObjCTypes]);
+	class_addMethod(subclass, selector, forwarderImp, types);
 
 	SEL aliasSelector = NSSelectorFromString([OCMRealMethodAliasPrefix stringByAppendingString:NSStringFromSelector(selector)]);
-	class_addMethod(subclass, aliasSelector, originalImp, method_getTypeEncoding(originalMethod));
+	class_addMethod(subclass, aliasSelector, originalImp, types);
+}
+
+- (void)removeForwarderForSelector:(SEL)selector
+{
+    Class subclass = object_getClass([self realObject]);
+    SEL aliasSelector = NSSelectorFromString([OCMRealMethodAliasPrefix stringByAppendingString:NSStringFromSelector(selector)]);
+    Method originalMethod = class_getInstanceMethod([self mockedClass], aliasSelector);
+  	IMP originalImp = method_getImplementation(originalMethod);
+    class_replaceMethod(subclass, selector, originalImp, method_getTypeEncoding(originalMethod));
+}
+
+//  Make the compiler happy in -forwardingTargetForSelectorForRealObject: because it can't find the message…
+- (id)forwardingTargetForSelector_Original:(SEL)sel
+{
+    return nil;
+}
+
+- (id)forwardingTargetForSelectorForRealObject:(SEL)sel
+{
+	// in here "self" is a reference to the real object, not the mock
+    OCPartialMockObject *mock = [OCPartialMockObject existingPartialMockForObject:self];
+    if ([mock handleSelector:sel])
+        return self;
+
+    return [self forwardingTargetForSelector_Original:sel];
 }
 
 - (void)forwardInvocationForRealObject:(NSInvocation *)anInvocation
@@ -120,11 +182,30 @@ static NSMutableDictionary *mockTable;
 	// in here "self" is a reference to the real object, not the mock
 	OCPartialMockObject *mock = [OCPartialMockObject existingPartialMockForObject:self];
 	if([mock handleInvocation:anInvocation] == NO)
-		[NSException raise:NSInternalInconsistencyException format:@"Ended up in subclass forwarder for %@ with unstubbed method %@",
-		 [self class], NSStringFromSelector([anInvocation selector])];
+    {
+        // if mock doesn't want to handle the invocation, maybe all expects have occurred, we forward to real object
+        SEL aliasSelector = NSSelectorFromString([OCMRealMethodAliasPrefix stringByAppendingString:NSStringFromSelector([anInvocation selector])]);
+        [anInvocation setSelector:aliasSelector];
+        [anInvocation invoke];
+    }
 }
 
+// Make the compiler happy; we add a method with this name to the real class
+- (Class)class_Original
+{
+    return nil;
+}
 
+// Implementation of the -class method; return the Class that was reported with [realObject class] prior to mocking
+- (Class)classForRealObject
+{
+    // "self" is the real object, not the mock
+    OCPartialMockObject *mock = [OCPartialMockObject existingPartialMockForObject:self];
+    if (mock != nil)
+        return [mock mockedClass];
+
+    return [self class_Original];
+}
 
 #pragma mark  Overrides
 

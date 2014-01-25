@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCBaseDescription.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -10,14 +10,6 @@
 #import "HCBaseDescription.h"
 
 #import "HCMatcher.h"
-#import "HCSelfDescribing.h"
-
-
-@interface HCBaseDescription ()
-- (id<HCDescription>)appendObjectDescriptionOf:(id)value;
-- (void)toCSyntaxString:(NSString *)unformatted;
-- (void)toCSyntax:(unichar)ch;
-@end
 
 
 @implementation HCBaseDescription
@@ -47,7 +39,7 @@
     NSString *description = [value description];
     NSUInteger descriptionLength = [description length];
     if (descriptionLength == 0)
-        [self append:[NSString stringWithFormat:@"<%@: 0x%0x>", NSStringFromClass([value class]), value]];
+        [self append:[NSString stringWithFormat:@"<%@: %p>", NSStringFromClass([value class]), (__bridge void *)value]];
     else if ([description characterAtIndex:0] == '<'
              && [description characterAtIndex:descriptionLength - 1] == '>')
     {

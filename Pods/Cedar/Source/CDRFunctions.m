@@ -162,17 +162,50 @@ NSArray *CDRRootGroupsFromSpecs(NSArray *specs) {
     return groups;
 }
 
+NSArray *CDRPermuteSpecClassesWithSeed(NSArray *unsortedSpecClasses, unsigned int seed) {
+    NSMutableArray *permutedSpecClasses = unsortedSpecClasses.mutableCopy;
+
+    [permutedSpecClasses sortUsingComparator:^NSComparisonResult(Class class1, Class class2) {
+        return [NSStringFromClass(class1) compare:NSStringFromClass(class2)];
+    }];
+
+    srand(seed);
+
+    for (int i=0; i < permutedSpecClasses.count; i++) {
+        NSUInteger idx = rand() % permutedSpecClasses.count;
+        [permutedSpecClasses exchangeObjectAtIndex:i withObjectAtIndex:idx];
+    }
+    return permutedSpecClasses;
+}
+
+unsigned int CDRGetRandomSeed() {
+    unsigned int seed = time(NULL) % 100000 + 2;
+    if (getenv("CEDAR_RANDOM_SEED")) {
+        seed = [[NSString stringWithUTF8String:getenv("CEDAR_RANDOM_SEED")] intValue];
+    }
+    return seed;
+}
+
+void __attribute__((weak)) __gcov_flush(void) {
+}
+
 int runSpecsWithCustomExampleReporters(NSArray *reporters) {
     @autoreleasepool {
         CDRDefineSharedExampleGroups();
         CDRDefineGlobalBeforeAndAfterEachBlocks();
 
+        unsigned int seed = CDRGetRandomSeed();
+
         NSArray *specClasses = CDRSpecClassesToRun();
-        NSArray *specs = CDRSpecsFromSpecClasses(specClasses);
+        NSArray *permutedSpecClasses = CDRPermuteSpecClassesWithSeed(specClasses, seed);
+        NSArray *specs = CDRSpecsFromSpecClasses(permutedSpecClasses);
         CDRMarkFocusedExamplesInSpecs(specs);
 
         NSArray *groups = CDRRootGroupsFromSpecs(specs);
-        [reporters makeObjectsPerformSelector:@selector(runWillStartWithGroups:) withObject:groups];
+        for (id<CDRExampleReporter> reporter in reporters) {
+            [reporter runWillStartWithGroups:groups andRandomSeed:seed];
+        }
+
         [groups makeObjectsPerformSelector:@selector(run)];
 
         int result = 0;
@@ -180,6 +213,9 @@ int runSpecsWithCustomExampleReporters(NSArray *reporters) {
             [reporter runDidComplete];
             result |= [reporter result];
         }
+
+        __gcov_flush();
+
         return result;
     }
 }

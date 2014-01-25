@@ -27,16 +27,18 @@ static void addGroups(id object, NSDictionary *groups) {
 	[StoreMocks add:groups asMembersOf:object];
 }
 
-static id createMethod(NSString *selector) {
-	return [StoreMocks mockMethod:selector block:^(id object) { }];
-}
-
-static id createProperty(NSString *selector) {
-	return [StoreMocks mockProperty:selector block:^(id object) { }];
+static id createMockMember(NSString *selector) {
+	return [StoreMocks mockMember:selector block:^(id object) { }];
 }
 
 static id createCategory(NSString *name, id extendingClass) {
 	return [StoreMocks mockCategory:name onClass:extendingClass block:^(id object) { }];
+}
+
+static id createCategory(NSDictionary *info, id extendingClass, NSDictionary *groups) {
+	id category = info[@"category"];
+	[StoreMocks add:extendingClass asExtendedClassOf:category];
+	return category;
 }
 
 #define GBGroupsCount(c) \
@@ -75,7 +77,6 @@ static id createCategory(NSString *name, id extendingClass) {
 TEST_BEGIN(MergeKnownObjectsTaskTests)
 
 describe(@"method groups:", ^{
-#define GBCategory() info[@"category"]; [StoreMocks add:extendee asExtendedClassOf:category]
 	__block id store;
 	__block id settings;
 	
@@ -85,15 +86,21 @@ describe(@"method groups:", ^{
 	});
 
 	sharedExamplesFor(@"examples", ^(NSDictionary *info) {
+		__block id classMethod;
+		__block id instanceMethod;
+		__block id property;
+		
+		beforeEach(^{
+			classMethod = createMockMember(@"+method");
+			instanceMethod = createMockMember(@"-method");
+			property = createMockMember(@"property");
+		});
+		
 		it(@"should merge class & instance methods and properties to empty class", ^{
 			runWithTask(store, settings, ^(MergeKnownObjectsTask *task, id store, id settings) {
 				// setup
 				ClassInfo *extendee = [StoreMocks createClass:^(ClassInfo *object) { }];
-				id category = GBCategory();
-				id classMethod = createMethod(@"+method");
-				id instanceMethod = createMethod(@"-method");
-				id property = createProperty(@"property");
-				addGroups(category, @{ @"group1":@[classMethod,instanceMethod,property] });
+				id category = createCategory(info, extendee, @{ @"group1":@[ classMethod, instanceMethod, property ] });
 				// execute
 				[task runTask];
 				// verify
@@ -109,15 +116,12 @@ describe(@"method groups:", ^{
 			runWithTask(store, settings, ^(MergeKnownObjectsTask *task, id store, id settings) {
 				// setup
 				ClassInfo *extendee = [StoreMocks createClass:^(ClassInfo *object) {
-					[StoreMocks add:[StoreMocks createMethod:@"+method1" block:^(MethodInfo *object) { }] asClassMethodOf:object];
-					[StoreMocks add:[StoreMocks createMethod:@"-method1" block:^(MethodInfo *object) { }] asInstanceMethodOf:object];
-					[StoreMocks add:[StoreMocks createProperty:@"property1" block:^(PropertyInfo *object) { }] asPropertyOf:object];
+					addGroups(object, @{ @"" : @[ @"+method1", @"-method1", @"property" ] });
 				}];
-				id category = GBCategory();
-				id categoryClassMethod = createMethod(@"+method");
-				id categoryInstanceMethod = createMethod(@"-method");
-				id categoryProperty = createProperty(@"property");
-				addGroups(category, @{ @"group1":@[categoryClassMethod,categoryInstanceMethod,categoryProperty] });
+				id categoryClassMethod = createMockMember(@"+method");
+				id categoryInstanceMethod = createMockMember(@"-method");
+				id categoryProperty = createMockMember(@"property");
+				id category = createCategory(info, extendee, @{ @"group1":@[categoryClassMethod,categoryInstanceMethod,categoryProperty] });
 				// execute
 				[task runTask];
 				// verify
@@ -137,15 +141,42 @@ describe(@"method groups:", ^{
 						@"group1" : @[
 							[StoreMocks createMethod:@"+method1" block:^(MethodInfo *object) { }],
 							[StoreMocks createMethod:@"-method1" block:^(MethodInfo *object) { }],
-							[StoreMocks createProperty:@"property1" block:^(PropertyInfo *object) { }]
+							[StoreMocks mockMember:@"property1" block:^(PropertyInfo *object) { }]
 						]
 					});
 				}];
-				id category = GBCategory();
-				id categoryClassMethod = createMethod(@"+method");
-				id categoryInstanceMethod = createMethod(@"-method");
-				id categoryProperty = createProperty(@"property");
-				addGroups(category, @{ @"group2":@[categoryClassMethod,categoryInstanceMethod,categoryProperty] });
+				id categoryClassMethod = createMockMember(@"+method");
+				id categoryInstanceMethod = createMockMember(@"-method");
+				id categoryProperty = createMockMember(@"property");
+				id category = createCategory(info, extendee, @{ @"group2":@[categoryClassMethod,categoryInstanceMethod,categoryProperty] });
+				// execute
+				[task runTask];
+				// verify
+				GBGroupsCount(2);
+				GBGroup(0, @"group1", extendee.interfaceClassMethods[0], extendee.interfaceInstanceMethods[0], extendee.interfaceProperties[0]);
+				GBGroup(1, @"group2", categoryClassMethod, categoryInstanceMethod, categoryProperty);
+				GBMembers(GBClassMethods(), extendee.interfaceClassMethods[0], categoryClassMethod);
+				GBMembers(GBInstanceMethods(), extendee.interfaceInstanceMethods[0], categoryInstanceMethod);
+				GBMembers(GBProperties(), extendee.interfaceProperties[0], categoryProperty);
+			});
+		});
+		
+		it(@"should merge groups ", ^{
+			runWithTask(store, settings, ^(MergeKnownObjectsTask *task, id store, id settings) {
+				// setup
+				ClassInfo *extendee = [StoreMocks createClass:^(ClassInfo *object) {
+					addGroups(object, @{
+						@"group1" : @[
+							[StoreMocks createMethod:@"+method1" block:^(MethodInfo *object) { }],
+							[StoreMocks createMethod:@"-method1" block:^(MethodInfo *object) { }],
+							[StoreMocks mockMember:@"property1" block:^(PropertyInfo *object) { }]
+						]
+					});
+				}];
+				id categoryClassMethod = createMockMember(@"+method");
+				id categoryInstanceMethod = createMockMember(@"-method");
+				id categoryProperty = createMockMember(@"property");
+				id category = createCategory(info, extendee, @{ @"group2":@[categoryClassMethod,categoryInstanceMethod,categoryProperty] });
 				// execute
 				[task runTask];
 				// verify
@@ -169,7 +200,7 @@ describe(@"method groups:", ^{
 		itShouldBehaveLike(@"examples");
 	});
 	
-	describe(@"categoried:", ^{
+	describe(@"categories:", ^{
 		beforeEach(^{
 			id category = createCategory(@"category", nil);
 			[[SpecHelper specHelper] sharedExampleContext][@"store"] = store;

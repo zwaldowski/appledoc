@@ -1,19 +1,27 @@
 //
 //  OCMockito - MKTStubbedInvocationMatcher.m
-//  Copyright 2012 Jonathan M. Reid. See LICENSE.txt
+//  Copyright 2013 Jonathan M. Reid. See LICENSE.txt
+//
+//  Created by: Jon Reid, http://qualitycoding.org/
+//  Source: https://github.com/jonreid/OCMockito
 //
 
+#import "MKTInvocationMatcher.h"
 #import "MKTStubbedInvocationMatcher.h"
 
 
 @implementation MKTStubbedInvocationMatcher
 
-@synthesize answer;
-
-- (void)dealloc
+- (instancetype)initCopyingInvocationMatcher:(MKTInvocationMatcher *)other
 {
-    [answer release];
-    [super dealloc];
+    self = [super init];
+    if (self)
+    {
+        _expected = other->_expected;
+        _numberOfArguments = other->_numberOfArguments;
+        _argumentMatchers = [other->_argumentMatchers mutableCopy];
+    }
+    return self;
 }
 
 @end

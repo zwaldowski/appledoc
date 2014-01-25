@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCIsDictionaryContainingKey.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -16,23 +16,17 @@
 
 @implementation HCIsDictionaryContainingKey
 
-+ (id)isDictionaryContainingKey:(id<HCMatcher>)theKeyMatcher
++ (instancetype)isDictionaryContainingKey:(id <HCMatcher>)theKeyMatcher
 {
-    return [[[self alloc] initWithKeyMatcher:theKeyMatcher] autorelease];
+    return [[self alloc] initWithKeyMatcher:theKeyMatcher];
 }
 
-- (id)initWithKeyMatcher:(id<HCMatcher>)theKeyMatcher
+- (instancetype)initWithKeyMatcher:(id <HCMatcher>)theKeyMatcher
 {
     self = [super init];
     if (self)
-        keyMatcher = [theKeyMatcher retain];
+        keyMatcher = theKeyMatcher;
     return self;
-}
-
-- (void)dealloc
-{
-    [keyMatcher release];
-    [super dealloc];
 }
 
 - (BOOL)matches:(id)dict
@@ -53,9 +47,7 @@
 @end
 
 
-#pragma mark -
-
-id<HCMatcher> HC_hasKey(id keyMatch)
+id HC_hasKey(id keyMatch)
 {
     HCRequireNonNilObject(keyMatch);
     return [HCIsDictionaryContainingKey isDictionaryContainingKey:HCWrapInMatcher(keyMatch)];

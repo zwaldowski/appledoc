@@ -1,6 +1,9 @@
 //
 //  OCMockito - MKTExactTimes.m
-//  Copyright 2012 Jonathan M. Reid. See LICENSE.txt
+//  Copyright 2013 Jonathan M. Reid. See LICENSE.txt
+//
+//  Created by: Jon Reid, http://qualitycoding.org/
+//  Source: https://github.com/jonreid/OCMockito
 //
 
 #import "MKTExactTimes.h"
@@ -9,7 +12,6 @@
 #import "MKTInvocationMatcher.h"
 #import "MKTTestLocation.h"
 #import "MKTVerificationData.h"
-#import "NSException+OCMockito.h"
 
 
 // As of 2010-09-09, the iPhone simulator has a bug where you can't catch exceptions when they are
@@ -21,21 +23,17 @@
 @end
 
 
-@interface MKTExactTimes ()
+@implementation MKTExactTimes
 {
     NSUInteger expectedCount;
 }
-@end
 
-
-@implementation MKTExactTimes
-
-+ (id)timesWithCount:(NSUInteger)expectedNumberOfInvocations
++ (instancetype)timesWithCount:(NSUInteger)expectedNumberOfInvocations
 {
-    return [[[self alloc] initWithCount:expectedNumberOfInvocations] autorelease];
+    return [[self alloc] initWithCount:expectedNumberOfInvocations];
 }
 
-- (id)initWithCount:(NSUInteger)expectedNumberOfInvocations
+- (instancetype)initWithCount:(NSUInteger)expectedNumberOfInvocations
 {
     self = [super init];
     if (self)
@@ -58,8 +56,8 @@
     if (matchingCount != expectedCount)
     {
         NSString *plural = (expectedCount == 1) ? @"" : @"s";
-        NSString *description = [NSString stringWithFormat:@"Expected %d matching invocation%@, but received %d",
-                                 expectedCount, plural, matchingCount];
+        NSString *description = [NSString stringWithFormat:@"Expected %u matching invocation%@, but received %u",
+                                 (unsigned)expectedCount, plural, (unsigned)matchingCount];
         MKTFailTestLocation([data testLocation], description);
     }
 }

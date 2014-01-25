@@ -1,12 +1,13 @@
 //---------------------------------------------------------------------------------------
 //  $Id$
-//  Copyright (c) 2004-2011 by Mulle Kybernetik. See License file for details.
+//  Copyright (c) 2004-2013 by Mulle Kybernetik. See License file for details.
 //---------------------------------------------------------------------------------------
 
 #import <objc/runtime.h>
 #import <OCMock/OCMockRecorder.h>
 #import <OCMock/OCMArg.h>
 #import <OCMock/OCMConstraint.h>
+#import "OCClassMockObject.h"
 #import "OCMPassByRefSetter.h"
 #import "OCMReturnValueProvider.h"
 #import "OCMBoxedReturnValueProvider.h"
@@ -109,15 +110,47 @@
 }
 
 
+#pragma mark  Modifying the recorder
+
+- (id)classMethod
+{
+    recordedAsClassMethod = YES;
+    [signatureResolver setupClassForClassMethodMocking];
+    return self;
+}
+
+- (id)ignoringNonObjectArgs
+{
+    ignoreNonObjectArgs = YES;
+    return self;
+}
+
+
 #pragma mark  Recording the actual invocation
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
-	return [signatureResolver methodSignatureForSelector:aSelector];
+    if(recordedAsClassMethod)
+        return [[signatureResolver mockedClass] methodSignatureForSelector:aSelector];
+    
+    NSMethodSignature *signature = [signatureResolver methodSignatureForSelector:aSelector];
+    if(signature == nil)
+    {
+        // if we're a working with a class mock and there is a class method, auto-switch
+        if(([[signatureResolver class] isSubclassOfClass:[OCClassMockObject class]]) &&
+           ([[signatureResolver mockedClass] respondsToSelector:aSelector]))
+        {
+            [self classMethod];
+            signature = [self methodSignatureForSelector:aSelector];
+        }
+    }
+    return signature;
 }
 
 - (void)forwardInvocation:(NSInvocation *)anInvocation
 {
+    if(recordedAsClassMethod)
+        [signatureResolver setupForwarderForClassMethodSelector:[anInvocation selector]];
 	if(recordedInvocation != nil)
 		[NSException raise:NSInternalInconsistencyException format:@"Recorder received two methods to record."];
 	[anInvocation setTarget:nil];
@@ -125,23 +158,39 @@
 	recordedInvocation = [anInvocation retain];
 }
 
-
+- (void)doesNotRecognizeSelector:(SEL)aSelector
+{
+    [NSException raise:NSInvalidArgumentException format:@"%@: cannot stub or expect method '%@' because no such method exists in the mocked class.", signatureResolver, NSStringFromSelector(aSelector)];
+}
 
 #pragma mark  Checking the invocation
 
+- (BOOL)matchesSelector:(SEL)sel
+{
+    return (sel == [recordedInvocation selector]);
+}
+
 - (BOOL)matchesInvocation:(NSInvocation *)anInvocation
 {
-	id  recordedArg, passedArg;
-	int i, n;
-	
+    id target = [anInvocation target];
+    BOOL isClassMethodInvocation = (target != nil) && (target == [target class]);
+    if(isClassMethodInvocation != recordedAsClassMethod)
+        return NO;
+    
 	if([anInvocation selector] != [recordedInvocation selector])
 		return NO;
-	
-	n = (int)[[recordedInvocation methodSignature] numberOfArguments];
-	for(i = 2; i < n; i++)
+
+    NSMethodSignature *signature = [recordedInvocation methodSignature];
+    int n = (int)[signature numberOfArguments];
+	for(int i = 2; i < n; i++)
 	{
-		recordedArg = [recordedInvocation getArgumentAtIndexAsObject:i];
-		passedArg = [anInvocation getArgumentAtIndexAsObject:i];
+        if(ignoreNonObjectArgs && strcmp([signature getArgumentTypeAtIndex:i], @encode(id)))
+        {
+            continue;
+        }
+
+		id recordedArg = [recordedInvocation getArgumentAtIndexAsObject:i];
+		id passedArg = [anInvocation getArgumentAtIndexAsObject:i];
 
 		if([recordedArg isProxy])
 		{
@@ -160,8 +209,12 @@
 		}
 		else if([recordedArg isKindOfClass:[OCMPassByRefSetter class]])
 		{
+            id valueToSet = [(OCMPassByRefSetter *)recordedArg value];
 			// side effect but easier to do here than in handleInvocation
-			*(id *)[passedArg pointerValue] = [(OCMPassByRefSetter *)recordedArg value];
+            if(![valueToSet isKindOfClass:[NSValue class]])
+                *(id *)[passedArg pointerValue] = valueToSet;
+            else
+                [(NSValue *)valueToSet getValue:[passedArg pointerValue]];
 		}
 		else if([recordedArg conformsToProtocol:objc_getProtocol("HCMatcher")])
 		{
@@ -180,8 +233,6 @@
 	}
 	return YES;
 }
-
-
 
 
 @end

@@ -13,24 +13,7 @@
 //  limitations under the License.
 
 #import "PKDifference.h"
-
-@interface NSMutableSet (PKDifferenceAdditions)
-- (void)minusSetTestingEquality:(NSSet *)s;
-@end
-
-@implementation NSMutableSet (PKDifferenceAdditions)
-
-- (void)minusSetTestingEquality:(NSSet *)s {
-    for (id a1 in [[self copy] autorelease]) {
-        for (id a2 in s) {
-            if ([a1 isEqual:a2]) {
-                [self removeObject:a1];
-            }
-        }
-    }
-}
-
-@end
+#import "NSMutableSet+ParseKitAdditions.h"
 
 @interface PKParser ()
 - (NSSet *)matchAndAssemble:(NSSet *)inAssemblies;
@@ -50,7 +33,8 @@
 
 
 - (id)initWithSubparser:(PKParser *)s minus:(PKParser *)m {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.subparser = s;
         self.minus = m;
     }
@@ -97,6 +81,18 @@
     [outAssemblies minusSetTestingEquality:[minus allMatchesFor:inAssemblies]];
     
     return outAssemblies;
+}
+
+
+- (void)add:(PKParser *)p {
+    NSParameterAssert([p isKindOfClass:[PKParser class]]);
+    NSAssert(!subparser || !minus, @"");
+    
+    if (!subparser) {
+        self.subparser = p;
+    } else if (!minus) {
+        self.minus = p;
+    }
 }
 
 @synthesize subparser;

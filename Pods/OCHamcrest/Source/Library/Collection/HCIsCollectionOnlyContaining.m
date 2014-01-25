@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCIsCollectionOnlyContaining.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -16,23 +16,17 @@
 
 @implementation HCIsCollectionOnlyContaining
 
-+ (id)isCollectionOnlyContaining:(id<HCMatcher>)aMatcher
++ (instancetype)isCollectionOnlyContaining:(id <HCMatcher>)aMatcher
 {
-    return [[[self alloc] initWithMatcher:aMatcher] autorelease];
+    return [[self alloc] initWithMatcher:aMatcher];
 }
 
-- (id)initWithMatcher:(id<HCMatcher>)aMatcher
+- (instancetype)initWithMatcher:(id <HCMatcher>)aMatcher
 {
     self = [super init];
     if (self)
-        matcher = [aMatcher retain];
+        matcher = aMatcher;
     return self;
-}
-
-- (void)dealloc
-{
-    [matcher release];
-    [super dealloc];
 }
 
 - (BOOL)matches:(id)collection
@@ -58,9 +52,7 @@
 @end
 
 
-#pragma mark -
-
-id<HCMatcher> HC_onlyContains(id itemMatch, ...)
+id HC_onlyContains(id itemMatch, ...)
 {
     NSMutableArray *matchers = [NSMutableArray arrayWithObject:HCWrapInMatcher(itemMatch)];
     

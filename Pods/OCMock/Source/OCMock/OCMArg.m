@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------------------
 //  $Id$
-//  Copyright (c) 2009-2010 by Mulle Kybernetik. See License file for details.
+//  Copyright (c) 2009-2013 by Mulle Kybernetik. See License file for details.
 //---------------------------------------------------------------------------------------
 
 #import <objc/runtime.h>
@@ -19,6 +19,16 @@
 + (void *)anyPointer
 {
 	return (void *)0x01234567;
+}
+
++ (id __autoreleasing *)anyObjectRef
+{
+    return (id *)0x01234567;
+}
+
++ (SEL)anySelector
+{
+    return NSSelectorFromString(@"aSelectorThatMatchesAnySelector");
 }
 
 + (id)isNil
@@ -57,6 +67,11 @@
 	return (id *)[[[OCMPassByRefSetter alloc] initWithValue:value] autorelease];
 }
 
++ (void *)setToValue:(NSValue *)value
+{
+	return (id *)[[[OCMPassByRefSetter alloc] initWithValue:value] autorelease];
+}
+
 + (id)resolveSpecialValues:(NSValue *)value
 {
 	const char *type = [value objCType];
@@ -68,7 +83,15 @@
 		if((pointer != NULL) && (object_getClass((id)pointer) == [OCMPassByRefSetter class]))
 			return (id)pointer;
 	}
+    else if(type[0] == ':')
+    {
+        SEL selector;
+        [value getValue:&selector];
+        if(selector == NSSelectorFromString(@"aSelectorThatMatchesAnySelector"))
+            return [OCMArg any];
+    }
 	return value;
 }
+
 
 @end

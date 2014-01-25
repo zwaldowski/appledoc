@@ -1,11 +1,17 @@
 //
 //  OCMockito - MKTTestLocation.h
-//  Copyright 2012 Jonathan M. Reid. See LICENSE.txt
+//  Copyright 2013 Jonathan M. Reid. See LICENSE.txt
 //
+//  Created by: Jon Reid, http://qualitycoding.org/
+//  Source: https://github.com/jonreid/OCMockito
+//
+
+#import <Foundation/Foundation.h>
+
 
 typedef struct
 {
-    id testCase;
+    __unsafe_unretained id testCase;
     const char *fileName;
     int lineNumber;
 } MKTTestLocation;

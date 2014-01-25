@@ -15,6 +15,8 @@
 #import <Foundation/Foundation.h>
 #import <ParseKit/PKTokenizerState.h>
 
+@class PKSymbolRootNode;
+
 /*!
     @class      PKNumberState 
     @brief      A number state returns a number from a reader.
@@ -22,31 +24,51 @@
                 If <tt>allowsScientificNotation</tt> is YES (default is NO) this state allows 'e' or 'E' followed by an (optionally explicityly positive or negative) integer to represent 10 to the indicated power. For example, this state will recognize <tt>1e2</tt> as equaling <tt>100</tt>.</p>
 */
 @interface PKNumberState : PKTokenizerState {
-    BOOL allowsTrailingDot;
+    BOOL allowsTrailingDecimalSeparator;
     BOOL allowsScientificNotation;
     BOOL allowsOctalNotation;
-    BOOL allowsHexadecimalNotation;
-    BOOL isDecimal;
+    BOOL allowsFloatingPoint;
+    
+    PKUniChar positivePrefix;
+    PKUniChar negativePrefix;
+    PKUniChar decimalSeparator;
+    
     BOOL isFraction;
     BOOL isNegative;
-    BOOL isHex;
     BOOL gotADigit;
-    NSUInteger len;
-    CGFloat base;
+    NSUInteger base;
     PKUniChar originalCin;
-    PKUniChar firstNum;
     PKUniChar c;
-    CGFloat floatValue;
-    CGFloat exp;
-    BOOL isNegativeExp;    
+    PKFloat floatValue;
+
+    NSUInteger exp;
+    BOOL isNegativeExp;
+
+    PKSymbolRootNode *prefixRootNode;
+    PKSymbolRootNode *suffixRootNode;
+    NSMutableDictionary *radixForPrefix;
+    NSMutableDictionary *radixForSuffix;
+    NSMutableDictionary *separatorsForRadix;
+    
+    NSString *prefix;
+    NSString *suffix;
 }
 
+- (void)addPrefix:(NSString *)s forRadix:(NSUInteger)r;
+- (void)removePrefix:(NSString *)s;
+
+- (void)addSuffix:(NSString *)s forRadix:(NSUInteger)r;
+- (void)removeSuffix:(NSString *)s;
+
+- (void)addGroupingSeparator:(PKUniChar)c forRadix:(NSUInteger)r;
+- (void)removeGroupingSeparator:(PKUniChar)c forRadix:(NSUInteger)r;
+
 /*!
-    @property   allowsTrailingDot
-    @brief      If YES, numbers are allowed to end with a trialing dot, e.g. <tt>42.<tt>
+    @property   allowsTrailingDecimalSeparator
+    @brief      If YES, numbers are allowed to end with a trialing decimal separator, e.g. <tt>42.<tt>
     @details    default is NO
 */
-@property (nonatomic) BOOL allowsTrailingDot;
+@property (nonatomic) BOOL allowsTrailingDecimalSeparator;
 
 /*!
     @property   allowsScientificNotation
@@ -56,16 +78,13 @@
 @property (nonatomic) BOOL allowsScientificNotation;
 
 /*!
-    @property   allowsOctalNotation
-    @brief      If YES, supports octal numbers like <tt>020<tt> (16), or <tt>0102<tt> (66)
-    @details    default is NO
+    @property   allowsFloatingPoint
+    @brief      If YES, supports floating point numbers like <tt>1.0<tt> or <tt>3.14<tt>. If NO, only whole numbers are allowed.
+    @details    default is YES
 */
-@property (nonatomic) BOOL allowsOctalNotation;
+@property (nonatomic) BOOL allowsFloatingPoint;
 
-/*!
-    @property   allowsHexidecimalNotation
-    @brief      If YES, supports hex numbers like <tt>0x20<tt> (32), or <tt>0xB7<tt> (183)
-    @details    default is NO
-*/
-@property (nonatomic) BOOL allowsHexadecimalNotation;
+@property (nonatomic) PKUniChar positivePrefix;
+@property (nonatomic) PKUniChar negativePrefix;
+@property (nonatomic) PKUniChar decimalSeparator;
 @end

@@ -1,12 +1,17 @@
 //
 //  OCMockito - MKTInvocationMatcher.m
-//  Copyright 2012 Jonathan M. Reid. See LICENSE.txt
+//  Copyright 2013 Jonathan M. Reid. See LICENSE.txt
+//
+//  Created by: Jon Reid, http://qualitycoding.org/
+//  Source: https://github.com/jonreid/OCMockito
 //
 
 #import "MKTInvocationMatcher.h"
 
-#define HC_SHORTHAND
+#import "MKTTypeEncoding.h"
 
+
+#define HC_SHORTHAND
 #if TARGET_OS_MAC
     #import <OCHamcrest/OCHamcrest.h>
     #import <OCHamcrest/HCWrapInMatcher.h>
@@ -17,79 +22,63 @@
 
 
 @interface MKTInvocationMatcher ()
-{
-    NSUInteger numberOfArguments;
-}
-@property (nonatomic, retain) NSInvocation *expected;
-@property (nonatomic, retain) NSMutableArray *argumentMatchers;
-- (void)trueUpArgumentMatchersToCount:(NSUInteger)desiredCount;
 @end
 
 
 @implementation MKTInvocationMatcher
 
-@synthesize expected;
-@synthesize argumentMatchers;
-
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (self)
-        argumentMatchers = [[NSMutableArray alloc] init];
+        _argumentMatchers = [[NSMutableArray alloc] init];
     return self;
-}
-
-- (void)dealloc
-{
-    [expected release];
-    [argumentMatchers release];
-    [super dealloc];
 }
 
 - (void)setMatcher:(id <HCMatcher>)matcher atIndex:(NSUInteger)argumentIndex
 {
-    NSUInteger matchersCount = [argumentMatchers count];
+    NSUInteger matchersCount = [_argumentMatchers count];
     if (matchersCount <= argumentIndex)
     {
         [self trueUpArgumentMatchersToCount:argumentIndex];
-        [argumentMatchers addObject:matcher];
+        [_argumentMatchers addObject:matcher];
     }
     else
-        [argumentMatchers replaceObjectAtIndex:argumentIndex withObject:matcher];
+        [_argumentMatchers replaceObjectAtIndex:argumentIndex withObject:matcher];
 }
 
 - (NSUInteger)argumentMatchersCount
 {
-    return [argumentMatchers count];
+    return [_argumentMatchers count];
 }
 
 - (void)trueUpArgumentMatchersToCount:(NSUInteger)desiredCount
 {
-    NSUInteger matchersCount = [argumentMatchers count];
+    NSUInteger matchersCount = [_argumentMatchers count];
     while (matchersCount < desiredCount)
     {
-        [argumentMatchers addObject:[NSNull null]];
+        [_argumentMatchers addObject:[NSNull null]];
         ++matchersCount;
     } 
 }
 
 - (void)setExpectedInvocation:(NSInvocation *)expectedInvocation
 {
-    [self setExpected:expectedInvocation];
-    [expected retainArguments];
+    _expected = expectedInvocation;
+    [_expected retainArguments];
     
-    NSMethodSignature *methodSignature = [expected methodSignature];
+    NSMethodSignature *methodSignature = [_expected methodSignature];
     
-    numberOfArguments = [[expected methodSignature] numberOfArguments];
-    [self trueUpArgumentMatchersToCount:numberOfArguments];
+    _numberOfArguments = [[_expected methodSignature] numberOfArguments];
+    [self trueUpArgumentMatchersToCount:_numberOfArguments];
         
-    for (NSUInteger argumentIndex = 2; argumentIndex < numberOfArguments; ++argumentIndex)
+    for (NSUInteger argumentIndex = 2; argumentIndex < _numberOfArguments; ++argumentIndex)
     {
         const char *argumentType = [methodSignature getArgumentTypeAtIndex:argumentIndex];
-        if (strcmp(argumentType, @encode(id)) == 0)
+        if (MKTTypeEncodingIsObjectOrClass(argumentType))
         {
-            id argument = nil;
-            [expected getArgument:&argument atIndex:argumentIndex];
+            __unsafe_unretained id argument = nil;
+            [_expected getArgument:&argument atIndex:argumentIndex];
             
             id <HCMatcher> matcher;
             if (argument != nil)
@@ -102,12 +91,12 @@
     }
 }
 
-- (BOOL)argumentObjectMismatchInInvocation:(NSInvocation *)actual atIndex:(NSUInteger)index
+- (BOOL)argumentObjectClassMismatchInInvocation:(NSInvocation *)actual atIndex:(NSUInteger)index
 {
-    id actualArgument;
+    __unsafe_unretained id actualArgument;
     [actual getArgument:&actualArgument atIndex:index];
     
-    id <HCMatcher> matcher = [argumentMatchers objectAtIndex:index];
+    id <HCMatcher> matcher = _argumentMatchers[index];
     return ![matcher matches:actualArgument];
 }
 
@@ -117,15 +106,15 @@
         type actualArgument;                                                                \
         [actual getArgument:&actualArgument atIndex:index];                                 \
                                                                                             \
-        id <HCMatcher> matcher = [argumentMatchers objectAtIndex:index];                    \
+        id <HCMatcher> matcher = _argumentMatchers[index];                                  \
         if ([matcher isEqual:[NSNull null]])                                                \
         {                                                                                   \
             type expectedArgument;                                                          \
-            [expected getArgument:&expectedArgument atIndex:index];                         \
+            [_expected getArgument:&expectedArgument atIndex:index];                        \
             return expectedArgument != actualArgument;                                      \
         }                                                                                   \
         else                                                                                \
-            return ![matcher matches:[NSNumber numberWith ## typeName :actualArgument]];    \
+            return ![matcher matches:@(actualArgument)];                                    \
     }
 
 DEFINE_ARGUMENT_MISMATCH_METHOD(char, Char)
@@ -151,17 +140,17 @@ DEFINE_ARGUMENT_MISMATCH_METHOD(double, Double)
 
 - (BOOL)matches:(NSInvocation *)actual
 {
-    if ([expected selector] != [actual selector])
+    if ([_expected selector] != [actual selector])
         return NO;
 
-    NSMethodSignature *methodSignature = [expected methodSignature];
+    NSMethodSignature *methodSignature = [_expected methodSignature];
 
-    for (NSUInteger argumentIndex = 2; argumentIndex < numberOfArguments; ++argumentIndex)
+    for (NSUInteger argumentIndex = 2; argumentIndex < _numberOfArguments; ++argumentIndex)
     {
         const char *argumentType = [methodSignature getArgumentTypeAtIndex:argumentIndex];
-        if (strcmp(argumentType, @encode(id)) == 0)
+        if (MKTTypeEncodingIsObjectOrClass(argumentType))
         {
-            if ([self argumentObjectMismatchInInvocation:actual atIndex:argumentIndex])
+            if ([self argumentObjectClassMismatchInInvocation:actual atIndex:argumentIndex])
                 return NO;
         }
         HANDLE_ARGUMENT_TYPE(char, Char)

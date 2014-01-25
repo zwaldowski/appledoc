@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCIsNot.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -15,23 +15,17 @@
 
 @implementation HCIsNot
 
-+ (id)isNot:(id<HCMatcher>)aMatcher
++ (instancetype)isNot:(id <HCMatcher>)aMatcher
 {
-    return [[[self alloc] initNot:aMatcher] autorelease];
+    return [[self alloc] initNot:aMatcher];
 }
 
-- (id)initNot:(id<HCMatcher>)aMatcher
+- (instancetype)initNot:(id <HCMatcher>)aMatcher
 {
     self = [super init];
     if (self)
-        matcher = [aMatcher retain];
+        matcher = aMatcher;
     return self;
-}
-
-- (void)dealloc
-{
-    [matcher release];
-    [super dealloc];
 }
 
 - (BOOL)matches:(id)item
@@ -44,12 +38,14 @@
     [[description appendText:@"not "] appendDescriptionOf:matcher];
 }
 
+- (void)describeMismatchOf:(id)item to:(id<HCDescription>)mismatchDescription
+{
+    [matcher describeMismatchOf:item to:mismatchDescription];
+}
 @end
 
 
-#pragma mark -
-
-id<HCMatcher> HC_isNot(id aMatcher)
+id HC_isNot(id aMatcher)
 {
     return [HCIsNot isNot:HCWrapInMatcher(aMatcher)];
 }

@@ -15,6 +15,7 @@
 #import <ParseKit/PKAssembly.h>
 
 static NSString * const PKAssemblyDefaultDelimiter = @"/";
+static NSString * const PKAssemblyDefaultCursor = @"^";
 
 @interface PKAssembly ()
 - (id)peek;
@@ -22,11 +23,13 @@ static NSString * const PKAssemblyDefaultDelimiter = @"/";
 - (BOOL)hasMore;
 - (NSString *)consumedObjectsJoinedByString:(NSString *)delimiter;
 - (NSString *)remainingObjectsJoinedByString:(NSString *)delimiter;
+- (NSString *)lastConsumedObjects:(NSUInteger)len joinedByString:(NSString *)delimiter;
 
 @property (nonatomic, readwrite, retain) NSMutableArray *stack;
 @property (nonatomic) NSUInteger index;
 @property (nonatomic, retain) NSString *string;
-@property (nonatomic, readwrite, retain) NSString *defaultDelimiter;
+@property (nonatomic, retain) NSString *defaultDelimiter;
+@property (nonatomic, retain) NSString *defaultCursor;
 @property (nonatomic, readonly) NSUInteger length;
 @property (nonatomic, readonly) NSUInteger objectsConsumed;
 @property (nonatomic, readonly) NSUInteger objectsRemaining;
@@ -45,7 +48,8 @@ static NSString * const PKAssemblyDefaultDelimiter = @"/";
 
 
 - (id)initWithString:(NSString *)s {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.stack = [NSMutableArray array];
         self.string = s;
     }
@@ -58,6 +62,7 @@ static NSString * const PKAssemblyDefaultDelimiter = @"/";
     self.string = nil;
     self.target = nil;
     self.defaultDelimiter = nil;
+    self.defaultCursor = nil;
     [super dealloc];
 }
 
@@ -68,12 +73,19 @@ static NSString * const PKAssemblyDefaultDelimiter = @"/";
     PKAssembly *a = NSAllocateObject([self class], 0, zone);
     a->stack = [stack mutableCopyWithZone:zone];
     a->string = [string retain];
+
     if (defaultDelimiter) {
         a->defaultDelimiter = [defaultDelimiter retain];
     } else {
         a->defaultDelimiter = nil;
     }
-
+    
+    if (defaultCursor) {
+        a->defaultCursor = [defaultCursor retain];
+    } else {
+        a->defaultCursor = nil;
+    }
+    
     if (target) {
         if ([target conformsToProtocol:@protocol(NSMutableCopying)]) {
             a->target = [target mutableCopyWithZone:zone];
@@ -107,7 +119,27 @@ static NSString * const PKAssemblyDefaultDelimiter = @"/";
         return NO;
     }
     
-    return [[self description] isEqualToString:[obj description]];
+    if (a.objectsConsumed != self.objectsConsumed) {
+        return NO;
+    }
+    
+    if (a.objectsRemaining != self.objectsRemaining) {
+        return NO;
+    }
+    
+    // this assert will (And should) pass. but it massively slows down performance.
+    //NSAssert([[self description] isEqualToString:[a description]], @"");
+
+    // These are cheaper ways (2-step) of acheiving the same check. but are apparently unnecessary.
+    //    if (![[self consumedObjectsJoinedByString:@""] isEqualToString:[a consumedObjectsJoinedByString:@""]]) {
+    //        return NO;
+    //    }
+    //    
+    //    if (![[self remainingObjectsJoinedByString:@""] isEqualToString:[a remainingObjectsJoinedByString:@""]]) {
+    //        return NO;
+    //    }
+    
+    return YES;
 }
 
 
@@ -130,6 +162,12 @@ static NSString * const PKAssemblyDefaultDelimiter = @"/";
 
 
 - (NSString *)remainingObjectsJoinedByString:(NSString *)delimiter {
+    NSAssert1(0, @"%s must be overriden", __PRETTY_FUNCTION__);
+    return nil;
+}
+
+
+- (NSString *)lastConsumedObjects:(NSUInteger)len joinedByString:(NSString *)delimiter {
     NSAssert1(0, @"%s must be overriden", __PRETTY_FUNCTION__);
     return nil;
 }
@@ -200,25 +238,22 @@ static NSString * const PKAssemblyDefaultDelimiter = @"/";
 
 
 - (NSString *)description {
-    NSMutableString *s = [NSMutableString string];
-    [s appendString:@"["];
+    NSMutableString *s = [NSMutableString stringWithString:@"["];
     
     NSUInteger i = 0;
     NSUInteger len = [stack count];
     
+    NSString *fmt = @"%@, ";
     for (id obj in stack) {
-        [s appendString:[obj description]];
-        if (len - 1 != i++) {
-            [s appendString:@", "];
+        if (len - 1 == i++) {
+            fmt = @"%@";
         }
+        [s appendFormat:fmt, obj];
     }
-    
-    [s appendString:@"]"];
-    
+
     NSString *d = defaultDelimiter ? defaultDelimiter : PKAssemblyDefaultDelimiter;
-    [s appendString:[self consumedObjectsJoinedByString:d]];
-    [s appendString:@"^"];
-    [s appendString:[self remainingObjectsJoinedByString:d]];
+    NSString *c = defaultCursor ? defaultCursor : PKAssemblyDefaultCursor;
+    [s appendFormat:@"]%@%@%@", [self consumedObjectsJoinedByString:d], c, [self remainingObjectsJoinedByString:d]];
     
     return [[s copy] autorelease];
 }
@@ -228,4 +263,5 @@ static NSString * const PKAssemblyDefaultDelimiter = @"/";
 @synthesize index;
 @synthesize string;
 @synthesize defaultDelimiter;
+@synthesize defaultCursor;
 @end

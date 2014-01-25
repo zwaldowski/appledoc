@@ -9,9 +9,9 @@ namespace Cedar { namespace Matchers { namespace Comparators {
     template<typename T>
     bool compare_empty(const T & container) {
         if ([container respondsToSelector:@selector(count)]) {
-            return 0 == [(id)container count];
+            return 0 == [container performSelector:@selector(count)];
         } else {
-            return 0 == [(id)container length];
+            return 0 == [container performSelector:@selector(length)];
         }
     }
 
@@ -90,5 +90,15 @@ namespace Cedar { namespace Matchers { namespace Comparators {
     template<typename U>
     bool compare_contains(const typename std::set<U> & container, const U & element) {
         return container.end() != std::find_if(container.begin(), container.end(), CompareEqualTo<U>(element));
+    }
+
+    template<typename U>
+    bool compare_contains(char *actualValue, const U & expectedContains) {
+        return actualValue != NULL && strstr(actualValue, expectedContains) != NULL;
+    }
+
+    template<typename U>
+    bool compare_contains(const char *actualValue, const U & expectedContains) {
+        return compare_contains((char *)actualValue, expectedContains);
     }
 }}}

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09A083D0438F45D2B3B22E42 /* libPods-appledoc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E4DD89AA7514FB38CA49F2E /* libPods-appledoc.a */; };
 		730BCC88153FF91C00B909FD /* PropertyInfoTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 730BCC87153FF91C00B909FD /* PropertyInfoTests.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		730BCC8C1540046F00B909FD /* AttributesInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 730BCC8B1540046F00B909FD /* AttributesInfo.m */; };
 		730BCC8D1540046F00B909FD /* AttributesInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 730BCC8B1540046F00B909FD /* AttributesInfo.m */; };
@@ -127,8 +128,9 @@
 		73AD21171553DE0300C3B792 /* ObjectiveCParseDataTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 73AD21161553DE0300C3B792 /* ObjectiveCParseDataTests.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		73AEC5C915DAB33700830AC7 /* MarkdownParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 73AEC5C815DAB33700830AC7 /* MarkdownParser.m */; };
 		73AEC5CA15DAB33700830AC7 /* MarkdownParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 73AEC5C815DAB33700830AC7 /* MarkdownParser.m */; };
+		73B502371893BA3B00EC60E3 /* DDCliUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 73B502361893BA3B00EC60E3 /* DDCliUtil.m */; };
+		73B502381893BA3B00EC60E3 /* DDCliUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 73B502361893BA3B00EC60E3 /* DDCliUtil.m */; };
 		73B62BE61588A1E2003FC025 /* libPods-AppledocTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 73B62BE51588A1E2003FC025 /* libPods-AppledocTests.a */; };
-		73B62BE91588A207003FC025 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 73B62BE81588A207003FC025 /* libPods.a */; };
 		73B6595A1588AFDF00AE2314 /* CommentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 73B659591588AFDF00AE2314 /* CommentParser.m */; };
 		73B6595B1588AFDF00AE2314 /* CommentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 73B659591588AFDF00AE2314 /* CommentParser.m */; };
 		73B6595F1588B7A900AE2314 /* CommentParserTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 73B6595D1588B7A900AE2314 /* CommentParserTests.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -219,7 +221,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2E4DD89AA7514FB38CA49F2E /* libPods-appledoc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-appledoc.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AF70AE5881A4C199E0B81E9 /* Pods.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
+		67C66D4786104A4886082028 /* Pods-appledoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appledoc.xcconfig"; path = "Pods/Pods-appledoc.xcconfig"; sourceTree = "<group>"; };
 		730BCC87153FF91C00B909FD /* PropertyInfoTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PropertyInfoTests.mm; sourceTree = "<group>"; };
 		730BCC8A1540046F00B909FD /* AttributesInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributesInfo.h; sourceTree = "<group>"; };
 		730BCC8B1540046F00B909FD /* AttributesInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttributesInfo.m; sourceTree = "<group>"; };
@@ -350,8 +354,9 @@
 		73AD21161553DE0300C3B792 /* ObjectiveCParseDataTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjectiveCParseDataTests.mm; sourceTree = "<group>"; };
 		73AEC5C715DAB33700830AC7 /* MarkdownParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkdownParser.h; sourceTree = "<group>"; };
 		73AEC5C815DAB33700830AC7 /* MarkdownParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MarkdownParser.m; sourceTree = "<group>"; };
+		73B502351893BA3B00EC60E3 /* DDCliUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDCliUtil.h; sourceTree = "<group>"; };
+		73B502361893BA3B00EC60E3 /* DDCliUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDCliUtil.m; sourceTree = "<group>"; };
 		73B62BE51588A1E2003FC025 /* libPods-AppledocTests.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libPods-AppledocTests.a"; path = "../../../../../Library/Developer/Xcode/DerivedData/appledoc-bhpaaotjueeopogaoklyxmrllize/Build/Products/Debug/libPods-AppledocTests.a"; sourceTree = "<group>"; };
-		73B62BE81588A207003FC025 /* libPods.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPods.a; path = "../../../../../Library/Developer/Xcode/DerivedData/appledoc-bhpaaotjueeopogaoklyxmrllize/Build/Products/Debug/libPods.a"; sourceTree = "<group>"; };
 		73B659581588AFDF00AE2314 /* CommentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentParser.h; sourceTree = "<group>"; };
 		73B659591588AFDF00AE2314 /* CommentParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CommentParser.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		73B6595D1588B7A900AE2314 /* CommentParserTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = CommentParserTests.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -428,7 +433,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				73D274B2150E05DA004D27F4 /* Foundation.framework in Frameworks */,
-				73B62BE91588A207003FC025 /* libPods.a in Frameworks */,
+				09A083D0438F45D2B3B22E42 /* libPods-appledoc.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -731,6 +736,7 @@
 				73D274B0150E05DA004D27F4 /* Frameworks & Libraries */,
 				73D274AE150E05DA004D27F4 /* Products */,
 				3AF70AE5881A4C199E0B81E9 /* Pods.xcconfig */,
+				67C66D4786104A4886082028 /* Pods-appledoc.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -746,7 +752,7 @@
 		73D274B0150E05DA004D27F4 /* Frameworks & Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				73B62BE81588A207003FC025 /* libPods.a */,
+				2E4DD89AA7514FB38CA49F2E /* libPods-appledoc.a */,
 				73B62BE51588A1E2003FC025 /* libPods-AppledocTests.a */,
 				73D274B1150E05DA004D27F4 /* Foundation.framework */,
 				7317FAB7150F534100B39CFD /* Cocoa.framework */,
@@ -800,6 +806,8 @@
 				73ED9445150E9FEC0032FD07 /* Logging.m */,
 				73239A0F155706380077AB8A /* StateBase.h */,
 				73239A10155706380077AB8A /* StateBase.m */,
+				73B502351893BA3B00EC60E3 /* DDCliUtil.h */,
+				73B502361893BA3B00EC60E3 /* DDCliUtil.m */,
 				73280F26150FE48700D1E6E8 /* GBSettings+Appledoc.h */,
 				73280F27150FE48700D1E6E8 /* GBSettings+Appledoc.m */,
 				738BE17215172D8D009079C8 /* GBSettings+Helpers.h */,
@@ -845,6 +853,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 73D274BC150E05DA004D27F4 /* Build configuration list for PBXNativeTarget "appledoc" */;
 			buildPhases = (
+				75BC7C520B6C46C8B85C1DDA /* Check Pods Manifest.lock */,
 				739704691511264900486507 /* Prepare tool name, version and build number */,
 				73D274A9150E05DA004D27F4 /* Sources */,
 				73D274AA150E05DA004D27F4 /* Frameworks */,
@@ -915,6 +924,21 @@
 			shellPath = /bin/sh;
 			shellScript = "git=`sh /etc/profile; which git`\nversion=`$git describe --abbrev=0 --tags`\ncount=`$git rev-list --all |wc -l`\necho -e \"#define GB_APPLEDOC_VERSION @\\\"$version\\\"\\n#define GB_APPLEDOC_BUILD [NSString stringWithFormat:@\\\"%d\\\", $count]\" > AppledocInfo.h";
 		};
+		75BC7C520B6C46C8B85C1DDA /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
 		E6692A93064B4BA68A001A46 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -927,7 +951,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Pods-appledoc-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -991,6 +1016,7 @@
 				73E416E51541BAE000600606 /* StructInfo.m in Sources */,
 				73E416E71541E12200600606 /* StructInfoTests.mm in Sources */,
 				7336652615457A2E000F7AFF /* ConstantInfo.m in Sources */,
+				73B502381893BA3B00EC60E3 /* DDCliUtil.m in Sources */,
 				7336652915457BF7000F7AFF /* ConstantInfoTests.mm in Sources */,
 				73F5C87115480DFF005BE2D6 /* CategoryInfoTests.mm in Sources */,
 				73A589FE15493F5B003838E0 /* DescriptorsInfo.m in Sources */,
@@ -1055,6 +1081,7 @@
 				734425161517645A00B6EC33 /* AppledocTask.m in Sources */,
 				732978F415187F3E00592A9D /* ParserTask.m in Sources */,
 				7329790215188A4C00592A9D /* ObjectiveCParser.m in Sources */,
+				73B502371893BA3B00EC60E3 /* DDCliUtil.m in Sources */,
 				7329790615188B0800592A9D /* TokensStream.m in Sources */,
 				73297914151899CA00592A9D /* ObjectiveCParserState.m in Sources */,
 				7329791815189D1B00592A9D /* ObjectiveCFileState.m in Sources */,
@@ -1224,7 +1251,7 @@
 		};
 		73D274BD150E05DA004D27F4 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AF70AE5881A4C199E0B81E9 /* Pods.xcconfig */;
+			baseConfigurationReference = 67C66D4786104A4886082028 /* Pods-appledoc.xcconfig */;
 			buildSettings = {
 				DSTROOT = /tmp/xcodeproj.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1238,7 +1265,7 @@
 		};
 		73D274BE150E05DA004D27F4 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AF70AE5881A4C199E0B81E9 /* Pods.xcconfig */;
+			baseConfigurationReference = 67C66D4786104A4886082028 /* Pods-appledoc.xcconfig */;
 			buildSettings = {
 				DSTROOT = /tmp/xcodeproj.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

@@ -58,15 +58,13 @@
     if (!fallbackStates) {
         self.fallbackStates = [NSMutableArray arrayWithCapacity:STATE_COUNT];
 
-        NSInteger i = 0;
-        for ( ; i < STATE_COUNT; i++) {
+        for (NSInteger i = 0; i < STATE_COUNT; i++) {
             [fallbackStates addObject:[NSNull null]];
         }
         
     }
 
-    NSInteger i = start;
-    for ( ; i <= end; i++) {
+    for (NSInteger i = start; i <= end; i++) {
         [fallbackStates replaceObjectAtIndex:i withObject:state];
     }
 }
@@ -79,8 +77,8 @@
 
 
 - (void)append:(PKUniChar)c {
-    NSParameterAssert(c > -1);
-    [stringbuf appendFormat:@"%C", c];
+    NSParameterAssert(c != PKEOF);
+    [stringbuf appendFormat:@"%C", (unichar)c];
 }
 
 

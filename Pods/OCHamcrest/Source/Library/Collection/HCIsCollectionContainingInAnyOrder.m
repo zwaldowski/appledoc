@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCIsCollectionContainingInAnyOrder.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -24,29 +24,22 @@
 
 @implementation HCMatchingInAnyOrder
 
-- (id)initWithMatchers:(NSMutableArray *)itemMatchers
-   mismatchDescription:(id<HCDescription, NSObject>)description
+- (instancetype)initWithMatchers:(NSArray *)itemMatchers
+             mismatchDescription:(id<HCDescription, NSObject>)description
 {
     self = [super init];
     if (self)
     {
-        matchers = [itemMatchers retain];
-        mismatchDescription = [description retain];        
+        matchers = [itemMatchers mutableCopy];
+        mismatchDescription = description;        
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [matchers release];
-    [mismatchDescription release];
-    [super dealloc];
 }
 
 - (BOOL)matches:(id)item
 {
     NSUInteger index = 0;
-    for (id<HCMatcher> matcher in matchers)
+    for (id <HCMatcher> matcher in matchers)
     {
         if ([matcher matches:item])
         {
@@ -74,27 +67,19 @@
 @end
 
 
-#pragma mark -
-
 @implementation HCIsCollectionContainingInAnyOrder
 
-+ (id)isCollectionContainingInAnyOrder:(NSMutableArray *)itemMatchers
++ (instancetype)isCollectionContainingInAnyOrder:(NSArray *)itemMatchers
 {
-    return [[[self alloc] initWithMatchers:itemMatchers] autorelease];
+    return [[self alloc] initWithMatchers:itemMatchers];
 }
 
-- (id)initWithMatchers:(NSMutableArray *)itemMatchers
+- (instancetype)initWithMatchers:(NSArray *)itemMatchers
 {
     self = [super init];
     if (self)
-        matchers = [itemMatchers retain];
+        matchers = [itemMatchers copy];
     return self;
-}
-
-- (void)dealloc
-{
-    [matchers release];
-    [super dealloc];
 }
 
 - (BOOL)matches:(id)collection
@@ -102,7 +87,7 @@
     return [self matches:collection describingMismatchTo:nil];
 }
 
-- (BOOL)matches:(id)collection describingMismatchTo:(id<HCDescription, NSObject>)mismatchDescription
+- (BOOL)matches:(id)collection describingMismatchTo:(id<HCDescription>)mismatchDescription
 {
     if (![collection conformsToProtocol:@protocol(NSFastEnumeration)])
     {
@@ -111,8 +96,8 @@
     }
     
     HCMatchingInAnyOrder *matchSequence =
-        [[[HCMatchingInAnyOrder alloc] initWithMatchers:matchers 
-                                    mismatchDescription:mismatchDescription] autorelease];
+        [[HCMatchingInAnyOrder alloc] initWithMatchers:matchers 
+                                   mismatchDescription:mismatchDescription];
     for (id item in collection)
         if (![matchSequence matches:item])
             return NO;
@@ -135,9 +120,7 @@
 @end
 
 
-#pragma mark -
-
-id<HCMatcher> HC_containsInAnyOrder(id itemMatch, ...)
+id HC_containsInAnyOrder(id itemMatch, ...)
 {
     NSMutableArray *matchers = [NSMutableArray arrayWithObject:HCWrapInMatcher(itemMatch)];
     

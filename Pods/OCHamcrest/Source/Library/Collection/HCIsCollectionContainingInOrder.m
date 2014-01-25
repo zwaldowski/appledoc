@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCIsCollectionContainingInOrder.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -23,28 +23,22 @@
 
 - (BOOL)isMatched:(id)item;
 - (BOOL)isNotSurplus:(id)item;
-- (void)describeMismatchOfMatcher:(id<HCMatcher>)matcher item:(id)item;
+- (void)describeMismatchOfMatcher:(id <HCMatcher>)matcher item:(id)item;
 
 @end
 
 @implementation HCMatchSequence
 
-- (id)initWithMatchers:(NSArray *)itemMatchers mismatchDescription:(id<HCDescription, NSObject>)description
+- (instancetype)initWithMatchers:(NSArray *)itemMatchers
+             mismatchDescription:(id<HCDescription, NSObject>)description
 {
     self = [super init];
     if (self)
     {
-        matchers = [itemMatchers retain];
-        mismatchDescription = [description retain];        
+        matchers = itemMatchers;
+        mismatchDescription = description;        
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [matchers release];
-    [mismatchDescription release];
-    [super dealloc];
 }
 
 - (BOOL)matches:(id)item
@@ -57,7 +51,7 @@
     if (nextMatchIndex < [matchers count])
     {
         [[mismatchDescription appendText:@"no item matched: "]
-                              appendDescriptionOf:[matchers objectAtIndex:nextMatchIndex]];
+                              appendDescriptionOf:matchers[nextMatchIndex]];
         return NO;
     }
     return YES;
@@ -65,7 +59,7 @@
 
 - (BOOL)isMatched:(id)item
 {
-    id<HCMatcher> matcher = [matchers objectAtIndex:nextMatchIndex];
+    id <HCMatcher> matcher = matchers[nextMatchIndex];
     if (![matcher matches:item])
     {
         [self describeMismatchOfMatcher:matcher item:item];
@@ -85,36 +79,28 @@
     return YES;
 }
 
-- (void)describeMismatchOfMatcher:(id<HCMatcher>)matcher item:(id)item
+- (void)describeMismatchOfMatcher:(id <HCMatcher>)matcher item:(id)item
 {
-    [mismatchDescription appendText:[NSString stringWithFormat:@"item %d: ", nextMatchIndex]];
+    [mismatchDescription appendText:[NSString stringWithFormat:@"item %zi: ", nextMatchIndex]];
     [matcher describeMismatchOf:item to:mismatchDescription];
 }
 
 @end
 
 
-#pragma mark -
-
 @implementation HCIsCollectionContainingInOrder
 
-+ (id)isCollectionContainingInOrder:(NSArray *)itemMatchers
++ (instancetype)isCollectionContainingInOrder:(NSArray *)itemMatchers
 {
-    return [[[self alloc] initWithMatchers:itemMatchers] autorelease];
+    return [[self alloc] initWithMatchers:itemMatchers];
 }
 
-- (id)initWithMatchers:(NSArray *)itemMatchers
+- (instancetype)initWithMatchers:(NSArray *)itemMatchers
 {
     self = [super init];
     if (self)
-        matchers = [itemMatchers retain];
+        matchers = itemMatchers;
     return self;
-}
-
-- (void)dealloc
-{
-    [matchers release];
-    [super dealloc];
 }
 
 - (BOOL)matches:(id)collection
@@ -131,8 +117,8 @@
     }
     
     HCMatchSequence *matchSequence =
-        [[[HCMatchSequence alloc] initWithMatchers:matchers
-                               mismatchDescription:mismatchDescription] autorelease];
+        [[HCMatchSequence alloc] initWithMatchers:matchers
+                              mismatchDescription:mismatchDescription];
     for (id item in collection)
         if (![matchSequence matches:item])
             return NO;
@@ -154,9 +140,7 @@
 @end
 
 
-#pragma mark -
-
-id<HCMatcher> HC_contains(id itemMatch, ...)
+id HC_contains(id itemMatch, ...)
 {
     NSMutableArray *matchers = [NSMutableArray arrayWithObject:HCWrapInMatcher(itemMatch)];
     

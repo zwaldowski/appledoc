@@ -1,43 +1,31 @@
 //
 //  OCMockito - MKTMockingProgress.m
-//  Copyright 2012 Jonathan M. Reid. See LICENSE.txt
+//  Copyright 2013 Jonathan M. Reid. See LICENSE.txt
+//
+//  Created by: Jon Reid, http://qualitycoding.org/
+//  Source: https://github.com/jonreid/OCMockito
 //
 
 #import "MKTMockingProgress.h"
 
 #import "MKTInvocationMatcher.h"
+#import "MKTOngoingStubbing.h"
 #import "MKTVerificationMode.h"
 
 
-@interface MKTMockingProgress ()
-@property (nonatomic, retain) MKTInvocationMatcher *invocationMatcher;
-@property (nonatomic, retain) id <MKTVerificationMode> verificationMode;
-@property (nonatomic, retain) MKTOngoingStubbing *ongoingStubbing;
-@end
-
-
 @implementation MKTMockingProgress
+{
+    MKTInvocationMatcher *_invocationMatcher;
+    id <MKTVerificationMode> _verificationMode;
+    MKTOngoingStubbing *_ongoingStubbing;
+}
 
-@synthesize testLocation;
-@synthesize invocationMatcher;
-@synthesize verificationMode;
-@synthesize ongoingStubbing;
-
-+ (id)sharedProgress
++ (instancetype)sharedProgress
 {
     static id sharedProgress = nil;
-    
     if (!sharedProgress)
         sharedProgress = [[self alloc] init];
     return sharedProgress;
-}
-
-- (void)dealloc
-{
-    [invocationMatcher release];
-    [verificationMode release];
-    [ongoingStubbing release];
-    [super dealloc];
 }
 
 - (void)stubbingStartedAtLocation:(MKTTestLocation)location
@@ -45,43 +33,43 @@
     [self setTestLocation:location];
 }
 
-- (void)reportOngoingStubbing:(MKTOngoingStubbing *)theOngoingStubbing
+- (void)reportOngoingStubbing:(MKTOngoingStubbing *)ongoingStubbing
 {
-    [self setOngoingStubbing:theOngoingStubbing];
+    _ongoingStubbing = ongoingStubbing;
 }
 
 - (MKTOngoingStubbing *)pullOngoingStubbing
 {
-    MKTOngoingStubbing *result = [ongoingStubbing retain];
-    [self setOngoingStubbing:nil];
-    return [result autorelease];
+    MKTOngoingStubbing *result = _ongoingStubbing;
+    _ongoingStubbing = nil;
+    return result;
 }
 
 - (void)verificationStarted:(id <MKTVerificationMode>)mode atLocation:(MKTTestLocation)location
 {
-    [self setVerificationMode:mode];
+    _verificationMode = mode;
     [self setTestLocation:location];
 }
 
 - (id <MKTVerificationMode>)pullVerificationMode
 {
-    id <MKTVerificationMode> result = [verificationMode retain];
-    [self setVerificationMode:nil];
-    return [result autorelease];
+    id <MKTVerificationMode> result = _verificationMode;
+    _verificationMode = nil;
+    return result;
 }
 
 - (void)setMatcher:(id <HCMatcher>)matcher forArgument:(NSUInteger)index
 {
-    if (!invocationMatcher)
-        invocationMatcher = [[MKTInvocationMatcher alloc] init];
-    [invocationMatcher setMatcher:matcher atIndex:index+2];
+    if (!_invocationMatcher)
+        _invocationMatcher = [[MKTInvocationMatcher alloc] init];
+    [_invocationMatcher setMatcher:matcher atIndex:index+2];
 }
 
 - (MKTInvocationMatcher *)pullInvocationMatcher
 {
-    MKTInvocationMatcher *result = [invocationMatcher retain];
-    [self setInvocationMatcher:nil];
-    return [result autorelease];
+    MKTInvocationMatcher *result = _invocationMatcher;
+    _invocationMatcher = nil;
+    return result;
 }
 
 @end

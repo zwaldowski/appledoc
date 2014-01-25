@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCBaseMatcher.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -10,11 +10,6 @@
 #import "HCBaseMatcher.h"
 
 #import "HCStringDescription.h"
-
-
-@interface HCBaseMatcher ()
-- (void)subclassResponsibility:(SEL)command;
-@end
 
 #define ABSTRACT_METHOD [self subclassResponsibility:_cmd]
 
@@ -54,7 +49,12 @@
 {
     NSString *className = NSStringFromClass([self class]);
     [NSException raise:NSGenericException
-                format:@"-[%@  %s] not implemented", className, command];
+                format:@"-[%@  %@] not implemented", className, NSStringFromSelector(command)];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return self;
 }
 
 @end

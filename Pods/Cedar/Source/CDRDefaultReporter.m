@@ -1,6 +1,7 @@
 #import "CDRDefaultReporter.h"
 #import "CDRExample.h"
 #import "CDRExampleGroup.h"
+#import "CDRSymbolicator.h"
 #import "SpecHelper.h"
 #import "CDRSlowTestStatistics.h"
 
@@ -35,10 +36,11 @@
 }
 
 #pragma mark Public interface
-- (void)runWillStartWithGroups:(NSArray *)groups {
+- (void)runWillStartWithGroups:(NSArray *)groups andRandomSeed:(unsigned int)seed {
     rootGroups_ = [groups retain];
     [self startObservingExamples:rootGroups_];
     startTime_ = [[NSDate alloc] init];
+    printf("Running With Random Seed: %i\n\n", seed);
 }
 
 - (void)runDidComplete {
@@ -66,6 +68,10 @@
 }
 
 #pragma mark Protected interface
+- (unsigned int)exampleCount {
+    return exampleCount_;
+}
+
 - (NSString *)successToken {
     return @".";
 }
@@ -91,7 +97,8 @@
 }
 
 - (NSString *)failureMessageForExample:(CDRExample *)example {
-    return [NSString stringWithFormat:@"FAILURE %@\n%@\n",[example fullText], example.failure];
+    return [NSString stringWithFormat:@"FAILURE %@\n%@\n",
+            example.fullText, example.failure];
 }
 
 - (NSString *)errorToken {
@@ -99,10 +106,33 @@
 }
 
 - (NSString *)errorMessageForExample:(CDRExample *)example {
-    return [NSString stringWithFormat:@"EXCEPTION %@\n%@\n", [example fullText], example.failure];
+    return [NSString stringWithFormat:@"EXCEPTION %@\n%@\n%@",
+            example.fullText, example.failure,
+            [self callStackSymbolsForFailure:example.failure]];
+}
+
+- (NSString *)callStackSymbolsForFailure:(CDRSpecFailure *)failure {
+    // Currently to symbolicate an exception
+    // we shell out to atos; thus this opt-in setting.
+    if (!getenv("CEDAR_SYMBOLICATE_EXCEPTIONS")) return nil;
+
+    NSError *error = nil;
+    NSString *callStackSymbols =
+        [failure callStackSymbolicatedSymbols:&error];
+
+    if (error.domain == kCDRSymbolicatorErrorDomain) {
+        if (error.code == kCDRSymbolicatorErrorNotSuccessful) {
+            NSString *details = [error.userInfo objectForKey:kCDRSymbolicatorErrorMessageKey];
+            printf("Exception symbolication was not successful.\n"
+                   "To turn it off remove CEDAR_SYMBOLICATE_EXCEPTIONS.\n"
+                   "Details:\n%s\n", details.UTF8String);
+        }
+    }
+    return callStackSymbols;
 }
 
 #pragma mark Private interface
+
 - (void)printMessages:(NSArray *)messages {
     printf("\n");
 
@@ -115,7 +145,9 @@
     for (id example in examples) {
         if (![example hasChildren]) {
             [example addObserver:self forKeyPath:@"state" options:0 context:NULL];
-            ++exampleCount_;
+            if (![example isKindOfClass:[CDRExampleGroup class]]) {
+                ++exampleCount_;
+            }
         } else {
             [self startObservingExamples:[example examples]];
         }
@@ -134,10 +166,10 @@
 
 - (void)printNestedFullTextForExample:(CDRExample *)example stateToken:(NSString *)token {
     static NSMutableArray *previousBranch = nil;
-    int previousBranchLength = previousBranch.count;
+    NSUInteger previousBranchLength = previousBranch.count;
 
     NSMutableArray *exampleBranch = [example fullTextInPieces];
-    int exampleBranchLength = exampleBranch.count;
+    NSUInteger exampleBranchLength = exampleBranch.count;
 
     BOOL onPreviousBranch = YES;
 

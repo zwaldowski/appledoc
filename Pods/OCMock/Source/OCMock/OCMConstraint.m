@@ -18,6 +18,10 @@
 	return NO;
 }
 
+- (id)copyWithZone:(struct _NSZone *)zone
+{
+    return [self retain];
+}
 
 + (id)constraintWithSelector:(SEL)aSelector onObject:(id)anObject
 {
@@ -119,17 +123,23 @@
 
 @implementation OCMBlockConstraint
 
-- (id)initWithConstraintBlock:(BOOL (^)(id))aBlock;
+- (id)initWithConstraintBlock:(BOOL (^)(id))aBlock
 {
 	self = [super init];
-	block = aBlock;
+	block = [aBlock copy];
 	return self;
+}
+
+- (void)dealloc {
+    [block release];
+    [super dealloc];
 }
 
 - (BOOL)evaluate:(id)value 
 {
 	return block(value);
 }
+
 
 @end
 

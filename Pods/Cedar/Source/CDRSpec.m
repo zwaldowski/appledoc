@@ -7,6 +7,8 @@
 
 CDRSpec *currentSpec;
 
+static void(^placeholderPendingTestBlock)() = ^{ it(@"is pending", PENDING); };
+
 void beforeEach(CDRSpecBlock block) {
     [currentSpec.currentGroup addBefore:block];
 }
@@ -16,23 +18,28 @@ void afterEach(CDRSpecBlock block) {
 }
 
 #define with_stack_address(b) \
-    (b.stackAddress = CDRCallerStackAddress()) ? b : b
+    ((b.stackAddress = CDRCallerStackAddress()), b)
 
 CDRExampleGroup * describe(NSString *text, CDRSpecBlock block) {
-    CDRExampleGroup *parentGroup = currentSpec.currentGroup;
-
-    CDRExampleGroup *group = [CDRExampleGroup groupWithText:text];
-    [parentGroup add:group];
-
+    CDRExampleGroup *group = nil;
     if (block) {
+        CDRExampleGroup *parentGroup = currentSpec.currentGroup;
+        group = [CDRExampleGroup groupWithText:text];
+        [parentGroup add:group];
         currentSpec.currentGroup = group;
         block();
         currentSpec.currentGroup = parentGroup;
+    } else {
+        group = describe(text, placeholderPendingTestBlock);
     }
     return with_stack_address(group);
 }
 
 CDRExampleGroup* (*context)(NSString *, CDRSpecBlock) = &describe;
+
+void subjectAction(CDRSpecBlock block) {
+    currentSpec.currentGroup.subjectActionBlock = block;
+}
 
 CDRExample * it(NSString *text, CDRSpecBlock block) {
     CDRExample *example = [CDRExample exampleWithText:text andBlock:block];
@@ -43,7 +50,7 @@ CDRExample * it(NSString *text, CDRSpecBlock block) {
 #pragma mark - Pending
 
 CDRExampleGroup * xdescribe(NSString *text, CDRSpecBlock block) {
-    CDRExampleGroup *group = describe(text, ^{});
+    CDRExampleGroup *group = describe(text, placeholderPendingTestBlock);
     return with_stack_address(group);
 }
 
@@ -126,15 +133,29 @@ void fail(NSString *reason) {
     //    wrong lines of code if there are errors present in the code
     //  - also __LINE__ is unrolled from the outermost block
     //    which causes incorrect values
-    [self.symbolicator symbolicateAddresses:addresses];
+    NSError *error = nil;
+    [self.symbolicator symbolicateAddresses:addresses error:&error];
 
-    int bestAddressIndex = [children indexOfObject:self.rootGroup];
+    if (error.domain == kCDRSymbolicatorErrorDomain) {
+        if (error.code == kCDRSymbolicatorErrorNotAvailable) {
+            printf("Spec location symbolication is not available.\n");
+        } else if (error.code == kCDRSymbolicatorErrorNotSuccessful) {
+            NSString *details = [error.userInfo objectForKey:kCDRSymbolicatorErrorMessageKey];
+            printf("Spec location symbolication was not successful.\n"
+                   "Details:\n%s\n", details.UTF8String);
+        } else {
+            printf("Spec location symbolication failed.\n");
+        }
+        return;
+    }
 
-    // Matches closest example/group located on or below specifed line number
+    NSUInteger bestAddressIndex = [children indexOfObject:self.rootGroup];
+
+    // Matches closest example/group located on or below specified line number
     // (only takes into account start of an example/group)
-    for (int i = 0, shortestDistance = -1; i < addresses.count; i++) {
-        NSUInteger address = [[addresses objectAtIndex:i] unsignedIntegerValue];
-        int distance = lineNumber - [self.symbolicator lineNumberForStackAddress:address];
+    for (NSInteger i = 0, shortestDistance = -1; i < addresses.count; i++) {
+        NSInteger address = [[addresses objectAtIndex:i] integerValue];
+        NSInteger distance = lineNumber - [self.symbolicator lineNumberForStackAddress:address];
 
         if (distance >= 0 && (distance < shortestDistance || shortestDistance == -1) ) {
             bestAddressIndex = i;

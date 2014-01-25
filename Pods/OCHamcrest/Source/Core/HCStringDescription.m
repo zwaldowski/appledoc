@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCStringDescription.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -21,23 +21,17 @@
     return [description description];
 }
 
-+ (HCStringDescription *)stringDescription
++ (instancetype)stringDescription
 {
-    return [[[HCStringDescription alloc] init] autorelease];
+    return [[HCStringDescription alloc] init];
 }
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (self)
         accumulator = [[NSMutableString alloc] init];
     return self;
-}
-
-- (void)dealloc
-{
-    [accumulator release];
-    [super dealloc];
 }
 
 - (NSString *)description

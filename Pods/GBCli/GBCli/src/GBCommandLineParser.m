@@ -60,7 +60,7 @@ const struct GBCommandLineKeys {
 	// Register option data.
 	NSMutableDictionary *data = [NSMutableDictionary dictionary];
 	[data setObject:longOption forKey:GBCommandLineKeys.longOption];
-	[data setObject:[NSNumber numberWithInt:requirement] forKey:GBCommandLineKeys.requirement];
+	[data setObject:[NSNumber numberWithUnsignedInteger:requirement] forKey:GBCommandLineKeys.requirement];
 	if (shortOption > 0) {
 		[data setObject:[NSNumber numberWithInt:shortOption] forKey:GBCommandLineKeys.shortOption];
 		[self.registeredOptionsByShortNames setObject:data forKey:[NSString stringWithFormat:@"%c", shortOption]];
@@ -72,7 +72,7 @@ const struct GBCommandLineKeys {
 		NSMutableDictionary *negData = [NSMutableDictionary dictionary];
 		NSString *negLongOption = [NSString stringWithFormat:@"no-%@", longOption];
 		[negData setObject:negLongOption forKey:GBCommandLineKeys.longOption];
-		[negData setObject:[NSNumber numberWithInt:requirement] forKey:GBCommandLineKeys.requirement];
+		[negData setObject:[NSNumber numberWithUnsignedInteger:requirement] forKey:GBCommandLineKeys.requirement];
 		[self.registeredOptionsByLongNames setObject:data forKey:negLongOption];
 	}
 }
@@ -93,8 +93,9 @@ const struct GBCommandLineKeys {
 
 - (BOOL)parseOptionsUsingDefaultArgumentsWithBlock:(GBCommandLineParseBlock)handler {
     NSProcessInfo *processInfo = [NSProcessInfo processInfo];
-    NSArray *arguments = [processInfo arguments];
     NSString *command = [processInfo processName];
+    NSMutableArray *arguments = [[processInfo arguments] mutableCopy];
+	[arguments removeObjectAtIndex:0];
 	return [self parseOptionsWithArguments:arguments commandLine:command block:handler];
 }
 

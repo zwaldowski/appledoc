@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCIsCloseTo.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -10,14 +10,13 @@
 #import "HCIsCloseTo.h"
 
 #import "HCDescription.h"
-#import <math.h>
 
 
 @implementation HCIsCloseTo
 
 + (id)isCloseTo:(double)aValue within:(double)aDelta
 {
-    return [[[self alloc] initWithValue:aValue delta:aDelta] autorelease];
+    return [[self alloc] initWithValue:aValue delta:aDelta];
 }
 
 - (id)initWithValue:(double)aValue delta:(double)aDelta
@@ -48,24 +47,22 @@
         double actualDelta = fabs([item doubleValue] - value);
         [[[mismatchDescription appendDescriptionOf:item]
                                appendText:@" differed by "]
-                               appendDescriptionOf:[NSNumber numberWithDouble:actualDelta]];
+                               appendDescriptionOf:@(actualDelta)];
     }
 }
 
 - (void)describeTo:(id<HCDescription>)description
 {
     [[[[description appendText:@"a numeric value within "]
-                    appendDescriptionOf:[NSNumber numberWithDouble:delta]]
+                    appendDescriptionOf:@(delta)]
                     appendText:@" of "]
-                    appendDescriptionOf:[NSNumber numberWithDouble:value]];
+                    appendDescriptionOf:@(value)];
 }
 
 @end
 
 
-#pragma mark -
-
-id<HCMatcher> HC_closeTo(double value, double delta)
+id HC_closeTo(double value, double delta)
 {
     return [HCIsCloseTo isCloseTo:value within:delta];
 }

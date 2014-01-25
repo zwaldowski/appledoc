@@ -52,6 +52,11 @@
 
 #pragma mark - Real members
 
++ (MemberInfoBase *)createMember:(NSString *)uniqueID block:(void(^)(MemberInfoBase *object))handler {
+	if ([uniqueID hasPrefix:@"+"] || [uniqueID hasPrefix:@"-"]) return [self createMethod:uniqueID block:handler];
+	return [self createProperty:uniqueID block:handler];
+}
+
 + (MethodInfo *)createMethod:(NSString *)uniqueID block:(void(^)(MethodInfo *object))handler {
 	MethodInfo *result = [[MethodInfo alloc] init];
 	NSRange range = NSMakeRange(1, uniqueID.length - 1);
@@ -108,6 +113,11 @@
 }
 
 #pragma mark - Mock members
+
++ (id)mockMember:(NSString *)uniqueID block:(GBCreateObjectBlock)handler {
+	if ([uniqueID hasPrefix:@"+"] || [uniqueID hasPrefix:@"-"]) return [self mockMethod:uniqueID block:handler];
+	return [self mockProperty:uniqueID block:handler];
+}
 
 + (id)mockMethod:(NSString *)uniqueID block:(void(^)(id object))handler {
 	BOOL isClassMethod = [uniqueID hasPrefix:@"+"];
@@ -208,6 +218,7 @@
 	NSMutableArray *groupsArray = [@[] mutableCopy];
 	
 	[groups enumerateKeysAndObjectsUsingBlock:^(NSString *groupName, NSArray *groupMembers, BOOL *stop) {
+		if ([groupName length] == 0) return;
 		id group = nil;
 		if (createMocks)
 			group = [self mockMethodGroup:groupName block:^(id object) { }];
@@ -224,18 +235,20 @@
 }
 
 + (void)add:(NSDictionary *)groups asMembersOf:(id)interfaceOrMock {
+	BOOL createMockMembers = [self isMock:interfaceOrMock];
 	NSMutableArray *classMethods = [@[] mutableCopy];
 	NSMutableArray *instanceMethods = [@[] mutableCopy];
 	NSMutableArray *properties = [@[] mutableCopy];
 	[groups enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSArray *members, BOOL *stop) {
 		[members enumerateObjectsUsingBlock:^(id member, NSUInteger idx, BOOL *stop) {
-			NSString *selector = [member uniqueObjectID];
+			id memberToAdd = [self createMemberFrom:member mock:createMockMembers];
+			NSString *selector = [memberToAdd uniqueObjectID];
 			if ([selector hasPrefix:@"+"])
-				[classMethods addObject:member];
+				[classMethods addObject:memberToAdd];
 			else if ([selector hasPrefix:@"-"])
-				[instanceMethods addObject:member];
+				[instanceMethods addObject:memberToAdd];
 			else
-				[properties addObject:member];
+				[properties addObject:memberToAdd];
 		}];
 	}];
 	
@@ -256,6 +269,14 @@
 	if ([objectOrMock isKindOfClass:[ObjectInfoBase class]]) return NO;
 	if ([objectOrMock isKindOfClass:[MethodGroupInfo class]]) return NO;
 	return YES;
+}
+
++ (id)createMemberFrom:(id)memberOrString mock:(BOOL)createMock {
+	if ([memberOrString isKindOfClass:[NSString class]]) {
+		if (createMock) return [self mockMember:memberOrString block:^(id object) {}];
+		return [self createMember:memberOrString block:^(MemberInfoBase *object) {}];
+	}
+	return memberOrString;
 }
 
 @end

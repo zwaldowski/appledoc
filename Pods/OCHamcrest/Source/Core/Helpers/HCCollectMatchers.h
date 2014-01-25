@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCCollectMatchers.h
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -16,8 +16,8 @@
 
 
 /**
-    Returns an array of matchers from a variable-length comma-separated list terminated by @c nil.
-    
-    @ingroup helpers
+ Returns an array of matchers from a variable-length comma-separated list terminated by @c nil.
+ 
+ @ingroup helpers
 */
 OBJC_EXPORT NSMutableArray *HCCollectMatchers(id item1, va_list args);

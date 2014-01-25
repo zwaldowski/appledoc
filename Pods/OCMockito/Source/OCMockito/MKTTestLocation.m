@@ -1,29 +1,28 @@
 //
 //  OCMockito - MKTTestLocation.m
-//  Copyright 2012 Jonathan M. Reid. See LICENSE.txt
+//  Copyright 2013 Jonathan M. Reid. See LICENSE.txt
+//
+//  Created by: Jon Reid, http://qualitycoding.org/
+//  Source: https://github.com/jonreid/OCMockito
 //
 
 #import "MKTTestLocation.h"
 
-#import "NSException+OCMockito.h"
-
-
-// As of 2010-09-09, the iPhone simulator has a bug where you can't catch exceptions when they are
-// thrown across NSInvocation boundaries. (See http://openradar.appspot.com/8081169 ) So instead of
-// using an NSInvocation to call -failWithException: without linking in SenTestingKit, we simply
-// pretend it exists on NSObject.
-@interface NSObject (MTExceptionBugHack)
-- (void)failWithException:(NSException *)exception;
-@end
+#if TARGET_OS_MAC
+    #import <OCHamcrest/OCHamcrest.h>
+#else
+    #import <OCHamcrestIOS/OCHamcrestIOS.h>
+#endif
 
 
 void MKTFailTest(id testCase, const char *fileName, int lineNumber, NSString *description)
 {
-    NSString *theFileName = [NSString stringWithCString:fileName encoding:NSUTF8StringEncoding];
-    NSException *failure = [NSException mkt_failureInFile:theFileName
-                                                   atLine:lineNumber
-                                                   reason:description];
-    [testCase failWithException:failure];
+    HCTestFailure *failure = [[HCTestFailure alloc] initWithTestCase:testCase
+                                                            fileName:[NSString stringWithUTF8String:fileName]
+                                                          lineNumber:(NSUInteger)lineNumber
+                                                              reason:description];
+    id <HCTestFailureHandler> chain = HC_testFailureHandlerChain();
+    [chain handleFailure:failure];
 }
 
 void MKTFailTestLocation(MKTTestLocation testLocation, NSString *description)

@@ -19,6 +19,7 @@ typedef void(^GBCreateObjectBlock)(id object);
 + (CategoryInfo *)createCategory:(void(^)(CategoryInfo *object))handler;
 + (ProtocolInfo *)createProtocol:(void(^)(ProtocolInfo *object))handler;
 
++ (MemberInfoBase *)createMember:(NSString *)uniqueID block:(void(^)(MemberInfoBase *object))handler;
 + (MethodInfo *)createMethod:(NSString *)uniqueID block:(void(^)(MethodInfo *object))handler;
 + (PropertyInfo *)createProperty:(NSString *)uniqueID block:(void(^)(PropertyInfo *object))handler;
 + (MethodGroupInfo *)createMethodGroup:(NSString *)name block:(void(^)(MethodGroupInfo *object))handler;
@@ -27,6 +28,7 @@ typedef void(^GBCreateObjectBlock)(id object);
 + (id)mockCategory:(NSString *)name onClass:(id)classNameOrObject block:(GBCreateObjectBlock)handler;
 + (id)mockProtocol:(NSString *)name block:(GBCreateObjectBlock)handler;
 
++ (id)mockMember:(NSString *)uniqueID block:(GBCreateObjectBlock)handler;
 + (id)mockMethod:(NSString *)uniqueID block:(GBCreateObjectBlock)handler;
 + (id)mockProperty:(NSString *)uniqueID block:(GBCreateObjectBlock)handler;
 + (id)mockMethodGroup:(NSString *)name block:(GBCreateObjectBlock)handler;

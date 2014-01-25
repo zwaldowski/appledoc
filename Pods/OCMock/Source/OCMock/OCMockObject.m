@@ -7,10 +7,10 @@
 #import "OCClassMockObject.h"
 #import "OCProtocolMockObject.h"
 #import "OCPartialMockObject.h"
-#import "OCMockClassObject.h"
 #import "OCObserverMockObject.h"
 #import <OCMock/OCMockRecorder.h>
 #import "NSInvocation+OCMAdditions.h"
+
 
 @interface OCMockObject(Private)
 + (id)_makeNice:(OCMockObject *)mock;
@@ -36,11 +36,6 @@
 + (id)mockForClass:(Class)aClass
 {
 	return [[[OCClassMockObject alloc] initWithClass:aClass] autorelease];
-}
-
-+ (id)mockForClassObject:(Class)aClass;
-{
-    return [[[OCMockClassObject alloc] initWithClass:aClass] autorelease];
 }
 
 + (id)mockForProtocol:(Protocol *)aProtocol
@@ -148,8 +143,8 @@
 	}
 	if([expectations count] > 0)
 	{
-		[NSException raise:NSInternalInconsistencyException format:@"%@ : %d expected methods were not invoked: %@", 
-			[self description], [expectations count], [self _recorderDescriptions:YES]];
+		[NSException raise:NSInternalInconsistencyException format:@"%@ : %@ expected methods were not invoked: %@", 
+			[self description], @([expectations count]), [self _recorderDescriptions:YES]];
 	}
 	if([exceptions count] > 0)
 	{
@@ -164,6 +159,15 @@
 
 
 #pragma mark  Handling invocations
+
+- (BOOL)handleSelector:(SEL)sel
+{
+    for (OCMockRecorder *recorder in recorders)
+        if ([recorder matchesSelector:sel])
+            return YES;
+
+    return NO;
+}
 
 - (void)forwardInvocation:(NSInvocation *)anInvocation
 {

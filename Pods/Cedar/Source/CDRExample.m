@@ -58,6 +58,7 @@ const CDRSpecBlock PENDING = nil;
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         @try {
             [parent_ setUp];
+            if (parent_.subjectActionBlock) { parent_.subjectActionBlock(); }
             block_();
             self.state = CDRExampleStatePassed;
         } @catch (CDRSpecFailure *x) {
@@ -66,8 +67,16 @@ const CDRSpecBlock PENDING = nil;
         } @catch (NSObject *x) {
             self.failure = [CDRSpecFailure specFailureWithRaisedObject:x];
             self.state = CDRExampleStateError;
+        } @finally {
+            @try {
+                [parent_ tearDown];
+            } @catch (NSObject *x) {
+                if (self.state != CDRExampleStateFailed) {
+                    self.failure = [CDRSpecFailure specFailureWithRaisedObject:x];
+                    self.state = CDRExampleStateError;
+                }
+            }
         }
-        [parent_ tearDown];
         [pool drain];
     } else {
         self.state = CDRExampleStatePending;

@@ -22,8 +22,18 @@
 
 
 - (id)initWithString:(NSString *)s {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.string = s;
+    }
+    return self;
+}
+
+
+- (id)initWithStream:(NSStream *)s {
+    self = [super init];
+    if (self) {
+        self.stream = s;
     }
     return self;
 }
@@ -31,6 +41,7 @@
 
 - (void)dealloc {
     self.string = nil;
+    self.stream = nil;
     [super dealloc];
 }
 
@@ -40,7 +51,14 @@
 }
 
 
+- (NSStream *)stream {
+    return [[stream retain] autorelease];
+}
+
+
 - (void)setString:(NSString *)s {
+    NSAssert(!stream, @"");
+    
     if (string != s) {
         [string autorelease];
         string = [s copy];
@@ -51,11 +69,35 @@
 }
 
 
-- (PKUniChar)read {
-    if (0 == length || offset > length - 1) {
-        return PKEOF;
+- (void)setStream:(NSInputStream *)s {
+    NSAssert(!string, @"");
+
+    if (stream != s) {
+        [stream autorelease];
+        stream = [s retain];
+        length = NSNotFound;
     }
-    return [string characterAtIndex:offset++];
+    // reset cursor
+    offset = 0;
+}
+
+
+- (PKUniChar)read {
+    PKUniChar result = PKEOF;
+    
+    if (string) {
+        if (length && offset < length) {
+            result = [string characterAtIndex:offset++];
+        }
+    } else {
+        NSUInteger maxLen = 1; // 2 for wide char?
+        uint8_t c;
+        if ([stream read:&c maxLength:maxLen]) {
+            result = (PKUniChar)c;
+        }
+    }
+    
+    return result;
 }
 
 
@@ -65,8 +107,7 @@
 
 
 - (void)unread:(NSUInteger)count {
-    NSUInteger i = 0;
-    for ( ; i < count; i++) {
+    for (NSUInteger i = 0; i < count; i++) {
         [self unread];
     }
 }

@@ -1,6 +1,9 @@
 //
 //  OCMockito - MKTMockingProgress.h
-//  Copyright 2012 Jonathan M. Reid. See LICENSE.txt
+//  Copyright 2013 Jonathan M. Reid. See LICENSE.txt
+//
+//  Created by: Jon Reid, http://qualitycoding.org/
+//  Source: https://github.com/jonreid/OCMockito
 //
 
 #import <Foundation/Foundation.h>
@@ -17,10 +20,10 @@
 
 @property (nonatomic, assign) MKTTestLocation testLocation;
 
-+ (id)sharedProgress;
++ (instancetype)sharedProgress;
 
 - (void)stubbingStartedAtLocation:(MKTTestLocation)location;
-- (void)reportOngoingStubbing:(MKTOngoingStubbing *)theOngoingStubbing;
+- (void)reportOngoingStubbing:(MKTOngoingStubbing *)ongoingStubbing;
 - (MKTOngoingStubbing *)pullOngoingStubbing;
 
 - (void)verificationStarted:(id <MKTVerificationMode>)mode atLocation:(MKTTestLocation)location;

@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCHasProperty.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Justin Shacklette
 //
@@ -11,19 +11,15 @@
 #import "HCRequireNonNilObject.h"
 #import "HCWrapInMatcher.h"
 
-@interface HCHasProperty ()
-- (id)objectFromInvokingSelector:(SEL)selector onObject:(id)item;
-@end
-
 
 @implementation HCHasProperty
 
-+ (id)hasProperty:(NSString *)property value:(id<HCMatcher>)aValueMatcher
++ (instancetype)hasProperty:(NSString *)property value:(id <HCMatcher>)aValueMatcher
 {
-    return [[[self alloc] initWithProperty:property value:aValueMatcher] autorelease];
+    return [[self alloc] initWithProperty:property value:aValueMatcher];
 }
 
-- (id)initWithProperty:(NSString *)property value:(id<HCMatcher>)aValueMatcher
+- (instancetype)initWithProperty:(NSString *)property value:(id <HCMatcher>)aValueMatcher
 {
     HCRequireNonNilObject(property);
     
@@ -31,16 +27,9 @@
     if (self != nil)
     {
         propertyName = [property copy];
-        valueMatcher = [aValueMatcher retain];
+        valueMatcher = aValueMatcher;
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [propertyName release];
-    [valueMatcher release];
-    [super dealloc];
 }
 
 - (BOOL)matches:(id)item
@@ -61,88 +50,87 @@
     [getterInvocation setSelector:selector];
     [getterInvocation invoke];
     
-    char charValue;
-    int intValue;
-    short shortValue;
-    long longValue;
-    long long longLongValue;
-    unsigned char unsignedCharValue;
-    unsigned int unsignedIntValue;
-    unsigned short unsignedShortValue;
-    unsigned long unsignedLongValue;
-    unsigned long long unsignedLongLongValue;
-    float floatValue;
-    double doubleValue;
-
     id result = nil;
     const char *argType = [getterSignature methodReturnType];
-    switch (argType[0])
+    if (strncmp(argType, @encode(char), 1) == 0)
     {
-        case 'c':
-            [getterInvocation getReturnValue:&charValue];
-            result = [NSNumber numberWithChar:charValue];
-            break;
-            
-        case 'i':
-            [getterInvocation getReturnValue:&intValue];
-            result = [NSNumber numberWithInt:intValue];
-            break;
-            
-        case 's':
-            [getterInvocation getReturnValue:&shortValue];
-            result = [NSNumber numberWithShort:shortValue];
-            break;
-            
-        case 'l':
-            [getterInvocation getReturnValue:&longValue];
-            result = [NSNumber numberWithLong:longValue];
-            break;
-            
-        case 'q':
-            [getterInvocation getReturnValue:&longLongValue];
-            result = [NSNumber numberWithLong:longLongValue];
-            break;
-            
-        case 'C':
-            [getterInvocation getReturnValue:&unsignedCharValue];
-            result = [NSNumber numberWithUnsignedChar:unsignedCharValue];
-            break;
-            
-        case 'I':
-            [getterInvocation getReturnValue:&unsignedIntValue];
-            result = [NSNumber numberWithUnsignedInt:unsignedIntValue];
-            break;
-            
-        case 'S':
-            [getterInvocation getReturnValue:&unsignedShortValue];
-            result = [NSNumber numberWithUnsignedShort:unsignedShortValue];
-            break;
-            
-        case 'L':
-            [getterInvocation getReturnValue:&unsignedLongValue];
-            result = [NSNumber numberWithUnsignedLong:unsignedLongValue];
-            break;
-            
-        case 'Q':
-            [getterInvocation getReturnValue:&unsignedLongLongValue];
-            result = [NSNumber numberWithUnsignedLongLong:unsignedLongLongValue];
-            break;
-            
-        case 'f':
-            [getterInvocation getReturnValue:&floatValue];
-            result = [NSNumber numberWithFloat:floatValue];
-            break;
-            
-        case 'd':
-            [getterInvocation getReturnValue:&doubleValue];
-            result = [NSNumber numberWithDouble:doubleValue];
-            break;
-            
-        case '@':
-            [getterInvocation getReturnValue:&result];
-            break;
+        char charValue;
+        [getterInvocation getReturnValue:&charValue];
+        result = @(charValue);
     }
-    
+    else if (strncmp(argType, @encode(int), 1) == 0)
+    {
+        int intValue;
+        [getterInvocation getReturnValue:&intValue];
+        result = @(intValue);
+    }
+    else if (strncmp(argType, @encode(short), 1) == 0)
+    {
+        short shortValue;
+        [getterInvocation getReturnValue:&shortValue];
+        result = @(shortValue);
+    }
+    else if (strncmp(argType, @encode(long), 1) == 0)
+    {
+        long longValue;
+        [getterInvocation getReturnValue:&longValue];
+        result = @(longValue);
+    }
+    else if (strncmp(argType, @encode(long long), 1) == 0)
+    {
+        long long longLongValue;
+        [getterInvocation getReturnValue:&longLongValue];
+        result = @(longLongValue);
+    }
+    else if (strncmp(argType, @encode(unsigned char), 1) == 0)
+    {
+        unsigned char unsignedCharValue;
+        [getterInvocation getReturnValue:&unsignedCharValue];
+        result = @(unsignedCharValue);
+    }
+    else if (strncmp(argType, @encode(unsigned int), 1) == 0)
+    {
+        unsigned int unsignedIntValue;
+        [getterInvocation getReturnValue:&unsignedIntValue];
+        result = @(unsignedIntValue);
+    }
+    else if (strncmp(argType, @encode(unsigned short), 1) == 0)
+    {
+        unsigned short unsignedShortValue;
+        [getterInvocation getReturnValue:&unsignedShortValue];
+        result = @(unsignedShortValue);
+    }
+    else if (strncmp(argType, @encode(unsigned long), 1) == 0)
+    {
+        unsigned long unsignedLongValue;
+        [getterInvocation getReturnValue:&unsignedLongValue];
+        result = @(unsignedLongValue);
+    }
+    else if (strncmp(argType, @encode(unsigned long long), 1) == 0)
+    {
+        unsigned long long unsignedLongLongValue;
+        [getterInvocation getReturnValue:&unsignedLongLongValue];
+        result = @(unsignedLongLongValue);
+    }
+    else if (strncmp(argType, @encode(float), 1) == 0)
+    {
+        float floatValue;
+        [getterInvocation getReturnValue:&floatValue];
+        result = @(floatValue);
+    }
+    else if (strncmp(argType, @encode(double), 1) == 0)
+    {
+        double doubleValue;
+        [getterInvocation getReturnValue:&doubleValue];
+        result = @(doubleValue);
+    }
+    else if (strncmp(argType, @encode(id), 1) == 0)
+    {
+        __unsafe_unretained id unretainedResult;
+        [getterInvocation getReturnValue:&unretainedResult];
+        result = unretainedResult;
+    }
+        
     return result;
 }
 
@@ -156,9 +144,7 @@
 @end
 
 
-#pragma mark -
-
-id<HCMatcher> HC_hasProperty(NSString *name, id valueMatch)
+id HC_hasProperty(NSString *name, id valueMatch)
 {
     return [HCHasProperty hasProperty:name value:HCWrapInMatcher(valueMatch)];
 }

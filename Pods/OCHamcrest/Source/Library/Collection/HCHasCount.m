@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCHasCount.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -15,23 +15,17 @@
 
 @implementation HCHasCount
 
-+ (id)hasCount:(id<HCMatcher>)matcher
++ (instancetype)hasCount:(id <HCMatcher>)matcher
 {
-    return [[[self alloc] initWithCount:matcher] autorelease];
+    return [[self alloc] initWithCount:matcher];
 }
 
-- (id)initWithCount:(id<HCMatcher>)matcher
+- (instancetype)initWithCount:(id <HCMatcher>)matcher
 {
     self = [super init];
     if (self)
-        countMatcher = [matcher retain];
+        countMatcher = matcher;
     return self;
-}
-
-- (void)dealloc
-{
-    [countMatcher release];
-    [super dealloc];
 }
 
 - (BOOL)matches:(id)item
@@ -39,19 +33,20 @@
     if (![item respondsToSelector:@selector(count)])
         return NO;
     
-    NSNumber *count = [NSNumber numberWithUnsignedInteger:[item count]];
+    NSNumber *count = @([item count]);
     return [countMatcher matches:count];
 }
 
 - (void)describeMismatchOf:(id)item to:(id<HCDescription>)mismatchDescription
 {
-    [super describeMismatchOf:item to:mismatchDescription];
-    
+    [mismatchDescription appendText:@"was "];
     if ([item respondsToSelector:@selector(count)])
     {
-        NSNumber *count = [NSNumber numberWithUnsignedInteger:[item count]];
-        [[mismatchDescription appendText:@" with count of "] appendDescriptionOf:count];
+        [[[mismatchDescription appendText:@"count of "]
+                               appendDescriptionOf:@([item count])]
+                               appendText:@" with "];
     }
+    [mismatchDescription appendDescriptionOf:item];
 }
 
 - (void)describeTo:(id<HCDescription>)description
@@ -62,14 +57,12 @@
 @end
 
 
-#pragma mark -
-
-id<HCMatcher> HC_hasCount(id<HCMatcher> matcher)
+id HC_hasCount(id <HCMatcher> matcher)
 {
     return [HCHasCount hasCount:matcher];
 }
 
-id<HCMatcher> HC_hasCountOf(NSUInteger value)
+id HC_hasCountOf(NSUInteger value)
 {
     return HC_hasCount(HC_equalToUnsignedInteger(value));
 }

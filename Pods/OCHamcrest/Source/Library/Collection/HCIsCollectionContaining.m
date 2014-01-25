@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCIsCollectionContaining.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -17,23 +17,17 @@
 
 @implementation HCIsCollectionContaining
 
-+ (id)isCollectionContaining:(id<HCMatcher>)anElementMatcher
++ (instancetype)isCollectionContaining:(id <HCMatcher>)anElementMatcher
 {
-    return [[[self alloc] initWithMatcher:anElementMatcher] autorelease];
+    return [[self alloc] initWithMatcher:anElementMatcher];
 }
 
-- (id)initWithMatcher:(id<HCMatcher>)anElementMatcher
+- (instancetype)initWithMatcher:(id <HCMatcher>)anElementMatcher
 {
     self = [super init];
     if (self)
-        elementMatcher = [anElementMatcher retain];
+        elementMatcher = anElementMatcher;
     return self;
-}
-
-- (void)dealloc
-{
-    [elementMatcher release];
-    [super dealloc];
 }
 
 - (BOOL)matches:(id)collection
@@ -56,15 +50,13 @@
 @end
 
 
-#pragma mark -
-
-id<HCMatcher> HC_hasItem(id itemMatch)
+id HC_hasItem(id itemMatch)
 {
     HCRequireNonNilObject(itemMatch);
     return [HCIsCollectionContaining isCollectionContaining:HCWrapInMatcher(itemMatch)];
 }
 
-id<HCMatcher> HC_hasItems(id itemMatch, ...)
+id HC_hasItems(id itemMatch, ...)
 {
     NSMutableArray *matchers = [NSMutableArray arrayWithObject:HC_hasItem(itemMatch)];
     

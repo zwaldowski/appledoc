@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCIsEqualIgnoringCase.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -15,12 +15,12 @@
 
 @implementation HCIsEqualIgnoringCase
 
-+ (id)isEqualIgnoringCase:(NSString *)aString
++ (instancetype)isEqualIgnoringCase:(NSString *)aString
 {
-    return [[[self alloc] initWithString:aString] autorelease];
+    return [[self alloc] initWithString:aString];
 }
 
-- (id)initWithString:(NSString *)aString
+- (instancetype)initWithString:(NSString *)aString
 {
     HCRequireNonNilObject(aString);
     
@@ -28,12 +28,6 @@
     if (self)
         string = [aString copy];
     return self;
-}
-
-- (void)dealloc
-{
-    [string release];
-    [super dealloc];
 }
 
 - (BOOL)matches:(id)item
@@ -53,9 +47,7 @@
 @end
 
 
-#pragma mark -
-
-id<HCMatcher> HC_equalToIgnoringCase(NSString *aString)
+id HC_equalToIgnoringCase(NSString *aString)
 {
     return [HCIsEqualIgnoringCase isEqualIgnoringCase:aString];
 }

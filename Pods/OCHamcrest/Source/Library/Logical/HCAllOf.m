@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCAllOf.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -15,23 +15,17 @@
 
 @implementation HCAllOf
 
-+ (id)allOf:(NSArray *)theMatchers
++ (instancetype)allOf:(NSArray *)theMatchers
 {
-    return [[[self alloc] initWithMatchers:theMatchers] autorelease];
+    return [[self alloc] initWithMatchers:theMatchers];
 }
 
-- (id)initWithMatchers:(NSArray *)theMatchers
+- (instancetype)initWithMatchers:(NSArray *)theMatchers
 {
     self = [super init];
     if (self)
-        matchers = [theMatchers retain];
+        matchers = theMatchers;
     return self;
-}
-
-- (void)dealloc
-{
-    [matchers release];
-    [super dealloc];
 }
 
 - (BOOL)matches:(id)item
@@ -41,7 +35,7 @@
 
 - (BOOL)matches:(id)item describingMismatchTo:(id<HCDescription>)mismatchDescription
 {
-    for (id<HCMatcher> oneMatcher in matchers)
+    for (id <HCMatcher> oneMatcher in matchers)
     {
         if (![oneMatcher matches:item])
         {
@@ -66,9 +60,7 @@
 @end
 
 
-#pragma mark -
-
-id<HCMatcher> HC_allOf(id match, ...)
+id HC_allOf(id match, ...)
 {
     va_list args;
     va_start(args, match);

@@ -38,7 +38,8 @@
 @implementation PKSymbolState
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.rootNode = [[[PKSymbolRootNode alloc] init] autorelease];
         self.addedSymbols = [NSMutableArray array];
     }
@@ -98,7 +99,7 @@
 
 
 - (PKToken *)symbolTokenWith:(PKUniChar)cin {
-    return [self symbolTokenWithSymbol:[NSString stringWithFormat:@"%C", cin]];
+    return [self symbolTokenWithSymbol:[NSString stringWithFormat:@"%C", (unichar)cin]];
 }
 
 

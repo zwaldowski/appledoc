@@ -1,6 +1,6 @@
 //
 //  OCHamcrest - HCStringContains.m
-//  Copyright 2012 hamcrest.org. See LICENSE.txt
+//  Copyright 2013 hamcrest.org. See LICENSE.txt
 //
 //  Created by: Jon Reid, http://qualitycoding.org/
 //  Docs: http://hamcrest.github.com/OCHamcrest/
@@ -9,14 +9,12 @@
 
 #import "HCStringContains.h"
 
-#import "HCDescription.h"
-
 
 @implementation HCStringContains
 
-+ (id)stringContains:(NSString *)aString
++ (instancetype)stringContains:(NSString *)aString
 {
-    return [[[self alloc] initWithSubstring:aString] autorelease];
+    return [[self alloc] initWithSubstring:aString];
 }
 
 - (BOOL)matches:(id)item
@@ -35,9 +33,7 @@
 @end
 
 
-#pragma mark -
-
-id<HCMatcher> HC_containsString(NSString *aString)
+id <HCMatcher> HC_containsString(NSString *aString)
 {
     return [HCStringContains stringContains:aString];
 }
