@@ -235,7 +235,7 @@
 	NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:3];
 	[result setObject:value forKey:@"value"];
 	if (style > 0) {
-		[result setObject:[NSNumber numberWithUnsignedInt:style] forKey:@"style"];
+		[result setObject:[NSNumber numberWithUnsignedInteger:style] forKey:@"style"];
 		[result setObject:[NSNumber numberWithBool:YES] forKey:@"emphasized"];
 	}
 	if (href) [result setObject:href forKey:@"href"];

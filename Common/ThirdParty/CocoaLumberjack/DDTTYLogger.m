@@ -90,7 +90,7 @@ static DDTTYLogger *sharedInstance;
 	if (logMsg)
 	{
 		const char *msg = [logMsg UTF8String];
-		int msgLen = strlen(msg);
+		size_t msgLen = strlen(msg);
 		
 		if (isFormatted)
 		{
@@ -113,7 +113,7 @@ static DDTTYLogger *sharedInstance;
 			NSString *tsNStr = [dateFormatter stringFromDate:(logMessage->timestamp)];
 			
 			const char *tsCStr = [tsNStr UTF8String];
-			int tsLen = strlen(tsCStr);
+			size_t tsLen = strlen(tsCStr);
 			
 			// tid = thread id
 			// 

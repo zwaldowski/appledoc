@@ -42,9 +42,9 @@
 
 // Now define everything the way we want it...
 
-extern NSUInteger kGBLogLevel;
-extern NSInteger kGBLogBasedResult;
-void GBLogUpdateResult(NSInteger result);
+extern int kGBLogLevel;
+extern int kGBLogBasedResult;
+void GBLogUpdateResult(int result);
 
 #define LOG_FLAG_FATAL		(1 << 0) // 0...0000001
 #define LOG_FLAG_ERROR		(1 << 1) // 0...0000010
@@ -111,7 +111,7 @@ void GBLogUpdateResult(NSInteger result);
  @param value The new application-wide log level.
  @see setLogLevelFromVerbose:
  */
-+ (void)setLogLevel:(NSUInteger)value;
++ (void)setLogLevel:(int)value;
 
 /** Sets logging level from the given verbose command line argument value.
  

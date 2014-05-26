@@ -1385,7 +1385,7 @@
 	const char *path = [filePath UTF8String];
 	const char *name = [attrName UTF8String];
 	
-	int result = getxattr(path, name, NULL, 0, 0, 0);
+	ssize_t result = getxattr(path, name, NULL, 0, 0, 0);
 	
 	return (result >= 0);
 }

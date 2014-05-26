@@ -10,17 +10,17 @@
 
 #pragma mark Log level handling
 
-NSUInteger kGBLogLevel = LOG_LEVEL_NORMAL;
-NSInteger kGBLogBasedResult = GBEXIT_SUCCESS;
+int kGBLogLevel = LOG_LEVEL_NORMAL;
+int kGBLogBasedResult = GBEXIT_SUCCESS;
 
-void GBLogUpdateResult(NSInteger result) {
+void GBLogUpdateResult(int result) {
 	// This code relies on exit codes being larger for more serious errors.
 	if (result > kGBLogBasedResult) kGBLogBasedResult = result;
 }
 
 @implementation GBLog
 
-+ (void)setLogLevel:(NSUInteger)value {
++ (void)setLogLevel:(int)value {
 	kGBLogLevel = value;
 }
 
