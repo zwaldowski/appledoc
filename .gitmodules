@@ -1,6 +1,9 @@
 [submodule "ddcli"]
-	path = Common/ThirdParty/ddcli
+	path = Vendor/ddcli
 	url = https://github.com/zwaldowski/ddcli.git
 [submodule "DDMinizip"]
-	path = Common/ThirdParty/DDMinizip
-	url = https://github.com/zwaldowski/DDMinizip
+	path = Vendor/DDMinizip
+	url = https://github.com/zwaldowski/DDMinizip.git
+[submodule "ParseKit"]
+	path = Vendor/ParseKit
+	url = https://github.com/zwaldowski/parsekit.git
