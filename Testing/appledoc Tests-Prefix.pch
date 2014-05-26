@@ -1,13 +1,10 @@
 //
-//  prefix.pch
-//  appledoc
+//  Prefix header
 //
-//  Created by Tomaz Kragelj on 22.7.10.
-//  Copyright (C) 2010, Gentle Bytes. All rights reserved.
+//  The contents of this file are implicitly included at the beginning of every source file.
 //
 
 #ifdef __OBJC__
-	#import <Cocoa/Cocoa.h>
 	#import <Foundation/Foundation.h>
 	#import "NSObject+GBObject.h"
 	#import "NSString+GBString.h"
@@ -17,4 +14,10 @@
 	#import "NSFileManager+GBFileManager.h"
 	#import "GBLog.h"
 	#import "GBExitCodes.h"
+
+	#import <XCTest/XCTest.h>
+	#import <OCMock/OCMock.h>
+	#import "GBRealLifeDataProvider.h"
+	#import "GBTestObjectsRegistry.h"
+	#import "GBObjectsAssertor.h"
 #endif

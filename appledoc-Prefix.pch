@@ -1,0 +1,21 @@
+//
+//  Prefix header
+//
+//  The contents of this file are implicitly included at the beginning of every source file.
+//
+
+#ifdef __OBJC__
+	#import <Foundation/Foundation.h>
+
+	#import "NSObject+GBObject.h"
+	#import "NSString+GBString.h"
+	#import "NSArray+GBArray.h"
+	#import "NSException+GBException.h"
+	#import "NSError+GBError.h"
+	#import "NSFileManager+GBFileManager.h"
+	#import "GBLog.h"
+	#import "GBExitCodes.h"
+
+	#define PKAssertMainThread() NSAssert1([NSThread isMainThread], @"%s should be called on the main thread only.", __PRETTY_FUNCTION__);
+	#define PKAssertNotMainThread() NSAssert1(![NSThread isMainThread], @"%s should be called on the main thread only.", __PRETTY_FUNCTION__);
+#endif
