@@ -9,7 +9,7 @@
 #import "GBApplicationSettingsProvider.h"
 #import "GBCommentComponentsProvider.h"
 
-@interface GBCommentComponentsProviderTesting : GHTestCase
+@interface GBCommentComponentsProviderTesting : XCTestCase
 @end
 	
 @implementation GBCommentComponentsProviderTesting
@@ -18,7 +18,7 @@
 	// setup & execute
 	GBCommentComponentsProvider *provider = [GBCommentComponentsProvider provider];
 	// verify
-	assertThat(provider.crossReferenceMarkersTemplate, is(@"<?%@>?"));
+	XCTAssertEqualObjects(provider.crossReferenceMarkersTemplate, @"<?%@>?");
 }
 
 @end

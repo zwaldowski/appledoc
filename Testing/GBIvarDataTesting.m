@@ -8,7 +8,7 @@
 
 #import "GBIvarData.h"
 
-@interface GBIvarDataTesting : GHTestCase
+@interface GBIvarDataTesting : XCTestCase
 @end
 
 @implementation GBIvarDataTesting
@@ -21,14 +21,14 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify - simple testing here, fully tested in GBModelBaseTesting!
-	assertThatInteger([original.sourceInfos count], equalToInteger(1));
+	XCTAssertEqual(original.sourceInfos.count, (NSUInteger)1);
 }
 
 - (void)testIsTopLevelObject_shouldReturnNO {
 	// setup & execute
 	GBIvarData *ivar = [GBTestObjectsRegistry ivarWithComponents:@"int", @"_name", nil];
 	// verify
-	assertThatBool(ivar.isTopLevelObject, equalToBool(NO));
+	XCTAssertFalse(ivar.isTopLevelObject);
 }
 
 @end

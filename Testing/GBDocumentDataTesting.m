@@ -9,7 +9,7 @@
 #import "GBDataObjects.h"
 #import "GBApplicationSettingsProvider.h"
 
-@interface GBDocumentDataTesting : GHTestCase
+@interface GBDocumentDataTesting : XCTestCase
 @end
 
 @implementation GBDocumentDataTesting
@@ -20,31 +20,31 @@
 	// setup & execute
 	GBDocumentData *document = [GBDocumentData documentDataWithContents:@"contents" path:@"path"];
 	// verify
-	assertThat(document.comment, isNot(nil));
-	assertThat(document.comment.stringValue, is(@"contents"));
+	XCTAssertNotNil(document.comment);
+	XCTAssertEqualObjects(document.comment.stringValue, @"contents");
 }
 
 - (void)testInitWithContentsData_shouldCreateSourceInfoUsingThePathAsFilename {
 	// setup & execute
 	GBDocumentData *document = [GBDocumentData documentDataWithContents:@"contents" path:@"path/to/document.ext"];
 	// verify
-	assertThatInteger([document.sourceInfos count], equalToInteger(1));
-	assertThatInteger([[document.sourceInfos anyObject] lineNumber], equalToInteger(1));
-	assertThat([[document.sourceInfos anyObject] filename], is(@"document.ext"));
+	XCTAssertEqual(document.sourceInfos.count, (NSUInteger)1);
+	XCTAssertEqual([[document.sourceInfos anyObject] lineNumber], (NSInteger)1);
+	XCTAssertEqualObjects([[document.sourceInfos anyObject] filename], @"document.ext");
 }
 
 - (void)testInitWithContentsData_shouldAssignNameOfDocument {
 	// setup & execute
 	GBDocumentData *document = [GBDocumentData documentDataWithContents:@"contents" path:@"path/document.extension"];
 	// verify
-	assertThat(document.nameOfDocument, is(@"document.extension"));
+	XCTAssertEqualObjects(document.nameOfDocument, @"document.extension");
 }
 
 - (void)testInitWithContentsData_shouldAssignPathOfDocument {
 	// setup & execute
 	GBDocumentData *document = [GBDocumentData documentDataWithContents:@"contents" path:@"path/document.extension"];
 	// verify
-	assertThat(document.pathOfDocument, is(@"path/document.extension"));
+	XCTAssertEqualObjects(document.pathOfDocument, @"path/document.extension");
 }
 
 #pragma mark Convenience methods testing
@@ -57,11 +57,11 @@
 	GBDocumentData *document4 = [GBDocumentData documentDataWithContents:@"c" path:@"path/sub/document.ext" basePath:@"path"];
 	GBDocumentData *document5 = [GBDocumentData documentDataWithContents:@"c" path:@"path/sub/document.ext" basePath:@"path/sub"];
 	// verify
-	assertThat(document1.subpathOfDocument, is(@"document.ext"));
-	assertThat(document2.subpathOfDocument, is(@"path/sub/document.ext"));
-	assertThat(document3.subpathOfDocument, is(@"document.ext"));
-	assertThat(document4.subpathOfDocument, is(@"sub/document.ext"));
-	assertThat(document5.subpathOfDocument, is(@"document.ext"));
+	XCTAssertEqualObjects(document1.subpathOfDocument, @"document.ext");
+	XCTAssertEqualObjects(document2.subpathOfDocument, @"path/sub/document.ext");
+	XCTAssertEqualObjects(document3.subpathOfDocument, @"document.ext");
+	XCTAssertEqualObjects(document4.subpathOfDocument, @"sub/document.ext");
+	XCTAssertEqualObjects(document5.subpathOfDocument, @"document.ext");
 }
 
 #pragma mark Overriden methods
@@ -70,14 +70,14 @@
 	// setup & execute
 	GBDocumentData *document = [GBDocumentData documentDataWithContents:@"contents" path:@"path"];
 	// verify
-	assertThatBool(document.isStaticDocument, equalToBool(YES));
+	XCTAssertTrue(document.isStaticDocument);
 }
 
 - (void)testIsTopLevelObject_shouldReturnNO {
 	// setup & execute
 	GBDocumentData *document = [GBDocumentData documentDataWithContents:@"contents" path:@"path"];
 	// verify
-	assertThatBool(document.isTopLevelObject, equalToBool(NO));
+	XCTAssertFalse(document.isTopLevelObject);
 }
 
 @end

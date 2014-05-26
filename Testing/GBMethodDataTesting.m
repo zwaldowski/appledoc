@@ -27,49 +27,49 @@
 	// setup & execute
 	GBMethodData *data = [GBTestObjectsRegistry instanceMethodWithArguments:[GBMethodArgument methodArgumentWithName:@"method"], nil];
 	// verify
-	assertThat(data.methodSelector, is(@"method"));
+	XCTAssertEqualObjects(data.methodSelector, @"method");
 }
 
 - (void)testMethodData_shouldInitializeSingleTypedInstanceSelector {
 	// setup & execute
 	GBMethodData *data = [GBTestObjectsRegistry instanceMethodWithNames:@"method", nil];
 	// verify
-	assertThat(data.methodSelector, is(@"method:"));
+	XCTAssertEqualObjects(data.methodSelector, @"method:");
 }
 
 - (void)testMethodData_shouldInitializeMultipleArgumentInstanceSelector {
 	// setup & execute
 	GBMethodData *data = [GBTestObjectsRegistry instanceMethodWithNames:@"delegate", @"checked", @"something", nil];
 	// verify
-	assertThat(data.methodSelector, is(@"delegate:checked:something:"));
+	XCTAssertEqualObjects(data.methodSelector, @"delegate:checked:something:");
 }
 
 - (void)testMethodData_shouldInitializeSingleTypelessClassSelector {
 	// setup & execute
 	GBMethodData *data = [GBTestObjectsRegistry classMethodWithArguments:[GBMethodArgument methodArgumentWithName:@"method"], nil];
 	// verify
-	assertThat(data.methodSelector, is(@"method"));
+	XCTAssertEqualObjects(data.methodSelector, @"method");
 }
 
 - (void)testMethodData_shouldInitializeSingleTypedClassSelector {
 	// setup & execute
 	GBMethodData *data = [GBTestObjectsRegistry classMethodWithNames:@"method", nil];
 	// verify
-	assertThat(data.methodSelector, is(@"method:"));
+	XCTAssertEqualObjects(data.methodSelector, @"method:");
 }
 
 - (void)testMethodData_shouldInitializeMultipleArgumentClassSelector {
 	// setup & execute
 	GBMethodData *data = [GBTestObjectsRegistry classMethodWithNames:@"delegate", @"checked", @"something", nil];
 	// verify
-	assertThat(data.methodSelector, is(@"delegate:checked:something:"));
+	XCTAssertEqualObjects(data.methodSelector, @"delegate:checked:something:");
 }
 
 - (void)testMethodData_shouldInitializePropertySelector {
 	// setup & execute
 	GBMethodData *data = [GBTestObjectsRegistry propertyMethodWithArgument:@"isSelected"];
 	// verify
-	assertThat(data.methodSelector, is(@"isSelected"));
+	XCTAssertEqualObjects(data.methodSelector, @"isSelected");
 }
 
 #pragma mark - Property initializations
@@ -80,9 +80,10 @@
 	NSArray *components = [NSArray arrayWithObjects:@"UIView", @"*", @"value", nil];
 	GBMethodData *data = [GBMethodData propertyDataWithAttributes:attributes components:components];
 	// verify
-	assertThat(data.methodAttributes, onlyContains(@"readonly", nil));
-	assertThat(data.methodResultTypes, onlyContains(@"UIView", @"*", nil));
-	assertThat(data.methodSelector, is(@"value"));
+	XCTAssertEqualObjects(data.methodAttributes, attributes);
+	NSArray *expectedTypes = @[ @"UIView", @"*" ];
+	XCTAssertEqualObjects(data.methodResultTypes, expectedTypes);
+	XCTAssertEqualObjects(data.methodSelector, @"value");
 }
 
 - (void)testMethodData_shouldInitializePropertyWithMultipleComponents {
@@ -91,9 +92,10 @@
 	NSArray *components = [NSArray arrayWithObjects:@"IBOutlet", @"UIView", @"*", @"value", nil];
 	GBMethodData *data = [GBMethodData propertyDataWithAttributes:attributes components:components];
 	// verify
-	assertThat(data.methodAttributes, onlyContains(@"nonatomic", @"assign", nil));
-	assertThat(data.methodResultTypes, onlyContains(@"IBOutlet", @"UIView", @"*", nil));
-	assertThat(data.methodSelector, is(@"value"));
+	XCTAssertEqualObjects(data.methodAttributes, attributes);
+	NSArray *expectedTypes = @[ @"IBOutlet", @"UIView", @"*" ];
+	XCTAssertEqualObjects(data.methodResultTypes, expectedTypes);
+	XCTAssertEqualObjects(data.methodSelector, @"value");
 }
 
 #pragma mark Merging testing
@@ -106,7 +108,7 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify - simple testing here, fully tested in GBModelBaseTesting!
-	assertThatInteger([original.sourceInfos count], equalToInteger(1));
+	XCTAssertEqual(original.sourceInfos.count, (NSUInteger)1);
 }
 
 - (void)testMergeDataFromObject_shouldMergeMethodWithDifferentResultType {
@@ -116,8 +118,8 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify - should keep original return type
-	assertThatInteger([original.methodResultTypes count], equalToInteger(1));
-	assertThat([original.methodResultTypes objectAtIndex:0], is(@"id"));
+	XCTAssertEqual(original.methodResultTypes.count, (NSUInteger)1);
+	XCTAssertEqualObjects([original.methodResultTypes objectAtIndex:0], @"id");
 }
 
 - (void)testMergeDataFromObject_shouldMergePropertyWithDifferentResultType {
@@ -127,8 +129,8 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify - should keep original return type
-	assertThatInteger([original.methodResultTypes count], equalToInteger(1));
-	assertThat([original.methodResultTypes objectAtIndex:0], is(@"id"));
+	XCTAssertEqual(original.methodResultTypes.count, (NSUInteger)1);
+	XCTAssertEqualObjects([original.methodResultTypes objectAtIndex:0], @"id");
 }
 
 - (void)testMergeDataFromObject_shouldMergePropertyWithDifferentAttributes {
@@ -138,8 +140,8 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify - should keep original attributes
-	assertThat([original.methodAttributes objectAtIndex:0], is(@"readonly"));
-	assertThat([original.methodAttributes objectAtIndex:1], is(@"retain"));
+	XCTAssertEqualObjects([original.methodAttributes objectAtIndex:0], @"readonly");
+	XCTAssertEqualObjects([original.methodAttributes objectAtIndex:1], @"retain");
 }
 
 - (void)testMergeDataFromObject_shouldMergeManualPropertyGetterImplementation {
@@ -152,7 +154,7 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify - simple testing here, just to make sure both are used and manual implementation is properly detected (i.e. no exception is thrown), fully tested in GBModelBaseTesting!
-	assertThatInteger([original.sourceInfos count], equalToInteger(2));
+	XCTAssertEqual(original.sourceInfos.count, (NSUInteger)2);
 }
 
 - (void)testMergeDataFromObject_shouldMergeManualPropertySetterImplementation {
@@ -164,7 +166,7 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify - simple testing here, just to make sure both are used and manual implementation is properly detected (i.e. no exception is thrown), fully tested in GBModelBaseTesting!
-	assertThatInteger([original.sourceInfos count], equalToInteger(2));
+	XCTAssertEqual(original.sourceInfos.count, (NSUInteger)2);
 }
 
 - (void)testMergeDataFromObject_shouldMergeManualPropertyGetterAndSetterImplementation {
@@ -180,7 +182,7 @@
 	[original mergeDataFromObject:getter];
 	[original mergeDataFromObject:setter];
 	// verify - simple testing here, just to make sure both are used and manual implementation is properly detected (i.e. no exception is thrown), fully tested in GBModelBaseTesting!
-	assertThatInteger([original.sourceInfos count], equalToInteger(3));
+	XCTAssertEqual(original.sourceInfos.count, (NSUInteger)3);
 }
 
 - (void)testMergeDataFromObject_shouldUseArgumentNamesFromComment {
@@ -194,7 +196,7 @@
 	[original mergeDataFromObject:source];
 	// verify
 	GBMethodArgument *mergedArgument = [original.methodArguments objectAtIndex:0];
-	assertThat(mergedArgument.argumentVar, is(@"theVar"));
+	XCTAssertEqualObjects(mergedArgument.argumentVar, @"theVar");
 }
 
 #pragma mark Property helpers
@@ -207,22 +209,22 @@
 	GBMethodData *property3 = [GBMethodData propertyDataWithAttributes:[NSArray arrayWithObjects:@"setter", @"=", @"setTheValue:", nil] components:components];
 	GBMethodData *property4 = [GBMethodData propertyDataWithAttributes:[NSArray arrayWithObjects:@"getter", @"=", @"isValue", @"setter", @"=", @"setTheValue:", nil] components:components];
 	// verify
-	assertThat(property1.propertyGetterSelector, is(@"value"));
-	assertThat(property1.propertySetterSelector, is(@"setValue:"));
-	assertThat(property2.propertyGetterSelector, is(@"isValue"));
-	assertThat(property2.propertySetterSelector, is(@"setValue:"));
-	assertThat(property3.propertyGetterSelector, is(@"value"));
-	assertThat(property3.propertySetterSelector, is(@"setTheValue:"));
-	assertThat(property4.propertyGetterSelector, is(@"isValue"));
-	assertThat(property4.propertySetterSelector, is(@"setTheValue:"));
+	XCTAssertEqualObjects(property1.propertyGetterSelector, @"value");
+	XCTAssertEqualObjects(property1.propertySetterSelector, @"setValue:");
+	XCTAssertEqualObjects(property2.propertyGetterSelector, @"isValue");
+	XCTAssertEqualObjects(property2.propertySetterSelector, @"setValue:");
+	XCTAssertEqualObjects(property3.propertyGetterSelector, @"value");
+	XCTAssertEqualObjects(property3.propertySetterSelector, @"setTheValue:");
+	XCTAssertEqualObjects(property4.propertyGetterSelector, @"isValue");
+	XCTAssertEqualObjects(property4.propertySetterSelector, @"setTheValue:");
 }
 
 - (void)testPropertySelectors_shouldReturnNilForMethods {
 	// setup & execute
 	GBMethodData *method = [GBTestObjectsRegistry instanceMethodWithNames:@"value", nil];
 	// verify
-	assertThat(method.propertyGetterSelector, is(nil));
-	assertThat(method.propertySetterSelector, is(nil));
+	XCTAssertNil(method.propertyGetterSelector);
+	XCTAssertNil(method.propertySetterSelector);
 }
 
 #pragma mark Convenience methods testing
@@ -233,9 +235,9 @@
 	GBMethodData *method2 = [GBTestObjectsRegistry instanceMethodWithNames:@"method", nil];
 	GBMethodData *method3 = [GBTestObjectsRegistry propertyMethodWithArgument:@"method"];
 	// verify
-	assertThatBool(method1.isInstanceMethod, equalToBool(NO));
-	assertThatBool(method2.isInstanceMethod, equalToBool(YES));
-	assertThatBool(method3.isInstanceMethod, equalToBool(NO));
+	XCTAssertFalse(method1.isInstanceMethod);
+	XCTAssertTrue(method2.isInstanceMethod);
+	XCTAssertFalse(method3.isInstanceMethod);
 }
 
 - (void)testIsClassMethod_shouldReturnProperValue {
@@ -244,9 +246,9 @@
 	GBMethodData *method2 = [GBTestObjectsRegistry instanceMethodWithNames:@"method", nil];
 	GBMethodData *method3 = [GBTestObjectsRegistry propertyMethodWithArgument:@"method"];
 	// verify
-	assertThatBool(method1.isClassMethod, equalToBool(YES));
-	assertThatBool(method2.isClassMethod, equalToBool(NO));
-	assertThatBool(method3.isClassMethod, equalToBool(NO));
+	XCTAssertTrue(method1.isClassMethod);
+	XCTAssertFalse(method2.isClassMethod);
+	XCTAssertFalse(method3.isClassMethod);
 }
 
 - (void)testIsMethod_shouldReturnProperValue {
@@ -255,9 +257,9 @@
 	GBMethodData *method2 = [GBTestObjectsRegistry instanceMethodWithNames:@"method", nil];
 	GBMethodData *method3 = [GBTestObjectsRegistry propertyMethodWithArgument:@"method"];
 	// verify
-	assertThatBool(method1.isMethod, equalToBool(YES));
-	assertThatBool(method2.isMethod, equalToBool(YES));
-	assertThatBool(method3.isMethod, equalToBool(NO));
+	XCTAssertTrue(method1.isMethod);
+	XCTAssertTrue(method2.isMethod);
+	XCTAssertFalse(method3.isMethod);
 }
 
 - (void)testIsProperty_shouldReturnProperValue {
@@ -266,9 +268,9 @@
 	GBMethodData *method2 = [GBTestObjectsRegistry instanceMethodWithNames:@"method", nil];
 	GBMethodData *method3 = [GBTestObjectsRegistry propertyMethodWithArgument:@"method"];
 	// verify
-	assertThatBool(method1.isProperty, equalToBool(NO));
-	assertThatBool(method2.isProperty, equalToBool(NO));
-	assertThatBool(method3.isProperty, equalToBool(YES));
+	XCTAssertFalse(method1.isProperty);
+	XCTAssertFalse(method2.isProperty);
+	XCTAssertTrue(method3.isProperty);
 }
 
 #pragma mark Formatted components testing
@@ -553,7 +555,7 @@
 	GBMethodData *method = [GBMethodData methodDataWithType:GBMethodTypeInstance result:results arguments:arguments];
 	// execute
 	NSArray *result = [method formattedComponents];
-	// verify: {-}-{ }-{(}-{BOOL}-{)}-{method}-{:}-{(}-{id}-{<}-{Protocol}-{>}-{)}-{val}
+	// verify: {-}-{ }-{(}-{NSArray}-{)}-{method}-{:}-{(}-{id}-{<}-{Protocol}-{>}-{)}-{val}
 	[self assertFormattedComponents:result match:
 	 @"-", 0, GBNULL, 
 	 @" ", 0, GBNULL, 
@@ -580,7 +582,7 @@
 	// setup
 	GBMethodData *method = [GBTestObjectsRegistry propertyMethodWithArgument:@"name"];
 	// execute & verify
-	assertThat(method.methodSelectorDelimiter, is(@""));
+	XCTAssertEqualObjects(method.methodSelectorDelimiter, @"");
 }
 
 - (void)testMethodSelectorDelimiter_shouldReturnEmptyStringForMethodsWithoutParameters {
@@ -588,7 +590,7 @@
 	GBMethodArgument *argument = [GBMethodArgument methodArgumentWithName:@"method"];
 	GBMethodData *method = [GBTestObjectsRegistry instanceMethodWithArguments:argument, nil];
 	// execute & verify
-	assertThat(method.methodSelectorDelimiter, is(@""));
+	XCTAssertEqualObjects(method.methodSelectorDelimiter, @"");
 }
 
 - (void)testMethodSelectorDelimiter_shouldReturnEmptyStringForMethodsWithParameters {
@@ -596,22 +598,22 @@
 	GBMethodData *method1 = [GBTestObjectsRegistry instanceMethodWithNames:@"method", nil];
 	GBMethodData *method2 = [GBTestObjectsRegistry instanceMethodWithNames:@"doSomething", @"withStyle", nil];
 	// execute & verify
-	assertThat(method1.methodSelectorDelimiter, is(@":"));
-	assertThat(method2.methodSelectorDelimiter, is(@":"));
+	XCTAssertEqualObjects(method1.methodSelectorDelimiter, @":");
+	XCTAssertEqualObjects(method2.methodSelectorDelimiter, @":");
 }
 
 - (void)testMethodPrefix_shouldReturnProperPrefix {
 	// setup, execute & verify
-	assertThat([[GBTestObjectsRegistry propertyMethodWithArgument:@"name"] methodPrefix], is(@"@property"));
-	assertThat(([[GBTestObjectsRegistry instanceMethodWithNames:@"method", nil] methodPrefix]), is(@"-"));
-	assertThat(([[GBTestObjectsRegistry classMethodWithNames:@"method", nil] methodPrefix]), is(@"+"));
+	XCTAssertEqualObjects([[GBTestObjectsRegistry propertyMethodWithArgument:@"name"] methodPrefix], @"@property");
+	XCTAssertEqualObjects(([[GBTestObjectsRegistry instanceMethodWithNames:@"method", nil] methodPrefix]), @"-");
+	XCTAssertEqualObjects(([[GBTestObjectsRegistry classMethodWithNames:@"method", nil] methodPrefix]), @"+");
 }
 
 - (void)testIsTopLevelObject_shouldReturnNO {
 	// setup & execute
 	GBMethodData *method = [GBTestObjectsRegistry instanceMethodWithNames:@"method", nil];
 	// verify
-	assertThatBool(method.isTopLevelObject, equalToBool(NO));
+	XCTAssertFalse(method.isTopLevelObject);
 }
 
 @end

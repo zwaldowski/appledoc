@@ -10,7 +10,7 @@
 #import "GBHTMLTemplateVariablesProvider.h"
 #import "GBTokenizer.h"
 
-@interface GBTemplateVariablesProviderCommonTesting : GHTestCase
+@interface GBTemplateVariablesProviderCommonTesting : XCTestCase
 - (NSDateFormatter *)yearFormatterFromSettings:(GBApplicationSettingsProvider *)settings;
 - (NSDateFormatter *)yearToDayFormatterFromSettings:(GBApplicationSettingsProvider *)settings;
 @end
@@ -25,10 +25,10 @@
 	// execute
 	NSDictionary *vars = [provider variablesForClass:class withStore:[GBTestObjectsRegistry store]];
 	// verify - just basic tests...
-	assertThat([vars objectForKey:@"page"], isNot(nil));
-	assertThat([vars valueForKeyPath:@"page.title"], isNot(nil));
-	assertThat([vars valueForKeyPath:@"page.specifications"], isNot(nil));
-	assertThat([vars objectForKey:@"object"], is(class));
+	XCTAssertNotNil([vars objectForKey:@"page"]);
+	XCTAssertNotNil([vars valueForKeyPath:@"page.title"]);
+	XCTAssertNotNil([vars valueForKeyPath:@"page.specifications"]);
+	XCTAssertEqualObjects([vars objectForKey:@"object"], class);
 }
 
 - (void)testVariableForClass_shouldPrepareFooterVariables {
@@ -42,8 +42,8 @@
 	NSDate *date = [NSDate date];
 	NSString *year = [[self yearFormatterFromSettings:settings] stringFromDate:date];
 	NSString *day = [[self yearToDayFormatterFromSettings:settings] stringFromDate:date];
-	assertThat([vars valueForKeyPath:@"page.copyrightDate"], is(year));
-	assertThat([vars valueForKeyPath:@"page.lastUpdatedDate"], is(day));
+	XCTAssertEqualObjects([vars valueForKeyPath:@"page.copyrightDate"], year);
+	XCTAssertEqualObjects([vars valueForKeyPath:@"page.lastUpdatedDate"], day);
 }
 
 #pragma mark Creation methods

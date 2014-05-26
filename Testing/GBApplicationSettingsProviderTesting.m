@@ -9,7 +9,7 @@
 #import "GBDataObjects.h"
 #import "GBApplicationSettingsProvider.h"
 
-@interface GBApplicationSettingsProviderTesting : GHTestCase
+@interface GBApplicationSettingsProviderTesting : XCTestCase
 
 - (NSDateFormatter *)yearFormatterFromSettings:(GBApplicationSettingsProvider *)settings;
 - (NSDateFormatter *)yearToDayFormatterFromSettings:(GBApplicationSettingsProvider *)settings;
@@ -54,24 +54,24 @@
 	// execute
 	[settings replaceAllOccurencesOfPlaceholderStringsInSettingsValues];
 	// verify
-	assertThat(settings.docsetBundleIdentifier, is(expected));
-	assertThat(settings.docsetBundleName, is(expected));
-	assertThat(settings.docsetCertificateIssuer, is(expected));
-	assertThat(settings.docsetCertificateSigner, is(expected));
-	assertThat(settings.docsetDescription, is(expected));
-	assertThat(settings.docsetFallbackURL, is(expected));
-	assertThat(settings.docsetFeedName, is(expected));
-	assertThat(settings.docsetFeedURL, is(expected));
-	assertThat(settings.docsetPackageURL, is(expected));
-	assertThat(settings.docsetMinimumXcodeVersion, is(expected));
-	assertThat(settings.docsetPlatformFamily, is(expected));
-	assertThat(settings.docsetPublisherIdentifier, is(expected));
-	assertThat(settings.docsetPublisherName, is(expected));
-	assertThat(settings.docsetCopyrightMessage, is(expected));
-	assertThat(settings.docsetBundleFilename, is(expected));
-	assertThat(settings.docsetAtomFilename, is(expected));
-    assertThat(settings.docsetXMLFilename, is(expected));
-	assertThat(settings.docsetPackageFilename, is(expected));
+	XCTAssertEqualObjects(settings.docsetBundleIdentifier, expected);
+	XCTAssertEqualObjects(settings.docsetBundleName, expected);
+	XCTAssertEqualObjects(settings.docsetCertificateIssuer, expected);
+	XCTAssertEqualObjects(settings.docsetCertificateSigner, expected);
+	XCTAssertEqualObjects(settings.docsetDescription, expected);
+	XCTAssertEqualObjects(settings.docsetFallbackURL, expected);
+	XCTAssertEqualObjects(settings.docsetFeedName, expected);
+	XCTAssertEqualObjects(settings.docsetFeedURL, expected);
+	XCTAssertEqualObjects(settings.docsetPackageURL, expected);
+	XCTAssertEqualObjects(settings.docsetMinimumXcodeVersion, expected);
+	XCTAssertEqualObjects(settings.docsetPlatformFamily, expected);
+	XCTAssertEqualObjects(settings.docsetPublisherIdentifier, expected);
+	XCTAssertEqualObjects(settings.docsetPublisherName, expected);
+	XCTAssertEqualObjects(settings.docsetCopyrightMessage, expected);
+	XCTAssertEqualObjects(settings.docsetBundleFilename, expected);
+	XCTAssertEqualObjects(settings.docsetAtomFilename, expected);
+    XCTAssertEqualObjects(settings.docsetXMLFilename, expected);
+	XCTAssertEqualObjects(settings.docsetPackageFilename, expected);
 }
 
 - (void)testPlaceholderReplacements_shouldReplaceDocSetFilenames {
@@ -104,20 +104,20 @@
 	// execute
 	[settings replaceAllOccurencesOfPlaceholderStringsInSettingsValues];
 	// verify
-	assertThat(settings.docsetBundleIdentifier, is(expected));
-	assertThat(settings.docsetBundleName, is(expected));
-	assertThat(settings.docsetCertificateIssuer, is(expected));
-	assertThat(settings.docsetCertificateSigner, is(expected));
-	assertThat(settings.docsetDescription, is(expected));
-	assertThat(settings.docsetFallbackURL, is(expected));
-	assertThat(settings.docsetFeedName, is(expected));
-	assertThat(settings.docsetFeedURL, is(expected));
-	assertThat(settings.docsetPackageURL, is(expected));
-	assertThat(settings.docsetMinimumXcodeVersion, is(expected));
-	assertThat(settings.docsetPlatformFamily, is(expected));
-	assertThat(settings.docsetPublisherIdentifier, is(expected));
-	assertThat(settings.docsetPublisherName, is(expected));
-	assertThat(settings.docsetCopyrightMessage, is(expected));
+	XCTAssertEqualObjects(settings.docsetBundleIdentifier, expected);
+	XCTAssertEqualObjects(settings.docsetBundleName, expected);
+	XCTAssertEqualObjects(settings.docsetCertificateIssuer, expected);
+	XCTAssertEqualObjects(settings.docsetCertificateSigner, expected);
+	XCTAssertEqualObjects(settings.docsetDescription, expected);
+	XCTAssertEqualObjects(settings.docsetFallbackURL, expected);
+	XCTAssertEqualObjects(settings.docsetFeedName, expected);
+	XCTAssertEqualObjects(settings.docsetFeedURL, expected);
+	XCTAssertEqualObjects(settings.docsetPackageURL, expected);
+	XCTAssertEqualObjects(settings.docsetMinimumXcodeVersion, expected);
+	XCTAssertEqualObjects(settings.docsetPlatformFamily, expected);
+	XCTAssertEqualObjects(settings.docsetPublisherIdentifier, expected);
+	XCTAssertEqualObjects(settings.docsetPublisherName, expected);
+	XCTAssertEqualObjects(settings.docsetCopyrightMessage, expected);
 }
 
 - (void)testProjectIdentifier_shouldNormalizeProjectName {
@@ -125,7 +125,7 @@
 	GBApplicationSettingsProvider *settings = [GBApplicationSettingsProvider provider];
 	settings.projectName = @"My Great  \t Project";
 	// execute & verify
-	assertThat(settings.projectIdentifier, is(@"My-Great-Project"));
+	XCTAssertEqualObjects(settings.projectIdentifier, @"My-Great-Project");
 }
 
 - (void)testVersionIdentifier_shouldNormalizeProjectVersion {
@@ -133,7 +133,7 @@
 	GBApplicationSettingsProvider *settings = [GBApplicationSettingsProvider provider];
 	settings.projectVersion = @"1.0 beta3  \t something";
 	// execute & verify
-	assertThat(settings.versionIdentifier, is(@"1.0-beta3-something"));
+	XCTAssertEqualObjects(settings.versionIdentifier, @"1.0-beta3-something");
 }
 
 #pragma mark HTML href names handling
@@ -147,10 +147,10 @@
 	GBCategoryData *extension = [GBCategoryData categoryDataWithName:nil className:@"Class"];
 	GBProtocolData *protocol = [GBProtocolData protocolDataWithName:@"Protocol"];
 	// execute & verify
-	assertThat([settings htmlReferenceNameForObject:class], is(@"Class.html"));
-	assertThat([settings htmlReferenceNameForObject:category], is(@"Class+Category.html"));
-	assertThat([settings htmlReferenceNameForObject:extension], is(@"Class+.html"));
-	assertThat([settings htmlReferenceNameForObject:protocol], is(@"Protocol.html"));
+	XCTAssertEqualObjects([settings htmlReferenceNameForObject:class], @"Class.html");
+	XCTAssertEqualObjects([settings htmlReferenceNameForObject:category], @"Class+Category.html");
+	XCTAssertEqualObjects([settings htmlReferenceNameForObject:extension], @"Class+.html");
+	XCTAssertEqualObjects([settings htmlReferenceNameForObject:protocol], @"Protocol.html");
 }
 
 - (void)testHtmlReferenceNameForObject_shouldReturnProperValueForDocuments {
@@ -162,10 +162,10 @@
 	GBDocumentData *document3 = [GBDocumentData documentDataWithContents:@"c" path:@"path/sub/document-template.html" basePath:@""];
 	GBDocumentData *document4 = [GBDocumentData documentDataWithContents:@"c" path:@"path/sub/document-template.html" basePath:@"path"];
 	// verify
-	assertThat([settings htmlReferenceNameForObject:document1], is(@"document.html"));
-	assertThat([settings htmlReferenceNameForObject:document2], is(@"document.html"));
-	assertThat([settings htmlReferenceNameForObject:document3], is(@"document.html"));
-	assertThat([settings htmlReferenceNameForObject:document4], is(@"document.html"));
+	XCTAssertEqualObjects([settings htmlReferenceNameForObject:document1], @"document.html");
+	XCTAssertEqualObjects([settings htmlReferenceNameForObject:document2], @"document.html");
+	XCTAssertEqualObjects([settings htmlReferenceNameForObject:document3], @"document.html");
+	XCTAssertEqualObjects([settings htmlReferenceNameForObject:document4], @"document.html");
 }
 
 - (void)testHtmlReferenceNameForObject_shouldReturnProperValueForMethods {
@@ -184,12 +184,12 @@
 	[class.methods registerMethod:method2];
 	[class.methods registerMethod:property];
 	// execute & verify
-	assertThat([settings1 htmlReferenceNameForObject:method1], is(@"//api/name/method"));
-	assertThat([settings1 htmlReferenceNameForObject:method2], is(@"//api/name/doSomething:withVars:"));
-	assertThat([settings1 htmlReferenceNameForObject:property], is(@"//api/name/value"));
-	assertThat([settings2 htmlReferenceNameForObject:method1], is(@"//apple_ref/occ/instm/Class/method"));
-	assertThat([settings2 htmlReferenceNameForObject:method2], is(@"//apple_ref/occ/instm/Class/doSomething:withVars:"));
-	assertThat([settings2 htmlReferenceNameForObject:property], is(@"//apple_ref/occ/instp/Class/value"));
+	XCTAssertEqualObjects([settings1 htmlReferenceNameForObject:method1], @"//api/name/method");
+	XCTAssertEqualObjects([settings1 htmlReferenceNameForObject:method2], @"//api/name/doSomething:withVars:");
+	XCTAssertEqualObjects([settings1 htmlReferenceNameForObject:property], @"//api/name/value");
+	XCTAssertEqualObjects([settings2 htmlReferenceNameForObject:method1], @"//apple_ref/occ/instm/Class/method");
+	XCTAssertEqualObjects([settings2 htmlReferenceNameForObject:method2], @"//apple_ref/occ/instm/Class/doSomething:withVars:");
+	XCTAssertEqualObjects([settings2 htmlReferenceNameForObject:property], @"//apple_ref/occ/instp/Class/value");
 }
 
 #pragma mark HTML href references handling - index
@@ -205,10 +205,10 @@
 	GBMethodData *method = [GBTestObjectsRegistry instanceMethodWithNames:@"method", nil];
 	[class.methods registerMethod:method];
 	// execute & verify
-	assertThat([settings1 htmlReferenceForObject:class fromSource:nil], is(@"Classes/Class.html"));
-	assertThat([settings1 htmlReferenceForObject:method fromSource:nil], is(@"Classes/Class.html#//api/name/method:"));
-	assertThat([settings2 htmlReferenceForObject:class fromSource:nil], is(@"Classes/Class.html"));
-	assertThat([settings2 htmlReferenceForObject:method fromSource:nil], is(@"Classes/Class.html#//apple_ref/occ/instm/Class/method:"));
+	XCTAssertEqualObjects([settings1 htmlReferenceForObject:class fromSource:nil], @"Classes/Class.html");
+	XCTAssertEqualObjects([settings1 htmlReferenceForObject:method fromSource:nil], @"Classes/Class.html#//api/name/method:");
+	XCTAssertEqualObjects([settings2 htmlReferenceForObject:class fromSource:nil], @"Classes/Class.html");
+	XCTAssertEqualObjects([settings2 htmlReferenceForObject:method fromSource:nil], @"Classes/Class.html#//apple_ref/occ/instm/Class/method:");
 }
 
 - (void)testHtmlReferenceForObjectFromSource_shouldReturnProperValueForCategoryFromIndex {
@@ -222,10 +222,10 @@
 	GBMethodData *method = [GBTestObjectsRegistry instanceMethodWithNames:@"method", nil];
 	[category.methods registerMethod:method];
 	// execute & verify
-	assertThat([settings1 htmlReferenceForObject:category fromSource:nil], is(@"Categories/Class+Category.html"));
-	assertThat([settings1 htmlReferenceForObject:method fromSource:nil], is(@"Categories/Class+Category.html#//api/name/method:"));
-	assertThat([settings2 htmlReferenceForObject:category fromSource:nil], is(@"Categories/Class+Category.html"));
-	assertThat([settings2 htmlReferenceForObject:method fromSource:nil], is(@"Categories/Class+Category.html#//apple_ref/occ/instm/Class(Category)/method:"));
+	XCTAssertEqualObjects([settings1 htmlReferenceForObject:category fromSource:nil], @"Categories/Class+Category.html");
+	XCTAssertEqualObjects([settings1 htmlReferenceForObject:method fromSource:nil], @"Categories/Class+Category.html#//api/name/method:");
+	XCTAssertEqualObjects([settings2 htmlReferenceForObject:category fromSource:nil], @"Categories/Class+Category.html");
+	XCTAssertEqualObjects([settings2 htmlReferenceForObject:method fromSource:nil], @"Categories/Class+Category.html#//apple_ref/occ/instm/Class(Category)/method:");
 }
 
 - (void)testHtmlReferenceForObjectFromSource_shouldReturnProperValueForProtocolFromIndex {
@@ -239,10 +239,10 @@
 	GBMethodData *method = [GBTestObjectsRegistry instanceMethodWithNames:@"method", nil];
 	[protocol.methods registerMethod:method];
 	// execute & verify
-	assertThat([settings1 htmlReferenceForObject:protocol fromSource:nil], is(@"Protocols/Protocol.html"));
-	assertThat([settings1 htmlReferenceForObject:method fromSource:nil], is(@"Protocols/Protocol.html#//api/name/method:"));
-	assertThat([settings2 htmlReferenceForObject:protocol fromSource:nil], is(@"Protocols/Protocol.html"));
-	assertThat([settings2 htmlReferenceForObject:method fromSource:nil], is(@"Protocols/Protocol.html#//apple_ref/occ/intfm/Protocol/method:"));
+	XCTAssertEqualObjects([settings1 htmlReferenceForObject:protocol fromSource:nil], @"Protocols/Protocol.html");
+	XCTAssertEqualObjects([settings1 htmlReferenceForObject:method fromSource:nil], @"Protocols/Protocol.html#//api/name/method:");
+	XCTAssertEqualObjects([settings2 htmlReferenceForObject:protocol fromSource:nil], @"Protocols/Protocol.html");
+	XCTAssertEqualObjects([settings2 htmlReferenceForObject:method fromSource:nil], @"Protocols/Protocol.html#//apple_ref/occ/intfm/Protocol/method:");
 }
 
 - (void)testHtmlReferenceForObjectFromSource_shouldReturnProperValueForDocumentFromIndex {
@@ -256,12 +256,12 @@
 	GBDocumentData *document5 = [GBDocumentData documentDataWithContents:@"c" path:@"include/sub/document-template.html" basePath:@"include/sub"];
 	GBDocumentData *document6 = [GBDocumentData documentDataWithContents:@"c" path:@"include/sub/document-template.html" basePath:@"include/sub/document-template.html"];
 	// verify
-	assertThat([settings htmlReferenceForObject:document1 fromSource:nil], is(@"docs/document.html"));
-	assertThat([settings htmlReferenceForObject:document2 fromSource:nil], is(@"docs/include/document.html"));
-	assertThat([settings htmlReferenceForObject:document3 fromSource:nil], is(@"docs/include/sub/document.html"));
-	assertThat([settings htmlReferenceForObject:document4 fromSource:nil], is(@"docs/include/sub/document.html"));
-	assertThat([settings htmlReferenceForObject:document5 fromSource:nil], is(@"docs/sub/document.html"));
-	assertThat([settings htmlReferenceForObject:document6 fromSource:nil], is(@"docs/document.html"));
+	XCTAssertEqualObjects([settings htmlReferenceForObject:document1 fromSource:nil], @"docs/document.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:document2 fromSource:nil], @"docs/include/document.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:document3 fromSource:nil], @"docs/include/sub/document.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:document4 fromSource:nil], @"docs/include/sub/document.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:document5 fromSource:nil], @"docs/sub/document.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:document6 fromSource:nil], @"docs/document.html");
 }
 
 #pragma mark HTML href references handling - top level to top level
@@ -275,10 +275,10 @@
 	GBProtocolData *protocol = [GBProtocolData protocolDataWithName:@"Protocol"];
 	GBDocumentData *document = [GBDocumentData documentDataWithContents:@"c" path:@"document.ext"];
 	// execute & verify
-	assertThat([settings htmlReferenceForObject:class fromSource:class], is(@"Class.html"));
-	assertThat([settings htmlReferenceForObject:category fromSource:category], is(@"Class+Category.html"));
-	assertThat([settings htmlReferenceForObject:protocol fromSource:protocol], is(@"Protocol.html"));
-	assertThat([settings htmlReferenceForObject:document fromSource:document], is(@"document.html"));
+	XCTAssertEqualObjects([settings htmlReferenceForObject:class fromSource:class], @"Class.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:category fromSource:category], @"Class+Category.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:protocol fromSource:protocol], @"Protocol.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:document fromSource:document], @"document.html");
 }
 
 - (void)testHtmlReferenceForObjectFromSource_shouldReturnProperValueForTopLevelObjectToSameTypeTopLevelObjectReference {
@@ -294,14 +294,14 @@
 	GBDocumentData *document1 = [GBDocumentData documentDataWithContents:@"c" path:@"include/document1.ext" basePath:@"include"];
 	GBDocumentData *document2 = [GBDocumentData documentDataWithContents:@"c" path:@"include/document2.ext" basePath:@"include/document2.ext"];
 	// execute & verify
-	assertThat([settings htmlReferenceForObject:class1 fromSource:class2], is(@"../Classes/Class1.html"));
-	assertThat([settings htmlReferenceForObject:class2 fromSource:class1], is(@"../Classes/Class2.html"));
-	assertThat([settings htmlReferenceForObject:category1 fromSource:category2], is(@"../Categories/Class+Category1.html"));
-	assertThat([settings htmlReferenceForObject:category2 fromSource:category1], is(@"../Categories/Class+Category2.html"));
-	assertThat([settings htmlReferenceForObject:protocol1 fromSource:protocol2], is(@"../Protocols/Protocol1.html"));
-	assertThat([settings htmlReferenceForObject:protocol2 fromSource:protocol1], is(@"../Protocols/Protocol2.html"));
-	assertThat([settings htmlReferenceForObject:document1 fromSource:document2], is(@"../docs/include/document1.html"));
-	assertThat([settings htmlReferenceForObject:document2 fromSource:document1], is(@"../../docs/document2.html"));
+	XCTAssertEqualObjects([settings htmlReferenceForObject:class1 fromSource:class2], @"../Classes/Class1.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:class2 fromSource:class1], @"../Classes/Class2.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:category1 fromSource:category2], @"../Categories/Class+Category1.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:category2 fromSource:category1], @"../Categories/Class+Category2.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:protocol1 fromSource:protocol2], @"../Protocols/Protocol1.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:protocol2 fromSource:protocol1], @"../Protocols/Protocol2.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:document1 fromSource:document2], @"../docs/include/document1.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:document2 fromSource:document1], @"../../docs/document2.html");
 }
 
 - (void)testHtmlReferenceForObjectFromSource_shouldReturnProperValueForTopLevelObjectToDifferentTypeOfTopLevelObjectReference {
@@ -314,26 +314,26 @@
 	GBDocumentData *document1 = [GBDocumentData documentDataWithContents:@"c" path:@"include/document1.ext" basePath:@"include/document1.ext"];
 	GBDocumentData *document2 = [GBDocumentData documentDataWithContents:@"c" path:@"include/document2.ext" basePath:@"include"];
 	// execute & verify
-	assertThat([settings htmlReferenceForObject:class fromSource:category], is(@"../Classes/Class.html"));
-	assertThat([settings htmlReferenceForObject:class fromSource:protocol], is(@"../Classes/Class.html"));
-	assertThat([settings htmlReferenceForObject:class fromSource:document1], is(@"../Classes/Class.html"));
-	assertThat([settings htmlReferenceForObject:class fromSource:document2], is(@"../../Classes/Class.html"));
-	assertThat([settings htmlReferenceForObject:category fromSource:class], is(@"../Categories/Class+Category.html"));
-	assertThat([settings htmlReferenceForObject:category fromSource:protocol], is(@"../Categories/Class+Category.html"));
-	assertThat([settings htmlReferenceForObject:category fromSource:document1], is(@"../Categories/Class+Category.html"));
-	assertThat([settings htmlReferenceForObject:category fromSource:document2], is(@"../../Categories/Class+Category.html"));
-	assertThat([settings htmlReferenceForObject:protocol fromSource:class], is(@"../Protocols/Protocol.html"));
-	assertThat([settings htmlReferenceForObject:protocol fromSource:category], is(@"../Protocols/Protocol.html"));	
-	assertThat([settings htmlReferenceForObject:protocol fromSource:document1], is(@"../Protocols/Protocol.html"));
-	assertThat([settings htmlReferenceForObject:protocol fromSource:document2], is(@"../../Protocols/Protocol.html"));	
-	assertThat([settings htmlReferenceForObject:document1 fromSource:class], is(@"../docs/document1.html"));
-	assertThat([settings htmlReferenceForObject:document1 fromSource:category], is(@"../docs/document1.html"));	
-	assertThat([settings htmlReferenceForObject:document1 fromSource:protocol], is(@"../docs/document1.html"));
-	assertThat([settings htmlReferenceForObject:document1 fromSource:document2], is(@"../../docs/document1.html"));
-	assertThat([settings htmlReferenceForObject:document2 fromSource:class], is(@"../docs/include/document2.html"));
-	assertThat([settings htmlReferenceForObject:document2 fromSource:category], is(@"../docs/include/document2.html"));	
-	assertThat([settings htmlReferenceForObject:document2 fromSource:protocol], is(@"../docs/include/document2.html"));
-	assertThat([settings htmlReferenceForObject:document2 fromSource:document1], is(@"../docs/include/document2.html"));
+	XCTAssertEqualObjects([settings htmlReferenceForObject:class fromSource:category], @"../Classes/Class.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:class fromSource:protocol], @"../Classes/Class.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:class fromSource:document1], @"../Classes/Class.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:class fromSource:document2], @"../../Classes/Class.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:category fromSource:class], @"../Categories/Class+Category.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:category fromSource:protocol], @"../Categories/Class+Category.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:category fromSource:document1], @"../Categories/Class+Category.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:category fromSource:document2], @"../../Categories/Class+Category.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:protocol fromSource:class], @"../Protocols/Protocol.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:protocol fromSource:category], @"../Protocols/Protocol.html");	
+	XCTAssertEqualObjects([settings htmlReferenceForObject:protocol fromSource:document1], @"../Protocols/Protocol.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:protocol fromSource:document2], @"../../Protocols/Protocol.html");	
+	XCTAssertEqualObjects([settings htmlReferenceForObject:document1 fromSource:class], @"../docs/document1.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:document1 fromSource:category], @"../docs/document1.html");	
+	XCTAssertEqualObjects([settings htmlReferenceForObject:document1 fromSource:protocol], @"../docs/document1.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:document1 fromSource:document2], @"../../docs/document1.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:document2 fromSource:class], @"../docs/include/document2.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:document2 fromSource:category], @"../docs/include/document2.html");	
+	XCTAssertEqualObjects([settings htmlReferenceForObject:document2 fromSource:protocol], @"../docs/include/document2.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:document2 fromSource:document1], @"../docs/include/document2.html");
 }
 
 - (void)testHtmlReferenceForObjectFromSource_shouldReturnProperValueForDocumentToTopLevelObjectReference {
@@ -346,10 +346,10 @@
 	GBDocumentData *document3 = [GBDocumentData documentDataWithContents:@"c" path:@"include/sub/document-template.html" basePath:@"include"];
 	GBDocumentData *document4 = [GBDocumentData documentDataWithContents:@"c" path:@"include/sub/document-template.html" basePath:@"include/sub/document-template.html"];
 	// verify
-	assertThat([settings htmlReferenceForObject:class fromSource:document1], is(@"../Classes/Class.html"));
-	assertThat([settings htmlReferenceForObject:class fromSource:document2], is(@"../../Classes/Class.html"));
-	assertThat([settings htmlReferenceForObject:class fromSource:document3], is(@"../../../Classes/Class.html"));
-	assertThat([settings htmlReferenceForObject:class fromSource:document4], is(@"../Classes/Class.html"));
+	XCTAssertEqualObjects([settings htmlReferenceForObject:class fromSource:document1], @"../Classes/Class.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:class fromSource:document2], @"../../Classes/Class.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:class fromSource:document3], @"../../../Classes/Class.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:class fromSource:document4], @"../Classes/Class.html");
 }
 
 - (void)testHtmlReferenceForObjectFromSource_shouldReturnProperValueForCustomDocumentToTopLevelObjectReference {
@@ -362,8 +362,8 @@
 	GBDocumentData *document2 = [GBDocumentData documentDataWithContents:@"c" path:@"path/document-template.html" basePath:@""];
 	document2.isCustomDocument = YES;
 	// verify
-	assertThat([settings htmlReferenceForObject:class fromSource:document1], is(@"../Classes/Class.html"));
-	assertThat([settings htmlReferenceForObject:class fromSource:document2], is(@"Classes/Class.html"));
+	XCTAssertEqualObjects([settings htmlReferenceForObject:class fromSource:document1], @"../Classes/Class.html");
+	XCTAssertEqualObjects([settings htmlReferenceForObject:class fromSource:document2], @"Classes/Class.html");
 }
 
 #pragma mark HTML href references handling - top level to members
@@ -379,10 +379,10 @@
 	GBMethodData *method = [GBTestObjectsRegistry propertyMethodWithArgument:@"value"];
 	[class.methods registerMethod:method];
 	// execute & verify
-	assertThat([settings1 htmlReferenceForObject:method fromSource:class], is(@"#//api/name/value"));
-	assertThat([settings1 htmlReferenceForObject:class fromSource:method], is(@"Class.html"));
-	assertThat([settings2 htmlReferenceForObject:method fromSource:class], is(@"#//apple_ref/occ/instp/Class/value"));
-	assertThat([settings2 htmlReferenceForObject:class fromSource:method], is(@"Class.html"));
+	XCTAssertEqualObjects([settings1 htmlReferenceForObject:method fromSource:class], @"#//api/name/value");
+	XCTAssertEqualObjects([settings1 htmlReferenceForObject:class fromSource:method], @"Class.html");
+	XCTAssertEqualObjects([settings2 htmlReferenceForObject:method fromSource:class], @"#//apple_ref/occ/instp/Class/value");
+	XCTAssertEqualObjects([settings2 htmlReferenceForObject:class fromSource:method], @"Class.html");
 }
 
 - (void)testHtmlReferenceForObjectFromSource_shouldReturnProperValueForTopLevelObjectToSameTypeRemoteMemberReference {
@@ -397,14 +397,14 @@
 	GBMethodData *method = [GBTestObjectsRegistry propertyMethodWithArgument:@"value"];
 	[class1.methods registerMethod:method];
 	// execute & verify
-	assertThat([settings1 htmlReferenceForObject:method fromSource:class2], is(@"../Classes/Class1.html#//api/name/value"));
-	assertThat([settings1 htmlReferenceForObject:method fromSource:class1], is(@"#//api/name/value"));
-	assertThat([settings1 htmlReferenceForObject:class1 fromSource:method], is(@"Class1.html"));
-	assertThat([settings1 htmlReferenceForObject:class2 fromSource:method], is(@"../Classes/Class2.html"));
-	assertThat([settings2 htmlReferenceForObject:method fromSource:class2], is(@"../Classes/Class1.html#//apple_ref/occ/instp/Class1/value"));
-	assertThat([settings2 htmlReferenceForObject:method fromSource:class1], is(@"#//apple_ref/occ/instp/Class1/value"));
-	assertThat([settings2 htmlReferenceForObject:class1 fromSource:method], is(@"Class1.html"));
-	assertThat([settings2 htmlReferenceForObject:class2 fromSource:method], is(@"../Classes/Class2.html"));
+	XCTAssertEqualObjects([settings1 htmlReferenceForObject:method fromSource:class2], @"../Classes/Class1.html#//api/name/value");
+	XCTAssertEqualObjects([settings1 htmlReferenceForObject:method fromSource:class1], @"#//api/name/value");
+	XCTAssertEqualObjects([settings1 htmlReferenceForObject:class1 fromSource:method], @"Class1.html");
+	XCTAssertEqualObjects([settings1 htmlReferenceForObject:class2 fromSource:method], @"../Classes/Class2.html");
+	XCTAssertEqualObjects([settings2 htmlReferenceForObject:method fromSource:class2], @"../Classes/Class1.html#//apple_ref/occ/instp/Class1/value");
+	XCTAssertEqualObjects([settings2 htmlReferenceForObject:method fromSource:class1], @"#//apple_ref/occ/instp/Class1/value");
+	XCTAssertEqualObjects([settings2 htmlReferenceForObject:class1 fromSource:method], @"Class1.html");
+	XCTAssertEqualObjects([settings2 htmlReferenceForObject:class2 fromSource:method], @"../Classes/Class2.html");
 }
 
 - (void)testHtmlReferenceForObjectFromSource_shouldReturnProperValueForTopLevelObjectToDifferentTypeRemoteMemberReference {
@@ -421,10 +421,10 @@
 	[class.methods registerMethod:method1];
 	[protocol.methods registerMethod:method2];
 	// execute & verify
-	assertThat([settings1 htmlReferenceForObject:method1 fromSource:protocol], is(@"../Classes/Class.html#//api/name/value1"));
-	assertThat([settings1 htmlReferenceForObject:method2 fromSource:class], is(@"../Protocols/Protocol.html#//api/name/value2"));
-	assertThat([settings2 htmlReferenceForObject:method1 fromSource:protocol], is(@"../Classes/Class.html#//apple_ref/occ/instp/Class/value1"));
-	assertThat([settings2 htmlReferenceForObject:method2 fromSource:class], is(@"../Protocols/Protocol.html#//apple_ref/occ/intfp/Protocol/value2"));
+	XCTAssertEqualObjects([settings1 htmlReferenceForObject:method1 fromSource:protocol], @"../Classes/Class.html#//api/name/value1");
+	XCTAssertEqualObjects([settings1 htmlReferenceForObject:method2 fromSource:class], @"../Protocols/Protocol.html#//api/name/value2");
+	XCTAssertEqualObjects([settings2 htmlReferenceForObject:method1 fromSource:protocol], @"../Classes/Class.html#//apple_ref/occ/instp/Class/value1");
+	XCTAssertEqualObjects([settings2 htmlReferenceForObject:method2 fromSource:class], @"../Protocols/Protocol.html#//apple_ref/occ/intfp/Protocol/value2");
 }
 
 #pragma mark Template files handling
@@ -433,37 +433,37 @@
 	// setup
 	GBApplicationSettingsProvider *settings = [GBApplicationSettingsProvider provider];
 	// execute & verify
-	assertThatBool([settings isPathRepresentingTemplateFile:@"file"], equalToBool(NO));
-	assertThatBool([settings isPathRepresentingTemplateFile:@"file.html"], equalToBool(NO));
-	assertThatBool([settings isPathRepresentingTemplateFile:@"path/file.html"], equalToBool(NO));
-	assertThatBool([settings isPathRepresentingTemplateFile:@"file-template"], equalToBool(YES));
-	assertThatBool([settings isPathRepresentingTemplateFile:@"file-template.html"], equalToBool(YES));
-	assertThatBool([settings isPathRepresentingTemplateFile:@"path/file-template"], equalToBool(YES));
-	assertThatBool([settings isPathRepresentingTemplateFile:@"path/file-template.html"], equalToBool(YES));
+	XCTAssertFalse([settings isPathRepresentingTemplateFile:@"file"]);
+	XCTAssertFalse([settings isPathRepresentingTemplateFile:@"file.html"]);
+	XCTAssertFalse([settings isPathRepresentingTemplateFile:@"path/file.html"]);
+	XCTAssertTrue([settings isPathRepresentingTemplateFile:@"file-template"]);
+	XCTAssertTrue([settings isPathRepresentingTemplateFile:@"file-template.html"]);
+	XCTAssertTrue([settings isPathRepresentingTemplateFile:@"path/file-template"]);
+	XCTAssertTrue([settings isPathRepresentingTemplateFile:@"path/file-template.html"]);
 }
 
 - (void)testOutputFilenameForTemplatePath_shouldReturnCorrectResults {
 	// setup
 	GBApplicationSettingsProvider *settings = [GBApplicationSettingsProvider provider];
 	// execute & verify
-	assertThat([settings outputFilenameForTemplatePath:@"file"], is(@"file"));
-	assertThat([settings outputFilenameForTemplatePath:@"file.html"], is(@"file.html"));
-	assertThat([settings outputFilenameForTemplatePath:@"path/file.html"], is(@"file.html"));
-	assertThat([settings outputFilenameForTemplatePath:@"file-template"], is(@"file"));
-	assertThat([settings outputFilenameForTemplatePath:@"file-template.html"], is(@"file.html"));
-	assertThat([settings outputFilenameForTemplatePath:@"path/file-template"], is(@"file"));
-	assertThat([settings outputFilenameForTemplatePath:@"path/file-template.html"], is(@"file.html"));
+	XCTAssertEqualObjects([settings outputFilenameForTemplatePath:@"file"], @"file");
+	XCTAssertEqualObjects([settings outputFilenameForTemplatePath:@"file.html"], @"file.html");
+	XCTAssertEqualObjects([settings outputFilenameForTemplatePath:@"path/file.html"], @"file.html");
+	XCTAssertEqualObjects([settings outputFilenameForTemplatePath:@"file-template"], @"file");
+	XCTAssertEqualObjects([settings outputFilenameForTemplatePath:@"file-template.html"], @"file.html");
+	XCTAssertEqualObjects([settings outputFilenameForTemplatePath:@"path/file-template"], @"file");
+	XCTAssertEqualObjects([settings outputFilenameForTemplatePath:@"path/file-template.html"], @"file.html");
 }
 
 - (void)testTemplateFilenameForOutputPath_shuoldReturnCorrectResults {
 	// setup
 	GBApplicationSettingsProvider *settings = [GBApplicationSettingsProvider provider];
 	// execute & verify
-	assertThat([settings templateFilenameForOutputPath:@"file"], is(@"file-template"));
-	assertThat([settings templateFilenameForOutputPath:@"file.html"], is(@"file-template.html"));
-	assertThat([settings templateFilenameForOutputPath:@"path/file.html"], is(@"path/file-template.html"));
-	assertThat([settings templateFilenameForOutputPath:@"path/file-template"], is(@"path/file-template"));
-	assertThat([settings templateFilenameForOutputPath:@"path/file-template.html"], is(@"path/file-template.html"));
+	XCTAssertEqualObjects([settings templateFilenameForOutputPath:@"file"], @"file-template");
+	XCTAssertEqualObjects([settings templateFilenameForOutputPath:@"file.html"], @"file-template.html");
+	XCTAssertEqualObjects([settings templateFilenameForOutputPath:@"path/file.html"], @"path/file-template.html");
+	XCTAssertEqualObjects([settings templateFilenameForOutputPath:@"path/file-template"], @"path/file-template");
+	XCTAssertEqualObjects([settings templateFilenameForOutputPath:@"path/file-template.html"], @"path/file-template.html");
 }
 
 #pragma mark Text conversion methods
@@ -479,10 +479,10 @@
 	NSString *result21 = [settings2 stringByEmbeddingCrossReference:@"[description](address \"title\")"];
 	NSString *result22 = [settings2 stringByEmbeddingCrossReference:@"[`description`](address \"title\")"];
 	// verify
-	assertThat(result11, is(@"~!@[description](address \"title\")@!~"));
-	assertThat(result12, is(@"~!@[`description`](address \"title\")@!~"));
-	assertThat(result21, is(@"[description](address \"title\")"));
-	assertThat(result22, is(@"[`description`](address \"title\")"));
+	XCTAssertEqualObjects(result11, @"~!@[description](address \"title\")@!~");
+	XCTAssertEqualObjects(result12, @"~!@[`description`](address \"title\")@!~");
+	XCTAssertEqualObjects(result21, @"[description](address \"title\")");
+	XCTAssertEqualObjects(result22, @"[`description`](address \"title\")");
 }
 
 #pragma mark Markdown to HTML conversion
@@ -494,8 +494,8 @@
 	NSString *result1 = [settings stringByConvertingMarkdownToHTML:@"~!@[description](address)@!~"];
 	NSString *result2 = [settings stringByConvertingMarkdownToHTML:@"[description](address)"];
 	// verify - Discount converts any kind of link, we just need to strip embedded prefix and suffix!
-	assertThat(result1, is(@"<p><a href=\"address\">description</a></p>"));
-	assertThat(result2, is(@"<p><a href=\"address\">description</a></p>"));
+	XCTAssertEqualObjects(result1, @"<p><a href=\"address\">description</a></p>");
+	XCTAssertEqualObjects(result2, @"<p><a href=\"address\">description</a></p>");
 }
 
 - (void)testStringByConvertingMarkdownToHTML_shouldAllowUsageOfUTF8CharacterSet {
@@ -504,7 +504,7 @@
 	// execute
 	NSString *result1 = [settings stringByConvertingMarkdownToHTML:@"对"];
 	// verify
-	assertThat(result1, is(@"<p>对</p>"));
+	XCTAssertEqualObjects(result1, @"<p>对</p>");
 }
 
 - (void)testStringByConvertingMarkdownToHTML_shouldConvertEmbeddedCrossReferencesInExampleBlock {
@@ -514,8 +514,8 @@
 	NSString *result1 = [settings stringByConvertingMarkdownToHTML:@"\t~!@[description](address)@!~"];
 	NSString *result2 = [settings stringByConvertingMarkdownToHTML:@"\t[description](address)"];
 	// verify - Discount doesn't process links here, but we need to return auto generated to deafult! Note that Discount adds new line!
-	assertThat(result1, is(@"<pre><code>description\n</code></pre>"));
-	assertThat(result2, is(@"<pre><code>[description](address)\n</code></pre>"));
+	XCTAssertEqualObjects(result1, @"<pre><code>description\n</code></pre>");
+	XCTAssertEqualObjects(result2, @"<pre><code>[description](address)\n</code></pre>");
 }
 
 - (void)testStringByConvertingMarkdownToHTML_shouldConvertAppledocStyleBoldMarkersInText {
@@ -524,7 +524,7 @@
 	// execute
 	NSString *result = [settings stringByConvertingMarkdownToHTML:@"**~!$text$!~**"];
 	// verify - Discount converts ** part, we just need to cleanup the remaining texts!
-	assertThat(result, is(@"<p><strong>text</strong></p>"));
+	XCTAssertEqualObjects(result, @"<p><strong>text</strong></p>");
 }
 
 - (void)testStringByConvertingMarkdownToHTML_shouldConvertAppledocStyleBoldMarkersInExampleBlock {
@@ -534,8 +534,8 @@
 	NSString *result1 = [settings stringByConvertingMarkdownToHTML:@"\t**~!$text$!~**"];
 	NSString *result2 = [settings stringByConvertingMarkdownToHTML:@"\t**text**"];
 	// verify - Discount doesn't process text here, so we should revert to original markup!
-	assertThat(result1, is(@"<pre><code>*text*\n</code></pre>"));
-	assertThat(result2, is(@"<pre><code>**text**\n</code></pre>"));
+	XCTAssertEqualObjects(result1, @"<pre><code>*text*\n</code></pre>");
+	XCTAssertEqualObjects(result2, @"<pre><code>**text**\n</code></pre>");
 }
 
 #pragma mark Markdown to text conversion
@@ -549,10 +549,10 @@
 	NSString *result3 = [settings stringByConvertingMarkdownToText:@"\t~!@[[class method]](address)@!~"];
 	NSString *result4 = [settings stringByConvertingMarkdownToText:@"\t[[class method]](address)"];
 	// verify - Discount converts any kind of link, we just need to strip embedded prefix and suffix!
-	assertThat(result1, is(@"description"));
-	assertThat(result2, is(@"description"));
-	assertThat(result3, is(@"\t[class method]"));
-	assertThat(result4, is(@"\t[class method]"));
+	XCTAssertEqualObjects(result1, @"description");
+	XCTAssertEqualObjects(result2, @"description");
+	XCTAssertEqualObjects(result3, @"\t[class method]");
+	XCTAssertEqualObjects(result4, @"\t[class method]");
 }
 
 - (void)testStringByConvertingMarkdownToText_shouldConvertEmbeddedCrossReferencesInExampleBlock {
@@ -564,10 +564,10 @@
 	NSString *result3 = [settings stringByConvertingMarkdownToText:@"\t~!@[[class method]](address)@!~"];
 	NSString *result4 = [settings stringByConvertingMarkdownToText:@"\t[[class method]](address)"];
 	// verify - Discount doesn't process links here, but we need to return auto generated to deafult! Note that Discount adds new line!
-	assertThat(result1, is(@"\tdescription"));
-	assertThat(result2, is(@"\tdescription"));
-	assertThat(result3, is(@"\t[class method]"));
-	assertThat(result4, is(@"\t[class method]"));
+	XCTAssertEqualObjects(result1, @"\tdescription");
+	XCTAssertEqualObjects(result2, @"\tdescription");
+	XCTAssertEqualObjects(result3, @"\t[class method]");
+	XCTAssertEqualObjects(result4, @"\t[class method]");
 }
 
 - (void)testStringByConvertingMarkdownToText_shouldConvertEmbeddedAppledocBoldMarkersInText {
@@ -577,8 +577,8 @@
 	NSString *result1 = [settings stringByConvertingMarkdownToText:@"~!$text$!~"];
 	NSString *result2 = [settings stringByConvertingMarkdownToText:@"**~!$text$!~**"];
 	// verify
-	assertThat(result1, is(@"text"));
-	assertThat(result2, is(@"text"));
+	XCTAssertEqualObjects(result1, @"text");
+	XCTAssertEqualObjects(result2, @"text");
 }
 
 - (void)testStringByConvertingMarkdownToText_shouldConvertEmbeddedAppledocBoldMarkersInExampleBlock {
@@ -588,8 +588,8 @@
 	NSString *result1 = [settings stringByConvertingMarkdownToText:@"\t~!$text$!~"];
 	NSString *result2 = [settings stringByConvertingMarkdownToText:@"\t**~!$text$!~**"];
 	// verify
-	assertThat(result1, is(@"\ttext"));
-	assertThat(result2, is(@"\ttext"));
+	XCTAssertEqualObjects(result1, @"\ttext");
+	XCTAssertEqualObjects(result2, @"\ttext");
 }
 
 - (void)testStringByConvertingMarkdownToText_shouldConvertMarkdownReferences {
@@ -602,11 +602,11 @@
 	NSString *result4 = [settings stringByConvertingMarkdownToText:@"prefix [description](address) suffix"];
 	NSString *result5 = [settings stringByConvertingMarkdownToText:@"[description1](address) [description2](address) [description3](address)"];
 	// verify
-	assertThat(result1, is(@"simple text"));
-	assertThat(result2, is(@"description"));
-	assertThat(result3, is(@"description"));
-	assertThat(result4, is(@"prefix description suffix"));
-	assertThat(result5, is(@"description1 description2 description3"));
+	XCTAssertEqualObjects(result1, @"simple text");
+	XCTAssertEqualObjects(result2, @"description");
+	XCTAssertEqualObjects(result3, @"description");
+	XCTAssertEqualObjects(result4, @"prefix description suffix");
+	XCTAssertEqualObjects(result5, @"description1 description2 description3");
 }
 						  
 - (void)testStringByConvertingMarkdownToText_shouldConvertFormattingMarkers {
@@ -619,11 +619,11 @@
 	NSString *result4 = [settings stringByConvertingMarkdownToText:@"*1* **2** ***3*** _4_ __5__ ___6___"];
 	NSString *result5 = [settings stringByConvertingMarkdownToText:@"_*1*_ *_2_* **_3_** _**4**_ *__5__* __*6*__"];
 	// verify
-	assertThat(result1, is(@"desc"));
-	assertThat(result2, is(@"desc"));
-	assertThat(result3, is(@"prefix desc suffix"));
-	assertThat(result4, is(@"1 2 3 4 5 6"));
-	assertThat(result5, is(@"1 2 3 4 5 6"));
+	XCTAssertEqualObjects(result1, @"desc");
+	XCTAssertEqualObjects(result2, @"desc");
+	XCTAssertEqualObjects(result3, @"prefix desc suffix");
+	XCTAssertEqualObjects(result4, @"1 2 3 4 5 6");
+	XCTAssertEqualObjects(result5, @"1 2 3 4 5 6");
 }
 
 - (void)testStringByConvertingMarkdownToText_shouldConvertManualAnchors {
@@ -639,14 +639,14 @@
 	NSString *result7 = [settings stringByConvertingMarkdownToText:@"<a\n\n\thref\n=\n\t   'address'\n>desc</a>"];
 	NSString *result8 = [settings stringByConvertingMarkdownToText:@"<a\n\n\thref\n=\n\t   'address'\n/>"];
 	// verify
-	assertThat(result1, is(@"desc"));
-	assertThat(result2, is(@"desc"));
-	assertThat(result3, is(@"address"));
-	assertThat(result4, is(@"address"));
-	assertThat(result5, is(@"address"));
-	assertThat(result6, is(@"address"));
-	assertThat(result7, is(@"desc"));
-	assertThat(result8, is(@"address"));
+	XCTAssertEqualObjects(result1, @"desc");
+	XCTAssertEqualObjects(result2, @"desc");
+	XCTAssertEqualObjects(result3, @"address");
+	XCTAssertEqualObjects(result4, @"address");
+	XCTAssertEqualObjects(result5, @"address");
+	XCTAssertEqualObjects(result6, @"address");
+	XCTAssertEqualObjects(result7, @"desc");
+	XCTAssertEqualObjects(result8, @"address");
 }
 
 #pragma mark Private accessor helpers

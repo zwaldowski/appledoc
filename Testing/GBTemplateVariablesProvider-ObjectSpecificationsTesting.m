@@ -10,7 +10,7 @@
 #import "GBHTMLTemplateVariablesProvider.h"
 #import "GBTokenizer.h"
 
-@interface GBTemplateVariablesProviderObjectSpecificationsTesting : GHTestCase
+@interface GBTemplateVariablesProviderObjectSpecificationsTesting : XCTestCase
 @end
 
 @implementation GBTemplateVariablesProviderObjectSpecificationsTesting
@@ -25,7 +25,7 @@
 	NSDictionary *vars = [provider variablesForClass:class withStore:[GBTestObjectsRegistry store]];
 	NSArray *specifications = [vars valueForKeyPath:@"page.specifications.values"];
 	// verify
-	assertThatInteger([specifications count], equalToInteger(0));
+	XCTAssertEqual(specifications.count, (NSUInteger)0);
 }
 
 - (void)testVariablesForClass_inheritsFrom_shouldPrepareSpecificationForUnknownSuperclass {
@@ -39,9 +39,9 @@
 	// verify
 	NSDictionary *specification = [specifications objectAtIndex:0];
 	NSArray *values = [specification objectForKey:@"values"];
-	assertThatInteger([values count], equalToInteger(1));
-	assertThat([[values objectAtIndex:0] objectForKey:@"string"], is(@"NSObject"));
-	assertThat([[values objectAtIndex:0] objectForKey:@"href"], is(nil));
+	XCTAssertEqual(values.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[values objectAtIndex:0] objectForKey:@"string"], @"NSObject");
+	XCTAssertNil([[values objectAtIndex:0] objectForKey:@"href"]);
 }
 
 - (void)testVariablesForClass_inheritsFrom_shouldPrepareSpecificationForKnownSuperclass {
@@ -59,9 +59,9 @@
 	// verify
 	NSDictionary *specification = [specifications objectAtIndex:0];
 	NSArray *values = [specification objectForKey:@"values"];
-	assertThatInteger([values count], equalToInteger(1));
-	assertThat([[values objectAtIndex:0] objectForKey:@"string"], is(@"Base"));
-	assertThat([[values objectAtIndex:0] objectForKey:@"href"], isNot(nil));
+	XCTAssertEqual(values.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[values objectAtIndex:0] objectForKey:@"string"], @"Base");
+	XCTAssertNotNil([[values objectAtIndex:0] objectForKey:@"href"]);
 }
 
 - (void)testVariablesForClass_inheritsFrom_shouldPrepareSpecificationForClassHierarchy {
@@ -84,13 +84,13 @@
 	// verify - note that href is created even if superclass is not registered to store as long as a superclass property is non-nil.
 	NSDictionary *specification = [specifications objectAtIndex:0];
 	NSArray *values = [specification objectForKey:@"values"];
-	assertThatInteger([values count], equalToInteger(3));
-	assertThat([[values objectAtIndex:0] objectForKey:@"string"], is(@"Level1"));
-	assertThat([[values objectAtIndex:0] objectForKey:@"href"], isNot(nil));
-	assertThat([[values objectAtIndex:1] objectForKey:@"string"], is(@"Level2"));
-	assertThat([[values objectAtIndex:1] objectForKey:@"href"], isNot(nil));
-	assertThat([[values objectAtIndex:2] objectForKey:@"string"], is(@"NSObject"));
-	assertThat([[values objectAtIndex:2] objectForKey:@"href"], is(nil));
+	XCTAssertEqual(values.count, (NSUInteger)3);
+	XCTAssertEqualObjects([[values objectAtIndex:0] objectForKey:@"string"], @"Level1");
+	XCTAssertNotNil([[values objectAtIndex:0] objectForKey:@"href"]);
+	XCTAssertEqualObjects([[values objectAtIndex:1] objectForKey:@"string"], @"Level2");
+	XCTAssertNotNil([[values objectAtIndex:1] objectForKey:@"href"]);
+	XCTAssertEqualObjects([[values objectAtIndex:2] objectForKey:@"string"], @"NSObject");
+	XCTAssertNil([[values objectAtIndex:2] objectForKey:@"href"]);
 }
 
 #pragma mark Conforms to
@@ -103,7 +103,7 @@
 	NSDictionary *vars = [provider variablesForClass:class withStore:[GBTestObjectsRegistry store]];
 	NSArray *specifications = [vars valueForKeyPath:@"page.specifications.values"];
 	// verify
-	assertThatInteger([specifications count], equalToInteger(0));
+	XCTAssertEqual(specifications.count, (NSUInteger)0);
 }
 
 - (void)testVariablesForClass_conformsTo_shouldPrepareSpecificationForUnknownProtocol {
@@ -117,9 +117,9 @@
 	// verify
 	NSDictionary *specification = [specifications objectAtIndex:0];
 	NSArray *values = [specification objectForKey:@"values"];
-	assertThatInteger([values count], equalToInteger(1));
-	assertThat([[values objectAtIndex:0] objectForKey:@"string"], is(@"Protocol"));
-	assertThat([[values objectAtIndex:0] objectForKey:@"href"], is(nil));
+	XCTAssertEqual(values.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[values objectAtIndex:0] objectForKey:@"string"], @"Protocol");
+	XCTAssertNil([[values objectAtIndex:0] objectForKey:@"href"]);
 }
 
 - (void)testVariablesForClass_conformsTo_shouldPrepareSpecificationForKnownProtocol {
@@ -136,9 +136,9 @@
 	// verify
 	NSDictionary *specification = [specifications objectAtIndex:0];
 	NSArray *values = [specification objectForKey:@"values"];
-	assertThatInteger([values count], equalToInteger(1));
-	assertThat([[values objectAtIndex:0] objectForKey:@"string"], is(@"Protocol"));
-	assertThat([[values objectAtIndex:0] objectForKey:@"href"], isNot(nil));
+	XCTAssertEqual(values.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[values objectAtIndex:0] objectForKey:@"string"], @"Protocol");
+	XCTAssertNotNil([[values objectAtIndex:0] objectForKey:@"href"]);
 }
 
 - (void)testVariablesForClass_conformsTo_shouldPrepareSpecificationForComplexProtocolsList {
@@ -160,13 +160,13 @@
 	// verify
 	NSDictionary *specification = [specifications objectAtIndex:0];
 	NSArray *values = [specification objectForKey:@"values"];
-	assertThatInteger([values count], equalToInteger(3));
-	assertThat([[values objectAtIndex:0] objectForKey:@"string"], is(@"Protocol1"));
-	assertThat([[values objectAtIndex:0] objectForKey:@"href"], isNot(nil));
-	assertThat([[values objectAtIndex:1] objectForKey:@"string"], is(@"Protocol2"));
-	assertThat([[values objectAtIndex:1] objectForKey:@"href"], is(nil));
-	assertThat([[values objectAtIndex:2] objectForKey:@"string"], is(@"Protocol3"));
-	assertThat([[values objectAtIndex:2] objectForKey:@"href"], isNot(nil));
+	XCTAssertEqual(values.count, (NSUInteger)3);
+	XCTAssertEqualObjects([[values objectAtIndex:0] objectForKey:@"string"], @"Protocol1");
+	XCTAssertNotNil([[values objectAtIndex:0] objectForKey:@"href"]);
+	XCTAssertEqualObjects([[values objectAtIndex:1] objectForKey:@"string"], @"Protocol2");
+	XCTAssertNil([[values objectAtIndex:1] objectForKey:@"href"]);
+	XCTAssertEqualObjects([[values objectAtIndex:2] objectForKey:@"string"], @"Protocol3");
+	XCTAssertNotNil([[values objectAtIndex:2] objectForKey:@"href"]);
 }
 
 #pragma mark Declared in
@@ -182,9 +182,9 @@
 	// verify
 	NSDictionary *specification = [specifications objectAtIndex:0];
 	NSArray *values = [specification objectForKey:@"values"];
-	assertThatInteger([values count], equalToInteger(1));
-	assertThat([[values objectAtIndex:0] objectForKey:@"string"], is(@"file.h"));
-	assertThat([[values objectAtIndex:0] objectForKey:@"href"], is(nil));
+	XCTAssertEqual(values.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[values objectAtIndex:0] objectForKey:@"string"], @"file.h");
+	XCTAssertNil([[values objectAtIndex:0] objectForKey:@"href"]);
 }
 
 - (void)testVariablesForClass_declaredIn_shouldPrepareSpecificationForMultipleSourceInfos {
@@ -199,11 +199,11 @@
 	// verify
 	NSDictionary *specification = [specifications objectAtIndex:0];
 	NSArray *values = [specification objectForKey:@"values"];
-	assertThatInteger([values count], equalToInteger(2));
-	assertThat([[values objectAtIndex:0] objectForKey:@"string"], is(@"file1.h"));
-	assertThat([[values objectAtIndex:0] objectForKey:@"href"], is(nil));
-	assertThat([[values objectAtIndex:1] objectForKey:@"string"], is(@"file2.h"));
-	assertThat([[values objectAtIndex:1] objectForKey:@"href"], is(nil));
+	XCTAssertEqual(values.count, (NSUInteger)2);
+	XCTAssertEqualObjects([[values objectAtIndex:0] objectForKey:@"string"], @"file1.h");
+	XCTAssertNil([[values objectAtIndex:0] objectForKey:@"href"]);
+	XCTAssertEqualObjects([[values objectAtIndex:1] objectForKey:@"string"], @"file2.h");
+	XCTAssertNil([[values objectAtIndex:1] objectForKey:@"href"]);
 }
 
 @end

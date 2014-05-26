@@ -25,10 +25,10 @@
 	[parser parseObjectsFromString:@"@interface MyClass /** @name Section1 */ /** */ -(id)method1; -(id)method2; @end" sourceFile:@"file" toStore:store];
 	// verify
 	NSArray *sections = [[[[store classes] anyObject] methods] sections];
-	assertThatInteger([sections count], equalToInteger(1));
+	XCTAssertEqual(sections.count, (NSUInteger)1);
 	GBMethodSectionData *section = [sections objectAtIndex:0];
-	assertThat(section.sectionName, is(@"Section1"));
-	assertThatInteger([[section methods] count], equalToInteger(2));
+	XCTAssertEqualObjects(section.sectionName, @"Section1");
+	XCTAssertEqual([section methods].count, (NSUInteger)2);
 	[self assertMethod:[[section methods] objectAtIndex:0] matchesInstanceComponents:@"id", @"method1", nil];
 	[self assertMethod:[[section methods] objectAtIndex:1] matchesInstanceComponents:@"id", @"method2", nil];
 }
@@ -41,10 +41,10 @@
 	[parser parseObjectsFromString:@"@interface MyClass /** @name Section1 */ /** */ -(id)method1; /** */ -(id)method2; @end" sourceFile:@"file" toStore:store];
 	// verify
 	NSArray *sections = [[[[store classes] anyObject] methods] sections];
-	assertThatInteger([sections count], equalToInteger(1));
+	XCTAssertEqual(sections.count, (NSUInteger)1);
 	GBMethodSectionData *section = [sections objectAtIndex:0];
-	assertThat(section.sectionName, is(@"Section1"));
-	assertThatInteger([[section methods] count], equalToInteger(2));
+	XCTAssertEqualObjects(section.sectionName, @"Section1");
+	XCTAssertEqual([section methods].count, (NSUInteger)2);
 	[self assertMethod:[[section methods] objectAtIndex:0] matchesInstanceComponents:@"id", @"method1", nil];
 	[self assertMethod:[[section methods] objectAtIndex:1] matchesInstanceComponents:@"id", @"method2", nil];
 }
@@ -57,8 +57,8 @@
 	[parser parseObjectsFromString:@"@interface MyClass /** @name Long section name */ /** */ -(id)method1; @end" sourceFile:@"file" toStore:store];
 	// verify
 	NSArray *sections = [[[[store classes] anyObject] methods] sections];
-	assertThatInteger([sections count], equalToInteger(1));
-	assertThat([[sections objectAtIndex:0] sectionName], is(@"Long section name"));
+	XCTAssertEqual(sections.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[sections objectAtIndex:0] sectionName], @"Long section name");
 }
 
 - (void)testParseObjectsFromString_shouldDetectSectionNameOnlyIfAtStartOfComment {
@@ -69,8 +69,8 @@
 	[parser parseObjectsFromString:@"@interface MyClass /** Some prefix @name Section */ /** */ -(id)method1; @end" sourceFile:@"file" toStore:store];
 	// verify - note that we still create default section!
 	NSArray *sections = [[[[store classes] anyObject] methods] sections];
-	assertThatInteger([sections count], equalToInteger(1));
-	assertThat([[sections objectAtIndex:0] sectionName], is(nil));
+	XCTAssertEqual(sections.count, (NSUInteger)1);
+	XCTAssertNil([[sections objectAtIndex:0] sectionName]);
 }
 
 - (void)testParseObjectsFromString_shouldOnlyTakeSectionNameFromTheFirstLineString {
@@ -81,8 +81,8 @@
 	[parser parseObjectsFromString:@"@interface MyClass /** @name\nSection\n\tspanning   multiple\n\n\n\nlines\rwhoa!    */ /** */ -(id)method1; @end" sourceFile:@"file" toStore:store];
 	// verify
 	NSArray *sections = [[[[store classes] anyObject] methods] sections];
-	assertThatInteger([sections count], equalToInteger(1));
-	assertThat([[sections objectAtIndex:0] sectionName], is(@"Section"));
+	XCTAssertEqual(sections.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[sections objectAtIndex:0] sectionName], @"Section");
 }
 
 - (void)testParseObjectsFromString_requiresDetectsSectionEvenIfFollowedByUncommentedMethod {
@@ -93,11 +93,11 @@
 	[parser parseObjectsFromString:@"@interface MyClass /** @name Section */ -(id)method1; @end" sourceFile:@"file" toStore:store];
 	// verify
 	NSArray *sections = [[[[store classes] anyObject] methods] sections];
-	assertThatInteger([sections count], equalToInteger(1));
+	XCTAssertEqual(sections.count, (NSUInteger)1);
 	GBMethodSectionData *section = [sections objectAtIndex:0];
-	assertThat(section.sectionName, is(@"Section"));
-	assertThatInteger([section.methods count], equalToInteger(1));
-	assertThat([[section.methods objectAtIndex:0] comment], is(nil));
+	XCTAssertEqualObjects(section.sectionName, @"Section");
+	XCTAssertEqual(section.methods.count, (NSUInteger)1);
+	XCTAssertNil([[section.methods objectAtIndex:0] comment]);
 }
 
 - (void)testParseObjectsFromString_shouldDetectSectionAndCommentForNextCommentedMethod {
@@ -108,12 +108,12 @@
 	[parser parseObjectsFromString:@"@interface MyClass /** @name Section1 */ /* First */ -(id)method1; /** Second */ -(id)method2; @end" sourceFile:@"file" toStore:store];
 	// verify
 	NSArray *sections = [[[[store classes] anyObject] methods] sections];
-	assertThatInteger([sections count], equalToInteger(1));
+	XCTAssertEqual(sections.count, (NSUInteger)1);
 	GBMethodSectionData *section = [sections objectAtIndex:0];
-	assertThat(section.sectionName, is(@"Section1"));
-	assertThatInteger([section.methods count], equalToInteger(2));
-	assertThat([[section.methods objectAtIndex:0] comment], is(nil));
-	assertThat([(GBComment *)[[section.methods objectAtIndex:1] comment] stringValue], is(@"Second"));
+	XCTAssertEqualObjects(section.sectionName, @"Section1");
+	XCTAssertEqual(section.methods.count, (NSUInteger)2);
+	XCTAssertNil([[section.methods objectAtIndex:0] comment]);
+	XCTAssertEqualObjects([(GBComment *)[[section.methods objectAtIndex:1] comment] stringValue], @"Second");
 }
 
 @end

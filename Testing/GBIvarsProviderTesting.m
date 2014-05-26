@@ -8,7 +8,7 @@
 
 #import "GBIvarsProvider.h"
 
-@interface GBIvarsProviderTesting : GHTestCase
+@interface GBIvarsProviderTesting : XCTestCase
 @end
 
 @implementation GBIvarsProviderTesting
@@ -22,9 +22,9 @@
 	// execute
 	[provider registerIvar:ivar];
 	// verify
-	assertThatBool([provider.ivars containsObject:ivar], equalToBool(YES));
-	assertThatInteger([provider.ivars count], equalToInteger(1));
-	assertThat([provider.ivars objectAtIndex:0], is(ivar));
+	XCTAssertTrue([provider.ivars containsObject:ivar]);
+	XCTAssertEqual(provider.ivars.count, (NSUInteger)1);
+	XCTAssertEqualObjects([provider.ivars objectAtIndex:0], ivar);
 }
 
 - (void)testRegisterIvar_shouldSetParentObject {
@@ -34,7 +34,7 @@
 	// execute
 	[provider registerIvar:ivar];
 	// verify
-	assertThat(ivar.parentObject, is(self));
+	XCTAssertEqualObjects(ivar.parentObject, self);
 }
 
 - (void)testRegisterIvar_shouldIgnoreSameInstance {
@@ -45,7 +45,7 @@
 	[provider registerIvar:ivar];
 	[provider registerIvar:ivar];
 	// verify
-	assertThatInteger([provider.ivars count], equalToInteger(1));
+	XCTAssertEqual(provider.ivars.count, (NSUInteger)1);
 }
 
 - (void)testRegisterIvar_shouldMergeDifferentInstanceWithSameName {
@@ -76,10 +76,10 @@
 	[original mergeDataFromIvarsProvider:source];
 	// verify - only basic testing here, details at GBIvarDataTesting!
 	NSArray *ivars = [original ivars];
-	assertThatInteger([ivars count], equalToInteger(3));
-	assertThat([[ivars objectAtIndex:0] nameOfIvar], is(@"_i1"));
-	assertThat([[ivars objectAtIndex:1] nameOfIvar], is(@"_i2"));
-	assertThat([[ivars objectAtIndex:2] nameOfIvar], is(@"_i3"));
+	XCTAssertEqual(ivars.count, (NSUInteger)3);
+	XCTAssertEqualObjects([[ivars objectAtIndex:0] nameOfIvar], @"_i1");
+	XCTAssertEqualObjects([[ivars objectAtIndex:1] nameOfIvar], @"_i2");
+	XCTAssertEqualObjects([[ivars objectAtIndex:2] nameOfIvar], @"_i3");
 }
 
 - (void)testMergeDataFromIvarsProvider_shouldPreserveSourceData {
@@ -94,9 +94,9 @@
 	[original mergeDataFromIvarsProvider:source];
 	// verify - only basic testing here, details at GBIvarDataTesting!
 	NSArray *ivars = [source ivars];
-	assertThatInteger([ivars count], equalToInteger(2));
-	assertThat([[ivars objectAtIndex:0] nameOfIvar], is(@"_i1"));
-	assertThat([[ivars objectAtIndex:1] nameOfIvar], is(@"_i3"));
+	XCTAssertEqual(ivars.count, (NSUInteger)2);
+	XCTAssertEqualObjects([[ivars objectAtIndex:0] nameOfIvar], @"_i1");
+	XCTAssertEqualObjects([[ivars objectAtIndex:1] nameOfIvar], @"_i3");
 }
 
 @end

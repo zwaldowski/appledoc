@@ -31,7 +31,7 @@
 + (GBStore *)storeWithProtocolWithComment:(id)comment;
 + (GBStore *)storeWithDocumentWithComment:(id)comment;
 + (GBStore *)storeWithObjects:(id)first, ... NS_REQUIRES_NIL_TERMINATION;
-+ (GBStore *)storeByPerformingSelector:(SEL)selector withObject:(id)object;
++ (GBStore *)storeByPerformingBlock:(void(^)(GBStore *store))block;
 
 + (GBClassData *)classWithName:(NSString *)name methods:(GBMethodData *)first,... NS_REQUIRES_NIL_TERMINATION;
 + (GBCategoryData *)categoryWithName:(NSString *)name className:(NSString *)className methods:(GBMethodData *)first,... NS_REQUIRES_NIL_TERMINATION;

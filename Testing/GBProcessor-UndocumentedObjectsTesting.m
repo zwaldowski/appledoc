@@ -10,7 +10,7 @@
 #import "GBStore.h"
 #import "GBProcessor.h"
 
-@interface GBProcessorUndocumentedObjectsTesting : GHTestCase
+@interface GBProcessorUndocumentedObjectsTesting : XCTestCase
 
 - (OCMockObject *)settingsProviderKeepObjects:(BOOL)objects keepMembers:(BOOL)members;
 - (GBClassData *)classWithComment:(BOOL)comment;
@@ -31,37 +31,43 @@
 	// setup
 	GBProcessor *processor = [GBProcessor processorWithSettingsProvider:[self settingsProviderKeepObjects:YES keepMembers:NO]];
 	GBClassData *class = [self classWithComment:NO];
-	GBStore *store = [GBTestObjectsRegistry storeByPerformingSelector:@selector(registerClass:) withObject:class];
+	GBStore *store = [GBTestObjectsRegistry storeByPerformingBlock:^(GBStore *store) {
+		[store registerClass:class];
+	}];
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThatInteger([store.classes count], equalToInteger(1));
-	assertThatBool([store.classes containsObject:class], equalToBool(YES));
+	XCTAssertEqual(store.classes.count, (NSUInteger)1);
+	XCTAssertTrue([store.classes containsObject:class]);
 }
 
 - (void)testProcessObjectsFromStore_shouldKeepUncommentedObjectIfItHasCommentedMembers {
 	// setup
 	GBProcessor *processor = [GBProcessor processorWithSettingsProvider:[self settingsProviderKeepObjects:NO keepMembers:NO]];
 	GBClassData *class = [self classWithComment:NO];
-	GBStore *store = [GBTestObjectsRegistry storeByPerformingSelector:@selector(registerClass:) withObject:class];
+	GBStore *store = [GBTestObjectsRegistry storeByPerformingBlock:^(GBStore *store) {
+		[store registerClass:class];
+	}];
 	[self registerMethodsOfCount:1 withComment:YES toObject:class];
 	[self registerMethodsOfCount:1 withComment:NO toObject:class];
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThatInteger([store.classes count], equalToInteger(1));
-	assertThatBool([store.classes containsObject:class], equalToBool(YES));
+	XCTAssertEqual(store.classes.count, (NSUInteger)1);
+	XCTAssertTrue([store.classes containsObject:class]);
 }
 
 - (void)testProcessObjectsFromStore_shouldDeleteUncommentedObjectIfKeepObjectsIsNo {
 	// setup
 	GBProcessor *processor = [GBProcessor processorWithSettingsProvider:[self settingsProviderKeepObjects:NO keepMembers:NO]];
 	GBClassData *class = [self classWithComment:NO];
-	GBStore *store = [GBTestObjectsRegistry storeByPerformingSelector:@selector(registerClass:) withObject:class];
+	GBStore *store = [GBTestObjectsRegistry storeByPerformingBlock:^(GBStore *store) {
+		[store registerClass:class];
+	}];
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThatInteger([store.classes count], equalToInteger(0));
+	XCTAssertEqual(store.classes.count, (NSUInteger)0);
 }
 
 - (void)testProcessObjectsFromStore_shouldDeleteUncommentedClassesCategoriesAndProtocols {
@@ -74,9 +80,9 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThatInteger([store.classes count], equalToInteger(0));
-	assertThatInteger([store.categories count], equalToInteger(0));
-	assertThatInteger([store.protocols count], equalToInteger(0));
+	XCTAssertEqual(store.classes.count, (NSUInteger)0);
+	XCTAssertEqual(store.categories.count, (NSUInteger)0);
+	XCTAssertEqual(store.protocols.count, (NSUInteger)0);
 }
 
 #pragma mark Undocumented methods handling
@@ -86,13 +92,15 @@
 	GBProcessor *processor = [GBProcessor processorWithSettingsProvider:[self settingsProviderKeepObjects:YES keepMembers:YES]];
 	GBClassData *class = [self classWithComment:YES];
 	NSArray *uncommented = [self registerMethodsOfCount:1 withComment:NO toObject:class];
-	GBStore *store = [GBTestObjectsRegistry storeByPerformingSelector:@selector(registerClass:) withObject:class];
+	GBStore *store = [GBTestObjectsRegistry storeByPerformingBlock:^(GBStore *store) {
+		[store registerClass:class];
+	}];
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
 	NSArray *methods = [class.methods methods];
- 	assertThatInteger([methods count], equalToInteger(1));
-	assertThatBool([methods containsObject:[uncommented objectAtIndex:0]], equalToBool(YES));
+ 	XCTAssertEqual(methods.count, (NSUInteger)1);
+	XCTAssertTrue([methods containsObject:[uncommented objectAtIndex:0]]);
 }
 
 - (void)testProcessObjectsFromStore_shouldDeleteUncommentedMethodsIfKeepMembersIsNo {
@@ -101,38 +109,44 @@
 	GBClassData *class = [self classWithComment:YES];
 	NSArray *commented = [self registerMethodsOfCount:1 withComment:YES toObject:class];
 	NSArray *uncommented = [self registerMethodsOfCount:1 withComment:NO toObject:class];
-	GBStore *store = [GBTestObjectsRegistry storeByPerformingSelector:@selector(registerClass:) withObject:class];
+	GBStore *store = [GBTestObjectsRegistry storeByPerformingBlock:^(GBStore *store) {
+		[store registerClass:class];
+	}];
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
 	NSArray *methods = [class.methods methods];
- 	assertThatInteger([methods count], equalToInteger(1));
-	assertThatBool([methods containsObject:[commented objectAtIndex:0]], equalToBool(YES));
-	assertThatBool([methods containsObject:[uncommented objectAtIndex:0]], equalToBool(NO));
+ 	XCTAssertEqual(methods.count, (NSUInteger)1);
+	XCTAssertTrue([methods containsObject:[commented objectAtIndex:0]]);
+	XCTAssertFalse([methods containsObject:[uncommented objectAtIndex:0]]);
 }
 
 - (void)testProcessObjectsFromStore_shouldKeepUncommentedObjectIfAllMethodsAreUnregisteredIfKeepObjectIsYes {
 	// setup
 	GBProcessor *processor = [GBProcessor processorWithSettingsProvider:[self settingsProviderKeepObjects:YES keepMembers:NO]];
 	GBClassData *class = [self classWithComment:NO];
-	GBStore *store = [GBTestObjectsRegistry storeByPerformingSelector:@selector(registerClass:) withObject:class];
+	GBStore *store = [GBTestObjectsRegistry storeByPerformingBlock:^(GBStore *store) {
+		[store registerClass:class];
+	}];
 	[self registerMethodsOfCount:1 withComment:NO toObject:class];
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThatBool([store.classes containsObject:class], equalToBool(YES));
+	XCTAssertTrue([store.classes containsObject:class]);
 }
 
 - (void)testProcessObjectsFromStore_shouldDeleteUncommentedObjectIfAllMethodsAreUnregisteredIfKeepObjectIsNo {
 	// setup
 	GBProcessor *processor = [GBProcessor processorWithSettingsProvider:[self settingsProviderKeepObjects:NO keepMembers:NO]];
 	GBClassData *class = [self classWithComment:NO];
-	GBStore *store = [GBTestObjectsRegistry storeByPerformingSelector:@selector(registerClass:) withObject:class];
+	GBStore *store = [GBTestObjectsRegistry storeByPerformingBlock:^(GBStore *store) {
+		[store registerClass:class];
+	}];
 	[self registerMethodsOfCount:1 withComment:NO toObject:class];
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThatBool([store.classes containsObject:class], equalToBool(NO));
+	XCTAssertFalse([store.classes containsObject:class]);
 }
 
 #pragma mark Creation methods

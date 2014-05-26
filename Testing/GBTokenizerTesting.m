@@ -9,7 +9,7 @@
 #import "GBApplicationSettingsProvider.h"
 #import "GBTokenizer.h"
 
-@interface GBTokenizerTesting : GHTestCase
+@interface GBTokenizerTesting : XCTestCase
 
 - (PKTokenizer *)defaultTokenizer;
 - (PKTokenizer *)longTokenizer;
@@ -26,7 +26,7 @@
 	// setup & execute
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[self defaultTokenizer] filename:@"file"];
 	// verify
-	assertThat([tokenizer.currentToken stringValue], is(@"one"));
+	XCTAssertEqualObjects([tokenizer.currentToken stringValue], @"one");
 }
 
 - (void)testInitWithTokenizer_shouldSkipOrdinaryComments {
@@ -34,8 +34,8 @@
 	GBTokenizer *tokenizer1 = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"// comment\n bla"] filename:@"file"];
 	GBTokenizer *tokenizer2 = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/* comment */\n bla"] filename:@"file"];
 	// verify
-	assertThat([tokenizer1.currentToken stringValue], is(@"bla"));
-	assertThat([tokenizer2.currentToken stringValue], is(@"bla"));
+	XCTAssertEqualObjects([tokenizer1.currentToken stringValue], @"bla");
+	XCTAssertEqualObjects([tokenizer2.currentToken stringValue], @"bla");
 }
 
 - (void)testInitWithTokenizer_shouldPositionOnFirstNonCommentToken {
@@ -43,8 +43,8 @@
 	GBTokenizer *tokenizer1 = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/// comment\n bla"] filename:@"file"];
 	GBTokenizer *tokenizer2 = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/** comment */\n bla"] filename:@"file"];
 	// verify
-	assertThat([tokenizer1.currentToken stringValue], is(@"bla"));
-	assertThat([tokenizer2.currentToken stringValue], is(@"bla"));
+	XCTAssertEqualObjects([tokenizer1.currentToken stringValue], @"bla");
+	XCTAssertEqualObjects([tokenizer2.currentToken stringValue], @"bla");
 }
 
 - (void)testInitWithTokenizer_shouldSetupLastComment {
@@ -52,8 +52,8 @@
 	GBTokenizer *tokenizer1 = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/// comment\n bla"] filename:@"file"];
 	GBTokenizer *tokenizer2 = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/** comment */\n bla"] filename:@"file"];
 	// verify
-	assertThat([tokenizer1.lastComment stringValue], is(@"comment"));
-	assertThat([tokenizer2.lastComment stringValue], is(@"comment"));
+	XCTAssertEqualObjects([tokenizer1.lastComment stringValue], @"comment");
+	XCTAssertEqualObjects([tokenizer2.lastComment stringValue], @"comment");
 }
 
 - (void)testInitWithTokenizer_shouldUseFullPathAsFilename {
@@ -61,8 +61,8 @@
 	GBTokenizer *tokenizer1 = [GBTokenizer tokenizerWithSource:[self defaultTokenizer] filename:@"/Users/Path/to/filename.h"];
 	GBTokenizer *tokenizer2 = [GBTokenizer tokenizerWithSource:[self defaultTokenizer] filename:@"filename.h"];
 	// verify
-	assertThat([tokenizer1 valueForKey:@"filename"], is(@"/Users/Path/to/filename.h"));
-	assertThat([tokenizer2 valueForKey:@"filename"], is(@"filename.h"));
+	XCTAssertEqualObjects([tokenizer1 valueForKey:@"filename"], @"/Users/Path/to/filename.h");
+	XCTAssertEqualObjects([tokenizer2 valueForKey:@"filename"], @"filename.h");
 }
 
 #pragma mark Lookahead testing
@@ -71,18 +71,18 @@
 	// setup
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[self defaultTokenizer] filename:@"file"];
 	// execute & verify
-	assertThat([[tokenizer lookahead:0] stringValue], is(@"one"));
-	assertThat([[tokenizer lookahead:1] stringValue], is(@"two"));
-	assertThat([[tokenizer lookahead:2] stringValue], is(@"three"));
+	XCTAssertEqualObjects([[tokenizer lookahead:0] stringValue], @"one");
+	XCTAssertEqualObjects([[tokenizer lookahead:1] stringValue], @"two");
+	XCTAssertEqualObjects([[tokenizer lookahead:2] stringValue], @"three");
 }
 
 - (void)testLookahead_shouldReturnEOFToken {
 	// setup
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[self defaultTokenizer] filename:@"file"];
 	// execute & verify
-	assertThat([[tokenizer lookahead:3] stringValue], is([[PKToken EOFToken] stringValue]));
-	assertThat([[tokenizer lookahead:4] stringValue], is([[PKToken EOFToken] stringValue]));
-	assertThat([[tokenizer lookahead:999999999] stringValue], is([[PKToken EOFToken] stringValue]));
+	XCTAssertEqualObjects([[tokenizer lookahead:3] stringValue], [[PKToken EOFToken] stringValue]);
+	XCTAssertEqualObjects([[tokenizer lookahead:4] stringValue], [[PKToken EOFToken] stringValue]);
+	XCTAssertEqualObjects([[tokenizer lookahead:999999999] stringValue], [[PKToken EOFToken] stringValue]);
 }
 
 - (void)testLookahead_shouldNotMovePosition {
@@ -90,24 +90,24 @@
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[self defaultTokenizer] filename:@"file"];
 	// execute & verify
 	[tokenizer lookahead:1];
-	assertThat([[tokenizer currentToken] stringValue], is(@"one"));
+	XCTAssertEqualObjects([[tokenizer currentToken] stringValue], @"one");
 	[tokenizer lookahead:2];
-	assertThat([[tokenizer currentToken] stringValue], is(@"one"));
+	XCTAssertEqualObjects([[tokenizer currentToken] stringValue], @"one");
 	[tokenizer lookahead:3];
-	assertThat([[tokenizer currentToken] stringValue], is(@"one"));
+	XCTAssertEqualObjects([[tokenizer currentToken] stringValue], @"one");
 	[tokenizer lookahead:99999];
-	assertThat([[tokenizer currentToken] stringValue], is(@"one"));
+	XCTAssertEqualObjects([[tokenizer currentToken] stringValue], @"one");
 }
 
 - (void)testLookahead_shouldSkipComments {
 	// setup
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[self commentsTokenizer] filename:@"file"];
 	// execute & verify
-	assertThat([[tokenizer lookahead:0] stringValue], is(@"ONE"));
-	assertThat([[tokenizer lookahead:1] stringValue], is(@"TWO"));
-	assertThat([[tokenizer lookahead:2] stringValue], is(@"THREE"));
-	assertThat([[tokenizer lookahead:3] stringValue], is(@"FOUR"));
-	assertThat([[tokenizer lookahead:4] stringValue], is([[PKToken EOFToken] stringValue]));
+	XCTAssertEqualObjects([[tokenizer lookahead:0] stringValue], @"ONE");
+	XCTAssertEqualObjects([[tokenizer lookahead:1] stringValue], @"TWO");
+	XCTAssertEqualObjects([[tokenizer lookahead:2] stringValue], @"THREE");
+	XCTAssertEqualObjects([[tokenizer lookahead:3] stringValue], @"FOUR");
+	XCTAssertEqualObjects([[tokenizer lookahead:4] stringValue], [[PKToken EOFToken] stringValue]);
 }
 
 #pragma mark Consuming testing
@@ -117,9 +117,9 @@
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[self defaultTokenizer] filename:@"file"];
 	// execute & verify
 	[tokenizer consume:1];
-	assertThat([tokenizer.currentToken stringValue], is(@"two"));
+	XCTAssertEqualObjects([tokenizer.currentToken stringValue], @"two");
 	[tokenizer consume:1];
-	assertThat([tokenizer.currentToken stringValue], is(@"three"));
+	XCTAssertEqualObjects([tokenizer.currentToken stringValue], @"three");
 }
 
 - (void)testConsume_shouldReturnEOF {
@@ -130,8 +130,8 @@
 	[tokenizer consume:1];
 	[tokenizer consume:1];
 	// verify
-	assertThat([tokenizer.currentToken stringValue], equalTo([[PKToken EOFToken] stringValue]));
-	assertThatBool([tokenizer eof], equalToBool(YES));
+	XCTAssertEqualObjects([tokenizer.currentToken stringValue], [[PKToken EOFToken] stringValue]);
+	XCTAssertTrue([tokenizer eof]);
 }
 
 - (void)testConsume_shouldSkipComments {
@@ -139,11 +139,11 @@
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[self commentsTokenizer] filename:@"file"];
 	// execute & verify - note that we initially position on the first token!
 	[tokenizer consume:1];
-	assertThat([[tokenizer currentToken] stringValue], is(@"TWO"));
+	XCTAssertEqualObjects([[tokenizer currentToken] stringValue], @"TWO");
 	[tokenizer consume:1];
-	assertThat([[tokenizer currentToken] stringValue], is(@"THREE"));
+	XCTAssertEqualObjects([[tokenizer currentToken] stringValue], @"THREE");
 	[tokenizer consume:1];
-	assertThat([[tokenizer currentToken] stringValue], is(@"FOUR"));
+	XCTAssertEqualObjects([[tokenizer currentToken] stringValue], @"FOUR");
 }
 
 - (void)testConsume_shouldSetLastComment {
@@ -151,11 +151,11 @@
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[self commentsTokenizer] filename:@"file"];
 	// execute & verify - note that we initially position on the first token!
 	[tokenizer consume:1];
-	assertThat([tokenizer.lastComment stringValue], is(@"second"));
+	XCTAssertEqualObjects([tokenizer.lastComment stringValue], @"second");
 	[tokenizer consume:1];
-	assertThat([tokenizer.lastComment stringValue], is(@"third"));
+	XCTAssertEqualObjects([tokenizer.lastComment stringValue], @"third");
 	[tokenizer consume:1];
-	assertThat([tokenizer.lastComment stringValue], is(nil));
+	XCTAssertNil([tokenizer.lastComment stringValue]);
 }
 
 - (void)testConsume_shouldSetPreviousComment {
@@ -163,14 +163,14 @@
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[self succesiveCommentsTokenizer] filename:@"file"];
 	// execute & verify - note that we initially position on the first token!
 	[tokenizer consume:1];
-	assertThat([tokenizer.previousComment stringValue], is(@"first\nfirst1"));
-	assertThat([tokenizer.lastComment stringValue], is(@"second"));
+	XCTAssertEqualObjects([tokenizer.previousComment stringValue], @"first\nfirst1");
+	XCTAssertEqualObjects([tokenizer.lastComment stringValue], @"second");
 	[tokenizer consume:1];
-	assertThat([tokenizer.previousComment stringValue], is(@"second"));
-	assertThat([tokenizer.lastComment stringValue], is(@"third"));
+	XCTAssertEqualObjects([tokenizer.previousComment stringValue], @"second");
+	XCTAssertEqualObjects([tokenizer.lastComment stringValue], @"third");
 	[tokenizer consume:1];
-	assertThat([tokenizer.previousComment stringValue], is(@"second"));
-	assertThat([tokenizer.lastComment stringValue], is(@"third"));
+	XCTAssertEqualObjects([tokenizer.previousComment stringValue], @"second");
+	XCTAssertEqualObjects([tokenizer.lastComment stringValue], @"third");
 }
 
 - (void)testConsume_shouldSetProperCommentWhenConsumingMultipleTokens {
@@ -179,10 +179,10 @@
 	GBTokenizer *tokenizer2 = [GBTokenizer tokenizerWithSource:[self commentsTokenizer] filename:@"file"];
 	// execute & verify - note that we initially position on the first token!
 	[tokenizer1 consume:2];
-	assertThat([tokenizer1.lastComment stringValue], is(@"third"));
+	XCTAssertEqualObjects([tokenizer1.lastComment stringValue], @"third");
 	// execute & verify - note that we initially position on the first token!
 	[tokenizer2 consume:3];
-	assertThat([tokenizer2.lastComment stringValue], is(nil));
+	XCTAssertNil([tokenizer2.lastComment stringValue]);
 }
 
 #pragma mark Block consuming testing
@@ -196,11 +196,11 @@
 		[tokens addObject:[token stringValue]];
 	}];
 	// verify
-	assertThatInteger([tokens count], equalToInteger(4));
-	assertThat([tokens objectAtIndex:0], is(@"one"));
-	assertThat([tokens objectAtIndex:1], is(@"two"));
-	assertThat([tokens objectAtIndex:2], is(@"three"));
-	assertThat([tokens objectAtIndex:3], is(@"four"));
+	XCTAssertEqual(tokens.count, (NSUInteger)4);
+	XCTAssertEqualObjects([tokens objectAtIndex:0], @"one");
+	XCTAssertEqualObjects([tokens objectAtIndex:1], @"two");
+	XCTAssertEqualObjects([tokens objectAtIndex:2], @"three");
+	XCTAssertEqualObjects([tokens objectAtIndex:3], @"four");
 }
 
 - (void)testConsumeFromToUsingBlock_shouldReportAllTokensFromTo {
@@ -212,10 +212,10 @@
 		[tokens addObject:[token stringValue]];
 	}];
 	// verify
-	assertThatInteger([tokens count], equalToInteger(3));
-	assertThat([tokens objectAtIndex:0], is(@"two"));
-	assertThat([tokens objectAtIndex:1], is(@"three"));
-	assertThat([tokens objectAtIndex:2], is(@"four"));
+	XCTAssertEqual(tokens.count, (NSUInteger)3);
+	XCTAssertEqualObjects([tokens objectAtIndex:0], @"two");
+	XCTAssertEqualObjects([tokens objectAtIndex:1], @"three");
+	XCTAssertEqualObjects([tokens objectAtIndex:2], @"four");
 }
 
 - (void)testConsumeFromToUsingBlock_shouldReturnIfStartTokenDoesntMatch {
@@ -227,8 +227,8 @@
 		count++;
 	}];
 	// verify
-	assertThatInteger(count, equalToInteger(0));
-	assertThat([[tokenizer currentToken] stringValue], is(@"one"));
+	XCTAssertEqual(count, (NSUInteger)0);
+	XCTAssertEqualObjects([[tokenizer currentToken] stringValue], @"one");
 }
 
 - (void)testConsumeFromToUsingBlock_shouldConsumeEndToken {
@@ -238,7 +238,7 @@
 	[tokenizer consumeFrom:nil to:@"five" usingBlock:^(PKToken *token, BOOL *consume, BOOL *stop) {
 	}];
 	// verify
-	assertThat([[tokenizer currentToken] stringValue], is(@"six"));
+	XCTAssertEqualObjects([[tokenizer currentToken] stringValue], @"six");
 }
 
 - (void)testConsumeFromToUsingBlock_shouldAcceptNilBlock {
@@ -247,7 +247,7 @@
 	// execute
 	[tokenizer consumeFrom:nil to:@"five" usingBlock:nil];
 	// verify
-	assertThat([[tokenizer currentToken] stringValue], is(@"six"));
+	XCTAssertEqualObjects([[tokenizer currentToken] stringValue], @"six");
 }
 
 - (void)testConsumeFromToUsingBlock_shouldQuitAndConsumeCurrentToken {
@@ -258,7 +258,7 @@
 		*stop = YES;
 	}];
 	// verify
-	assertThat([[tokenizer currentToken] stringValue], is(@"two"));
+	XCTAssertEqualObjects([[tokenizer currentToken] stringValue], @"two");
 }
 
 - (void)testConsumeFromToUsingBlock_shouldQuitWithoutConsumingCurrentToken {
@@ -270,7 +270,7 @@
 		*stop = YES;
 	}];
 	// verify
-	assertThat([[tokenizer currentToken] stringValue], is(@"one"));
+	XCTAssertEqualObjects([[tokenizer currentToken] stringValue], @"one");
 }
 
 #pragma mark Comments parsing testing
@@ -279,63 +279,63 @@
 	// setup & execute
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/// comment     \n   ONE"] filename:@"file"];
 	// verify
-	assertThat([tokenizer.lastComment stringValue], is(@"comment"));
+	XCTAssertEqualObjects([tokenizer.lastComment stringValue], @"comment");
 }
 
 - (void)testLastCommentString_shouldNotTrimSpacesIfPrefixedWithMultipleSpaces {
 	// setup & execute
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"///  comment     \n   ONE"] filename:@"file"];
 	// verify
-	assertThat([tokenizer.lastComment stringValue], is(@"  comment     "));
+	XCTAssertEqualObjects([tokenizer.lastComment stringValue], @"  comment     ");
 }
 
 - (void)testLastCommentString_shouldNotTrimSpacesIfPrefixedWithTab {
 	// setup & execute
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"///\tcomment     \n   ONE"] filename:@"file"];
 	// verify
-	assertThat([tokenizer.lastComment stringValue], is(@"\tcomment     "));
+	XCTAssertEqualObjects([tokenizer.lastComment stringValue], @"\tcomment     ");
 }
 
 - (void)testLastCommentString_shouldGroupSingleLineComments {
 	// setup & execute
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/// line1\n/// line2\n   ONE"] filename:@"file"];
 	// verify
-	assertThat([tokenizer.lastComment stringValue], is(@"line1\nline2"));
+	XCTAssertEqualObjects([tokenizer.lastComment stringValue], @"line1\nline2");
 }
 
 - (void)testLastCommentString_shouldGroupSingleLineCommentsIfIndentationMatches {
 	// setup & execute
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"    /// line1\n    /// line2\n   ONE"] filename:@"file"];
 	// verify
-	assertThat([tokenizer.lastComment stringValue], is(@"line1\nline2"));
+	XCTAssertEqualObjects([tokenizer.lastComment stringValue], @"line1\nline2");
 }
 
 - (void)testLastCommentString_shouldIgnoreSingleLineCommentsIfIndentationDoesNotMatch {
 	// setup & execute
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"    /// line1\n  /// line2\n   ONE"] filename:@"file"];
 	// verify
-	assertThat([tokenizer.lastComment stringValue], is(@"line2"));
+	XCTAssertEqualObjects([tokenizer.lastComment stringValue], @"line2");
 }
 
 - (void)testLastCommentString_shouldIgnoreSingleLineCommentsIfEmptyLineFoundInBetween {
 	// setup & execute
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/// line1\n\n/// line2\n   ONE"] filename:@"file"];
 	// verify
-	assertThat([tokenizer.lastComment stringValue], is(@"line2"));
+	XCTAssertEqualObjects([tokenizer.lastComment stringValue], @"line2");
 }
 
 - (void)testLastCommentString_shouldRemovePrefixLine {
 	// setup & execute
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/** -----------------\n line */\n   ONE"] filename:@"file"];
 	// verify
-	assertThat([tokenizer.lastComment stringValue], is(@"line"));
+	XCTAssertEqualObjects([tokenizer.lastComment stringValue], @"line");
 }
 
 - (void)testLastCommentString_shouldRemoveSuffixLine {
 	// setup & execute
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/** line\n ----------------- */\n   ONE"] filename:@"file"];
 	// verify
-	assertThat([tokenizer.lastComment stringValue], is(@"line"));
+	XCTAssertEqualObjects([tokenizer.lastComment stringValue], @"line");
 }
 
 - (void)testLastCommentString_shouldRemoveCommonPrefixInMultilineComments {
@@ -343,54 +343,54 @@
 	GBTokenizer *tokenizer2 = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/** \n * first\n * second */ ONE"] filename:@"file"];
 	GBTokenizer *tokenizer3 = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/** \n * first\n * second\n */ ONE"] filename:@"file"];
 	// verify
-	assertThat([tokenizer1.lastComment stringValue], is(@"first\nsecond"));
-	assertThat([tokenizer2.lastComment stringValue], is(@"\nfirst\nsecond"));
-	assertThat([tokenizer3.lastComment stringValue], is(@"\nfirst\nsecond\n"));
+	XCTAssertEqualObjects([tokenizer1.lastComment stringValue], @"first\nsecond");
+	XCTAssertEqualObjects([tokenizer2.lastComment stringValue], @"\nfirst\nsecond");
+	XCTAssertEqualObjects([tokenizer3.lastComment stringValue], @"\nfirst\nsecond\n");
 }
 
 - (void)testLastCommentString_shouldKeepCommonPrefixInSingleLineComments {
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/// halo\n/// * first\n/// * second"] filename:@"file"];
 	// verify
-	assertThat([tokenizer.lastComment stringValue], is(@"halo\n* first\n* second"));
+	XCTAssertEqualObjects([tokenizer.lastComment stringValue], @"halo\n* first\n* second");
 }
 
 - (void)testLastCommentString_shouldKeepExampleTabs {
 	// setup & execute
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/** line1\n\n\texample1\n\texample2\n\nline2 */\n   ONE"] filename:@"file"];
 	// verify
-	assertThat([tokenizer.lastComment stringValue], is(@"line1\n\n\texample1\n\texample2\n\nline2"));
+	XCTAssertEqualObjects([tokenizer.lastComment stringValue], @"line1\n\n\texample1\n\texample2\n\nline2");
 }
 
 - (void)testLastCommentString_shouldDetectSingleLineCommentSourceInformation {
 	// setup & execute
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"\n\n\n/// comment\nONE"] filename:@"file"];
 	// verify
-	assertThat([tokenizer.lastComment.sourceInfo filename], is(@"file"));
-	assertThatInteger([tokenizer.lastComment.sourceInfo lineNumber], equalToInteger(4));
+	XCTAssertEqualObjects([tokenizer.lastComment.sourceInfo filename], @"file");
+	XCTAssertEqual([tokenizer.lastComment.sourceInfo lineNumber], (NSInteger)4);
 }
 
 - (void)testLastCommentString_shouldAssignSingleLineCommentLineNumberOfFirstLine {
 	// setup & execute
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/// line1\n/// line2\n/// line3\nONE"] filename:@"file"];
 	// verify
-	assertThat([tokenizer.lastComment.sourceInfo filename], is(@"file"));
-	assertThatInteger([tokenizer.lastComment.sourceInfo lineNumber], equalToInteger(1));
+	XCTAssertEqualObjects([tokenizer.lastComment.sourceInfo filename], @"file");
+	XCTAssertEqual([tokenizer.lastComment.sourceInfo lineNumber], (NSInteger)1);
 }
 
 - (void)testLastCommentString_shouldDetectMultipleLineCommentSourceInformation {
 	// setup & execute
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"\n\n\n/** comment */\nONE"] filename:@"file"];
 	// verify
-	assertThat([tokenizer.lastComment.sourceInfo filename], is(@"file"));
-	assertThatInteger([tokenizer.lastComment.sourceInfo lineNumber], equalToInteger(4));
+	XCTAssertEqualObjects([tokenizer.lastComment.sourceInfo filename], @"file");
+	XCTAssertEqual([tokenizer.lastComment.sourceInfo lineNumber], (NSInteger)4);
 }
 
 - (void)testLastCommentString_shouldDetectPreviousAndLastCommentSourceInformation {
 	// setup & execute
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/// previous\n\n/** last */\nONE"] filename:@"file"];
 	// verify
-	assertThatInteger([tokenizer.previousComment.sourceInfo lineNumber], equalToInteger(1));
-	assertThatInteger([tokenizer.lastComment.sourceInfo lineNumber], equalToInteger(3));
+	XCTAssertEqual([tokenizer.previousComment.sourceInfo lineNumber], (NSInteger)1);
+	XCTAssertEqual([tokenizer.lastComment.sourceInfo lineNumber], (NSInteger)3);
 }
 
 - (void)testLastCommentString_shouldDetectSectionNameAndAssignItToPreviousCommentWhenValidCommentFollows {
@@ -398,8 +398,8 @@
 	GBApplicationSettingsProvider *settings = [GBTestObjectsRegistry realSettingsProvider];
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/** previous */ /** @name name */ /** second */ ONE"] filename:@"file" settings:settings];
 	// verify
-	assertThat(tokenizer.previousComment.stringValue, is(@"@name name"));
-	assertThat(tokenizer.lastComment.stringValue, is(@"second"));
+	XCTAssertEqualObjects(tokenizer.previousComment.stringValue, @"@name name");
+	XCTAssertEqualObjects(tokenizer.lastComment.stringValue, @"second");
 }
 
 - (void)testLastCommentString_shouldDetectSectionNameAndAssignItToPreviousCommentWhenInvalidCommentFollows {
@@ -407,8 +407,8 @@
 	GBApplicationSettingsProvider *settings = [GBTestObjectsRegistry realSettingsProvider];
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/** previous */ /** @name name */ /* second */ ONE"] filename:@"file" settings:settings];
 	// verify
-	assertThat(tokenizer.previousComment.stringValue, is(@"@name name"));
-	assertThat(tokenizer.lastComment, is(nil));
+	XCTAssertEqualObjects(tokenizer.previousComment.stringValue, @"@name name");
+	XCTAssertNil(tokenizer.lastComment);
 }
 
 - (void)testLastCommentString_shouldDetectSectionNameAndAssignItToPreviousCommentWhenNoOtherCommentFollows {
@@ -416,8 +416,8 @@
 	GBApplicationSettingsProvider *settings = [GBTestObjectsRegistry realSettingsProvider];
 	GBTokenizer *tokenizer = [GBTokenizer tokenizerWithSource:[PKTokenizer tokenizerWithString:@"/** previous */ /** @name name */ ONE"] filename:@"file" settings:settings];
 	// verify
-	assertThat(tokenizer.previousComment.stringValue, is(@"@name name"));
-	assertThat(tokenizer.lastComment, is(nil));
+	XCTAssertEqualObjects(tokenizer.previousComment.stringValue, @"@name name");
+	XCTAssertNil(tokenizer.lastComment);
 }
 
 #pragma mark Miscellaneous methods
@@ -428,8 +428,8 @@
 	// execute
 	[tokenizer resetComments];
 	// verify
-	assertThat(tokenizer.lastComment, is(nil));
-	assertThat(tokenizer.previousComment, is(nil));
+	XCTAssertNil(tokenizer.lastComment);
+	XCTAssertNil(tokenizer.previousComment);
 }
 
 #pragma mark Creation methods

@@ -10,7 +10,7 @@
 #import "GBDataObjects.h"
 #import "GBProcessor.h"
 
-@interface GBProcessorMembersDocumentationCopyingTesting : GHTestCase
+@interface GBProcessorMembersDocumentationCopyingTesting : XCTestCase
 
 - (GBProcessor *)processorWithFind:(BOOL)find;
 - (GBProcessor *)processorWithFind:(BOOL)find keepObjects:(BOOL)objects keepMembers:(BOOL)members;
@@ -38,7 +38,7 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat(derived.comment, is(original.comment));
+	XCTAssertEqualObjects(derived.comment, original.comment);
 }
 
 - (void)testProcessObjectsFromStore_shouldCopyDocumentationFromAnySuperclassIfFindIsYes {
@@ -53,7 +53,7 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat(derived.comment, is(original.comment));
+	XCTAssertEqualObjects(derived.comment, original.comment);
 }
 
 - (void)testProcessObjectsFromStore_shouldNotCopyDocumentationFromSuperclassIfFindIsNo {
@@ -67,7 +67,7 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat(derived.comment, is(nil));
+	XCTAssertNil(derived.comment);
 }
 
 - (void)testProcessObjectsFromStore_shouldCopyDocumentationFromSuperclassEvenIfUndocumentedObjectsShouldBeDeleted {
@@ -81,7 +81,7 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat(derived.comment, is(original.comment));
+	XCTAssertEqualObjects(derived.comment, original.comment);
 }
 
 #pragma mark Adopted protocols copying testing
@@ -97,7 +97,7 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat(derived.comment, is(original.comment));
+	XCTAssertEqualObjects(derived.comment, original.comment);
 }
 
 - (void)testProcessObjectsFromStore_shouldCopyDocumentationFromAdoptedProtocolEvenIfUndocumentedObjectsShouldBeDeleted {
@@ -111,7 +111,7 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat(derived.comment, is(original.comment));
+	XCTAssertEqualObjects(derived.comment, original.comment);
 }
 
 #pragma mark Creation methods

@@ -8,7 +8,7 @@
 
 #import "GBDataObjects.h"
 
-@interface GBModelBaseTesting : GHTestCase
+@interface GBModelBaseTesting : XCTestCase
 @end
 
 @implementation GBModelBaseTesting
@@ -27,13 +27,13 @@
 	[original mergeDataFromObject:source];
 	// verify
 	NSArray *files = [original sourceInfosSortedByName];
-	assertThatInteger([files count], equalToInteger(3));
-	assertThat([[files objectAtIndex:0] filename], is(@"f1"));
-	assertThat([[files objectAtIndex:1] filename], is(@"f2"));
-	assertThat([[files objectAtIndex:2] filename], is(@"f3"));
-	assertThatInteger([[files objectAtIndex:0] lineNumber], equalToInteger(3));
-	assertThatInteger([[files objectAtIndex:1] lineNumber], equalToInteger(2));
-	assertThatInteger([[files objectAtIndex:2] lineNumber], equalToInteger(4));
+	XCTAssertEqual(files.count, (NSUInteger)3);
+	XCTAssertEqualObjects([[files objectAtIndex:0] filename], @"f1");
+	XCTAssertEqualObjects([[files objectAtIndex:1] filename], @"f2");
+	XCTAssertEqualObjects([[files objectAtIndex:2] filename], @"f3");
+	XCTAssertEqual([[files objectAtIndex:0] lineNumber], (NSInteger)3);
+	XCTAssertEqual([[files objectAtIndex:1] lineNumber], (NSInteger)2);
+	XCTAssertEqual([[files objectAtIndex:2] lineNumber], (NSInteger)4);
 }
 
 - (void)testMergeDataFromObject_shouldPreserveSourceDeclaredFiles {
@@ -48,11 +48,11 @@
 	[original mergeDataFromObject:source];
 	// verify
 	NSArray *files = [source sourceInfosSortedByName];
-	assertThatInteger([files count], equalToInteger(2));
-	assertThat([[files objectAtIndex:0] filename], is(@"f1"));
-	assertThat([[files objectAtIndex:1] filename], is(@"f3"));
-	assertThatInteger([[files objectAtIndex:0] lineNumber], equalToInteger(2));
-	assertThatInteger([[files objectAtIndex:1] lineNumber], equalToInteger(1));
+	XCTAssertEqual(files.count, (NSUInteger)2);
+	XCTAssertEqualObjects([[files objectAtIndex:0] filename], @"f1");
+	XCTAssertEqualObjects([[files objectAtIndex:1] filename], @"f3");
+	XCTAssertEqual([[files objectAtIndex:0] lineNumber], (NSInteger)2);
+	XCTAssertEqual([[files objectAtIndex:1] lineNumber], (NSInteger)1);
 }
 
 #pragma mark Comments merging handling
@@ -65,8 +65,8 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify
-	assertThat(original.comment.stringValue, is(@"Comment"));
-	assertThat(source.comment.stringValue, is(nil));
+	XCTAssertEqualObjects(original.comment.stringValue, @"Comment");
+	XCTAssertNil(source.comment.stringValue);
 }
 
 - (void)testMergeDataFromObject_shouldUseSourceCommentIfOriginalIsNotGiven {
@@ -77,8 +77,8 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify
-	assertThat(original.comment.stringValue, is(@"Comment"));
-	assertThat(source.comment.stringValue, is(@"Comment"));
+	XCTAssertEqualObjects(original.comment.stringValue, @"Comment");
+	XCTAssertEqualObjects(source.comment.stringValue, @"Comment");
 }
 
 - (void)testMergeDataFromObject_shouldKeepOriginalCommentIfBothObjectsHaveComments {
@@ -90,8 +90,8 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify
-	assertThat(original.comment.stringValue, is(@"Comment1"));
-	assertThat(source.comment.stringValue, is(@"Comment2"));
+	XCTAssertEqualObjects(original.comment.stringValue, @"Comment1");
+	XCTAssertEqualObjects(source.comment.stringValue, @"Comment2");
 }
 
 #pragma mark Source information testing
@@ -103,7 +103,7 @@
 	object.comment.sourceInfo = [GBSourceInfo infoWithFilename:@"file1" lineNumber:1];
 	[object registerSourceInfo:[GBSourceInfo infoWithFilename:@"file.h" lineNumber:1]];
 	// execute & verify
-	assertThat(object.prefferedSourceInfo, is(object.comment.sourceInfo));
+	XCTAssertEqualObjects(object.prefferedSourceInfo, object.comment.sourceInfo);
 }
 
 - (void)testPrefferedSourceInfo_shouldReturnHeaderFileSourceInfoIfCommentNotGiven {
@@ -112,7 +112,7 @@
 	[object registerSourceInfo:[GBSourceInfo infoWithFilename:@"a.m" lineNumber:1]];
 	[object registerSourceInfo:[GBSourceInfo infoWithFilename:@"b.h" lineNumber:1]];
 	// execute & verify
-	assertThat(object.prefferedSourceInfo.filename, is(@"b.h"));
+	XCTAssertEqualObjects(object.prefferedSourceInfo.filename, @"b.h");
 }
 			   
 - (void)testPrefferedSourceInfo_shouldReturnHeaderFileSourceInfoIfCommentDoesntHaveSourceInfo {
@@ -122,7 +122,7 @@
 	[object registerSourceInfo:[GBSourceInfo infoWithFilename:@"a.m" lineNumber:1]];
 	[object registerSourceInfo:[GBSourceInfo infoWithFilename:@"b.h" lineNumber:1]];
 	// execute & verify
-	assertThat(object.prefferedSourceInfo.filename, is(@"b.h"));
+	XCTAssertEqualObjects(object.prefferedSourceInfo.filename, @"b.h");
 }
 
 - (void)testPrefferedSourceInfo_shouldReturnSingleSourceInfo {
@@ -130,14 +130,14 @@
 	GBModelBase *object = [[GBModelBase alloc] init];
 	[object registerSourceInfo:[GBSourceInfo infoWithFilename:@"a.m" lineNumber:1]];
 	// execute & verify
-	assertThat(object.prefferedSourceInfo.filename, is(@"a.m"));
+	XCTAssertEqualObjects(object.prefferedSourceInfo.filename, @"a.m");
 }
 
 - (void)testPrefferedSourceInfo_shouldReturnNilIfNoSourceInfoAvailable {
 	// setup
 	GBModelBase *object = [[GBModelBase alloc] init];
 	// execute & verify
-	assertThat(object.prefferedSourceInfo, is(nil));
+	XCTAssertNil(object.prefferedSourceInfo);
 }
 
 @end

@@ -9,7 +9,7 @@
 #import "GBProtocolData.h"
 #import "GBAdoptedProtocolsProvider.h"
 
-@interface GBAdoptedProtocolsProviderTesting : GHTestCase
+@interface GBAdoptedProtocolsProviderTesting : XCTestCase
 @end
 
 @implementation GBAdoptedProtocolsProviderTesting
@@ -23,9 +23,9 @@
 	// execute
 	[provider registerProtocol:protocol];
 	// verify
-	assertThatBool([provider.protocols containsObject:protocol], equalToBool(YES));
-	assertThatInteger([[provider.protocols allObjects] count], equalToInteger(1));
-	assertThat([[provider.protocols allObjects] objectAtIndex:0], is(protocol));
+	XCTAssertTrue([provider.protocols containsObject:protocol]);
+	XCTAssertEqual([provider.protocols allObjects].count, (NSUInteger)1);
+	XCTAssertEqualObjects([[provider.protocols allObjects] objectAtIndex:0], protocol);
 }
 
 - (void)testRegisterProtocol_shouldIgnoreSameInstance {
@@ -36,7 +36,7 @@
 	[provider registerProtocol:protocol];
 	[provider registerProtocol:protocol];
 	// verify
-	assertThatInteger([[provider.protocols allObjects] count], equalToInteger(1));
+	XCTAssertEqual([provider.protocols allObjects].count, (NSUInteger)1);
 }
 
 - (void)testRegisterProtocol_shouldMergeDifferentInstanceWithSameName {
@@ -67,10 +67,10 @@
 	[original mergeDataFromProtocolsProvider:source];
 	// verify - only basic verification here, details within GBProtocolDataTesting!
 	NSArray *protocols = [original protocolsSortedByName];
-	assertThatInteger([protocols count], equalToInteger(3));
-	assertThat([[protocols objectAtIndex:0] nameOfProtocol], is(@"P1"));
-	assertThat([[protocols objectAtIndex:1] nameOfProtocol], is(@"P2"));
-	assertThat([[protocols objectAtIndex:2] nameOfProtocol], is(@"P3"));
+	XCTAssertEqual(protocols.count, (NSUInteger)3);
+	XCTAssertEqualObjects([[protocols objectAtIndex:0] nameOfProtocol], @"P1");
+	XCTAssertEqualObjects([[protocols objectAtIndex:1] nameOfProtocol], @"P2");
+	XCTAssertEqualObjects([[protocols objectAtIndex:2] nameOfProtocol], @"P3");
 }
 
 - (void)testMergeDataFromProtocolProvider_shouldPreserveSourceData {
@@ -85,9 +85,9 @@
 	[original mergeDataFromProtocolsProvider:source];
 	// verify - only basic verification here, details within GBProtocolDataTesting!
 	NSArray *protocols = [source protocolsSortedByName];
-	assertThatInteger([protocols count], equalToInteger(2));
-	assertThat([[protocols objectAtIndex:0] nameOfProtocol], is(@"P1"));
-	assertThat([[protocols objectAtIndex:1] nameOfProtocol], is(@"P3"));
+	XCTAssertEqual(protocols.count, (NSUInteger)2);
+	XCTAssertEqualObjects([[protocols objectAtIndex:0] nameOfProtocol], @"P1");
+	XCTAssertEqualObjects([[protocols objectAtIndex:1] nameOfProtocol], @"P3");
 }
 
 #pragma mark Protocols replacing handling
@@ -104,9 +104,9 @@
 	[provider replaceProtocol:protocol1 withProtocol:protocol3];
 	// verify
 	NSArray *protocols = [provider protocolsSortedByName];
-	assertThatInteger([protocols count], equalToInteger(2));
-	assertThat([[protocols objectAtIndex:0] nameOfProtocol], is(@"P2"));
-	assertThat([[protocols objectAtIndex:1] nameOfProtocol], is(@"P3"));
+	XCTAssertEqual(protocols.count, (NSUInteger)2);
+	XCTAssertEqualObjects([[protocols objectAtIndex:0] nameOfProtocol], @"P2");
+	XCTAssertEqualObjects([[protocols objectAtIndex:1] nameOfProtocol], @"P3");
 }
 
 @end

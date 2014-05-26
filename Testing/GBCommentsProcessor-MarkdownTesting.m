@@ -324,12 +324,11 @@
 	}
 	va_end(args);
 	
-	assertThatInteger([comment.longDescription.components count], equalToInteger([expectations count]));
-	for (NSUInteger i=0; i<[expectations count]; i++) {
+	XCTAssertEqual([comment.longDescription.components count], [expectations count]);
+	[expectations enumerateObjectsUsingBlock:^(NSString *expected, NSUInteger i, BOOL *stop) {
 		GBCommentComponent *component = [comment.longDescription.components objectAtIndex:i];
-		NSString *expected = [expectations objectAtIndex:i];
-		assertThat(component.markdownValue, is(expected));
-	}
+		XCTAssertEqualObjects(component.markdownValue, expected);
+	}];
 }
 
 - (void)assertComponents:(GBCommentComponentsList *)components matchMarkdown:(NSString *)first, ... {
@@ -341,12 +340,11 @@
 	}
 	va_end(args);
 	
-	assertThatInteger([components.components count], equalToInteger([expectations count]));
-	for (NSUInteger i=0; i<[expectations count]; i++) {
+	XCTAssertEqual([components.components count], [expectations count]);
+	[expectations enumerateObjectsUsingBlock:^(NSString *expected, NSUInteger i, BOOL *stop) {
 		GBCommentComponent *component = [components.components objectAtIndex:i];
-		NSString *expected = [expectations objectAtIndex:i];
-		assertThat(component.markdownValue, is(expected));
-	}
+		XCTAssertEqualObjects(component.markdownValue, expected);
+	}];
 }
 
 @end

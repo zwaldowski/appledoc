@@ -9,7 +9,7 @@
 #import "GBApplicationSettingsProvider.h"
 #import "GBDataObjects.h"
 
-@interface GBCommentTesting : GHTestCase
+@interface GBCommentTesting : XCTestCase
 @end
 	
 @implementation GBCommentTesting
@@ -20,12 +20,12 @@
 	// setup & execute
 	GBComment *comment = [GBComment commentWithStringValue:@""];
 	// verify
-	assertThat(comment.longDescription, isNot(nil));
-	assertThat(comment.relatedItems, isNot(nil));
-	assertThat(comment.methodParameters, isNot(nil));
-	assertThat(comment.methodExceptions, isNot(nil));
-	assertThat(comment.methodResult, isNot(nil));
-	assertThat(comment.availability, isNot(nil));
+	XCTAssertNotNil(comment.longDescription);
+	XCTAssertNotNil(comment.relatedItems);
+	XCTAssertNotNil(comment.methodParameters);
+	XCTAssertNotNil(comment.methodExceptions);
+	XCTAssertNotNil(comment.methodResult);
+	XCTAssertNotNil(comment.availability);
 }
 
 #pragma mark Comment components testing

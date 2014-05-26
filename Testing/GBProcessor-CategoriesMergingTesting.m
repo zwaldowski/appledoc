@@ -11,7 +11,7 @@
 #import "GBStore.h"
 #import "GBProcessor.h"
 
-@interface GBProcessorCategoriesMergingTesting : GHTestCase
+@interface GBProcessorCategoriesMergingTesting : XCTestCase
 
 - (GBProcessor *)processorWithMerge:(BOOL)merge keep:(BOOL)keep prefix:(BOOL)prefix;
 - (NSString *)randomName;
@@ -34,9 +34,9 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThatInteger([store.categories count], equalToInteger(2));
-	assertThatBool([store.categories containsObject:category], equalToBool(YES));
-	assertThatBool([store.categories containsObject:extension], equalToBool(YES));
+	XCTAssertEqual(store.categories.count, (NSUInteger)2);
+	XCTAssertTrue([store.categories containsObject:category]);
+	XCTAssertTrue([store.categories containsObject:extension]);
 }
 
 - (void)testProcessObjectsFromStore_shouldMergeCategoryIfMergeIsYes {
@@ -49,7 +49,7 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThatInteger([store.categories count], equalToInteger(0));
+	XCTAssertEqual(store.categories.count, (NSUInteger)0);
 }
 
 - (void)testProcessObjectsFromStore_shouldKeepCategoryOfUnknownClassEvenIfMergeIsYes {
@@ -61,9 +61,9 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThatInteger([store.categories count], equalToInteger(2));
-	assertThatBool([store.categories containsObject:category], equalToBool(YES));
-	assertThatBool([store.categories containsObject:extension], equalToBool(YES));
+	XCTAssertEqual(store.categories.count, (NSUInteger)2);
+	XCTAssertTrue([store.categories containsObject:category]);
+	XCTAssertTrue([store.categories containsObject:extension]);
 }
 
 #pragma mark Methods merging testing
@@ -81,9 +81,9 @@
 	[processor processObjectsFromStore:store];
 	// verify
 	NSArray *methods = [class.methods methods];
-	assertThatInteger([methods count], equalToInteger(2));
-	assertThatBool([methods containsObject:[category.methods.methods objectAtIndex:0]], equalToBool(YES));
-	assertThatBool([methods containsObject:[extension.methods.methods objectAtIndex:0]], equalToBool(YES));
+	XCTAssertEqual(methods.count, (NSUInteger)2);
+	XCTAssertTrue([methods containsObject:[category.methods.methods objectAtIndex:0]]);
+	XCTAssertTrue([methods containsObject:[extension.methods.methods objectAtIndex:0]]);
 }
 
 - (void)testProcessObjectsFromStore_shouldUseRegisterMethodOnClassToMergeMethods {
@@ -119,10 +119,10 @@
 	[processor processObjectsFromStore:store];
 	// verify
 	NSArray *sections = [class.methods sections];
-	assertThatInteger([sections count], equalToInteger(2));
+	XCTAssertEqual(sections.count, (NSUInteger)2);
 	GBMethodSectionData *section = [sections objectAtIndex:1];
-	assertThatInteger([section.methods count], equalToInteger(1));
-	assertThatBool([section.methods containsObject:[category.methods.methods objectAtIndex:0]], equalToBool(YES)); 
+	XCTAssertEqual(section.methods.count, (NSUInteger)1);
+	XCTAssertTrue([section.methods containsObject:[category.methods.methods objectAtIndex:0]]); 
 }
 
 - (void)testProcessObjectsFromStore_shouldCreateSingleSectionIfKeepSectionsIsNo {
@@ -139,11 +139,11 @@
 	[processor processObjectsFromStore:store];
 	// verify
 	NSArray *sections = [class.methods sections];
-	assertThatInteger([sections count], equalToInteger(1));
+	XCTAssertEqual(sections.count, (NSUInteger)1);
 	GBMethodSectionData *section = [sections objectAtIndex:0];
-	assertThatInteger([section.methods count], equalToInteger(2));
-	assertThatBool([section.methods containsObject:[category.methods.methods objectAtIndex:0]], equalToBool(YES)); 
-	assertThatBool([section.methods containsObject:[category.methods.methods objectAtIndex:1]], equalToBool(YES));
+	XCTAssertEqual(section.methods.count, (NSUInteger)2);
+	XCTAssertTrue([section.methods containsObject:[category.methods.methods objectAtIndex:0]]); 
+	XCTAssertTrue([section.methods containsObject:[category.methods.methods objectAtIndex:1]]);
 }
 
 - (void)testProcessObjectsFromStore_shouldDuplicateSectionsIfKeepSectionsIsYes {
@@ -161,13 +161,13 @@
 	// verify
 	GBMethodSectionData *section;
 	NSArray *sections = [class.methods sections];
-	assertThatInteger([sections count], equalToInteger(2));
+	XCTAssertEqual(sections.count, (NSUInteger)2);
 	section = [sections objectAtIndex:0];
-	assertThatInteger([section.methods count], equalToInteger(1));
-	assertThatBool([section.methods containsObject:[category.methods.methods objectAtIndex:0]], equalToBool(YES)); 
+	XCTAssertEqual(section.methods.count, (NSUInteger)1);
+	XCTAssertTrue([section.methods containsObject:[category.methods.methods objectAtIndex:0]]); 
 	section = [sections objectAtIndex:1];
-	assertThatInteger([section.methods count], equalToInteger(1));
-	assertThatBool([section.methods containsObject:[category.methods.methods objectAtIndex:1]], equalToBool(YES));
+	XCTAssertEqual(section.methods.count, (NSUInteger)1);
+	XCTAssertTrue([section.methods containsObject:[category.methods.methods objectAtIndex:1]]);
 }
 
 #pragma mark Section naming testing
@@ -183,7 +183,7 @@
 	[processor processObjectsFromStore:store];
 	// verify
 	NSString *name = [[class.methods.sections objectAtIndex:0] sectionName];
-	assertThatBool([name rangeOfString:category.nameOfCategory].location != NSNotFound, equalToBool(YES));
+	XCTAssertTrue([name rangeOfString:category.nameOfCategory].location != NSNotFound);
 }
 
 - (void)testProcessObjectsFromStore_shouldUseOriginalSectionNamesIfPrefixIsNo {
@@ -197,7 +197,7 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat([[class.methods.sections objectAtIndex:0] sectionName], is(@"Section"));
+	XCTAssertEqualObjects([[class.methods.sections objectAtIndex:0] sectionName], @"Section");
 }
 
 - (void)testProcessObjectsFromStore_shouldAddCategoryNameToSectionNamesIfPrefixIsYes {
@@ -212,8 +212,8 @@
 	[processor processObjectsFromStore:store];
 	// verify
 	NSString *name = [[class.methods.sections objectAtIndex:0] sectionName];
-	assertThatBool([name rangeOfString:@"Section"].location != NSNotFound, equalToBool(YES));
-	assertThatBool([name rangeOfString:category.nameOfCategory].location != NSNotFound, equalToBool(YES));
+	XCTAssertTrue([name rangeOfString:@"Section"].location != NSNotFound);
+	XCTAssertTrue([name rangeOfString:category.nameOfCategory].location != NSNotFound);
 }
 
 - (void)testProcessObjectsFromStore_shouldNotAddExtensionKeywordToSectionNamesEvenIfPrefixIsYes {
@@ -227,7 +227,7 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat([[class.methods.sections objectAtIndex:0] sectionName], is(@"Section"));
+	XCTAssertEqualObjects([[class.methods.sections objectAtIndex:0] sectionName], @"Section");
 }
 
 #pragma mark Creation methods

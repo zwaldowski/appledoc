@@ -160,32 +160,42 @@
 
 + (GBStore *)storeWithClassWithName:(NSString *)name {
 	GBClassData *class = [GBClassData classDataWithName:name];
-	return [self storeByPerformingSelector:@selector(registerClass:) withObject:class];
+	return [GBTestObjectsRegistry storeByPerformingBlock:^(GBStore *store) {
+		[store registerClass:class];
+	}];
 }
 
 + (GBStore *)storeWithClassWithComment:(id)comment {
 	GBClassData *class = [GBClassData classDataWithName:@"Class"];
 	[self registerComment:comment forObject:class];
-	return [self storeByPerformingSelector:@selector(registerClass:) withObject:class];
+	return [GBTestObjectsRegistry storeByPerformingBlock:^(GBStore *store) {
+		[store registerClass:class];
+	}];
 }
 
 + (GBStore *)storeWithCategoryWithComment:(id)comment {
 	GBCategoryData *category = [GBCategoryData categoryDataWithName:@"Category" className:@"Class"];
 	[self registerComment:comment forObject:category];
-	return [self storeByPerformingSelector:@selector(registerCategory:) withObject:category];
+	return [GBTestObjectsRegistry storeByPerformingBlock:^(GBStore *store) {
+		[store registerCategory:category];
+	}];
 }
 
 + (GBStore *)storeWithProtocolWithComment:(id)comment {
 	GBProtocolData *protocol = [GBProtocolData protocolDataWithName:@"Protocol"];
 	[self registerComment:comment forObject:protocol];
-	return [self storeByPerformingSelector:@selector(registerProtocol:) withObject:protocol];
+	return [GBTestObjectsRegistry storeByPerformingBlock:^(GBStore *store) {
+		[store registerProtocol:protocol];
+	}];
 }
 
 + (GBStore *)storeWithDocumentWithComment:(id)comment {
 	// Note that we still assign the comment so that we can use mocks for testing - because of that we can safely pass arbitrary string to contents!
 	GBDocumentData *document = [GBDocumentData documentDataWithContents:@"contents" path:@"path"];
 	[self registerComment:comment forObject:document];
-	return [self storeByPerformingSelector:@selector(registerDocument:) withObject:document];
+	return [GBTestObjectsRegistry storeByPerformingBlock:^(GBStore *store) {
+		[store registerDocument:document];
+	}];
 }
 
 + (GBStore *)storeWithObjects:(id)first, ... {
@@ -207,10 +217,12 @@
 	return result;
 }
 
-+ (GBStore *)storeByPerformingSelector:(SEL)selector withObject:(id)object {
++ (GBStore *)storeByPerformingBlock:(void(^)(GBStore *store))block
+{
 	GBStore *result = [self store];
-	[result performSelector:selector withObject:object];
+	if (block) block(result);
 	return result;
+
 }
 
 @end

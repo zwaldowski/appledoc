@@ -8,7 +8,7 @@
 
 #import "GBDataObjects.h"
 
-@interface GBCategoryDataTesting : GHTestCase
+@interface GBCategoryDataTesting : XCTestCase
 @end
 
 @implementation GBCategoryDataTesting
@@ -20,8 +20,8 @@
 	GBCategoryData *category = [GBCategoryData categoryDataWithName:@"Category" className:@"Class"];
 	GBCategoryData *extension = [GBCategoryData categoryDataWithName:nil className:@"Class"];
 	// execute & verify
-	assertThat(category.idOfCategory, is(@"Class(Category)"));
-	assertThat(extension.idOfCategory, is(@"Class()"));
+	XCTAssertEqualObjects(category.idOfCategory, @"Class(Category)");
+	XCTAssertEqualObjects(extension.idOfCategory, @"Class()");
 }
 
 #pragma mark Base data merging
@@ -34,7 +34,7 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify - simple testing here, fully tested in GBModelBaseTesting!
-	assertThatInteger([original.sourceInfos count], equalToInteger(1));
+	XCTAssertEqual(original.sourceInfos.count, (NSUInteger)1);
 }
 
 #pragma mark Category components merging
@@ -50,8 +50,8 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify
-	assertThatInteger([[original.adoptedProtocols protocols] count], equalToInteger(3));
-	assertThatInteger([[source.adoptedProtocols protocols] count], equalToInteger(2));
+	XCTAssertEqual([original.adoptedProtocols protocols].count, (NSUInteger)3);
+	XCTAssertEqual([source.adoptedProtocols protocols].count, (NSUInteger)2);
 }
 
 - (void)testMergeDataFromObject_categoryShouldMergeMethodsAndPreserveSourceData {
@@ -65,8 +65,8 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify
-	assertThatInteger([[original.methods methods] count], equalToInteger(3));
-	assertThatInteger([[source.methods methods] count], equalToInteger(2));
+	XCTAssertEqual([original.methods methods].count, (NSUInteger)3);
+	XCTAssertEqual([source.methods methods].count, (NSUInteger)2);
 }
 
 #pragma mark Extension components merging
@@ -82,8 +82,8 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify
-	assertThatInteger([[original.adoptedProtocols protocols] count], equalToInteger(3));
-	assertThatInteger([[source.adoptedProtocols protocols] count], equalToInteger(2));
+	XCTAssertEqual([original.adoptedProtocols protocols].count, (NSUInteger)3);
+	XCTAssertEqual([source.adoptedProtocols protocols].count, (NSUInteger)2);
 }
 
 - (void)testMergeDataFromObject_extensionShouldMergeMethodsAndPreserveSourceData {
@@ -97,8 +97,8 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify
-	assertThatInteger([[original.methods methods] count], equalToInteger(3));
-	assertThatInteger([[source.methods methods] count], equalToInteger(2));
+	XCTAssertEqual([original.methods methods].count, (NSUInteger)3);
+	XCTAssertEqual([source.methods methods].count, (NSUInteger)2);
 }
 
 #pragma mark Helper methods
@@ -107,7 +107,7 @@
 	// setup & execute
 	GBCategoryData *category = [GBCategoryData categoryDataWithName:@"Category" className:@"Class"];
 	// verify
-	assertThatBool(category.isTopLevelObject, equalToBool(YES));
+	XCTAssertTrue(category.isTopLevelObject);
 }
 
 @end

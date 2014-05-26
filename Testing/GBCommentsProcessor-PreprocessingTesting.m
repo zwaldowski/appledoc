@@ -42,8 +42,8 @@
 	NSString *result1 = [processor stringByPreprocessingString:@"*bold1* *bold text* * bolder text *" withFlags:0];
 	NSString *result2 = [processor stringByPreprocessingString:@"*bold1* Middle *bold text*" withFlags:0];
 	// verify
-	assertThat(result1, is(@"**~!$bold1$!~** **~!$bold text$!~** **~!$ bolder text $!~**"));
-	assertThat(result2, is(@"**~!$bold1$!~** Middle **~!$bold text$!~**"));
+	XCTAssertEqualObjects(result1, @"**~!$bold1$!~** **~!$bold text$!~** **~!$ bolder text $!~**");
+	XCTAssertEqualObjects(result2, @"**~!$bold1$!~** Middle **~!$bold text$!~**");
 }
 
 - (void)testStringByPreprocessingString_shouldNotConvertAppledocBoldMarkersToTemporarySyntaxIfPrevented {
@@ -56,8 +56,8 @@
 	NSString *result1 = [processor stringByPreprocessingString:@"*bold1* *bold text* * bolder text *" withFlags:0];
 	NSString *result2 = [processor stringByPreprocessingString:@"*bold1* Middle *bold text*" withFlags:0];
 	// verify
-	assertThat(result1, is(@"*bold1* *bold text* * bolder text *"));
-	assertThat(result2, is(@"*bold1* Middle *bold text*"));
+	XCTAssertEqualObjects(result1, @"*bold1* *bold text* * bolder text *");
+	XCTAssertEqualObjects(result2, @"*bold1* Middle *bold text*");
 }
 
 - (void)testStringByPreprocessingString_shouldLeaveItalicsMarkers {
@@ -67,8 +67,8 @@
 	NSString *result1 = [processor stringByPreprocessingString:@"_bold1_ _bold text_ _ bolder text _" withFlags:0];
 	NSString *result2 = [processor stringByPreprocessingString:@"_bold1_ Middle _bold text_" withFlags:0];
 	// verify
-	assertThat(result1, is(@"_bold1_ _bold text_ _ bolder text _"));
-	assertThat(result2, is(@"_bold1_ Middle _bold text_"));
+	XCTAssertEqualObjects(result1, @"_bold1_ _bold text_ _ bolder text _");
+	XCTAssertEqualObjects(result2, @"_bold1_ Middle _bold text_");
 }
 
 - (void)testStringByPreprocessingString_shouldLeaveBoldItalicsMarkers {
@@ -77,7 +77,7 @@
 	// execute
 	NSString *result = [processor stringByPreprocessingString:@"_*text1*_ *_marked text_* _* text2 *_" withFlags:0];
 	// verify
-	assertThat(result, is(@"_*text1*_ *_marked text_* _* text2 *_"));
+	XCTAssertEqualObjects(result, @"_*text1*_ *_marked text_* _* text2 *_");
 }
 
 - (void)testStringByPreprocessingString_shouldHandleMonospaceMarkers {
@@ -86,7 +86,7 @@
 	// execute
 	NSString *result = [processor stringByPreprocessingString:@"`mono` ` monoer `" withFlags:0];
 	// verify
-	assertThat(result, is(@"`mono` ` monoer `"));
+	XCTAssertEqualObjects(result, @"`mono` ` monoer `");
 }
 
 - (void)testStringByPreprocessingString_shouldHandleMarkdownBoldMarkers {
@@ -96,8 +96,8 @@
 	NSString *result1 = [processor stringByPreprocessingString:@"__text1__ __ marked __" withFlags:0];
 	NSString *result2 = [processor stringByPreprocessingString:@"**text1** ** marked **" withFlags:0];
 	// verify
-	assertThat(result1, is(@"__text1__ __ marked __"));
-	assertThat(result2, is(@"**text1** ** marked **"));
+	XCTAssertEqualObjects(result1, @"__text1__ __ marked __");
+	XCTAssertEqualObjects(result2, @"**text1** ** marked **");
 }
 
 - (void)testStringByPreprocessingString_shouldLeaveMarkdownBoldItalicsMarkers {
@@ -111,12 +111,12 @@
 	NSString *result5 = [processor stringByPreprocessingString:@"___text1___ ___ marked ___" withFlags:0];
 	NSString *result6 = [processor stringByPreprocessingString:@"***text1*** *** marked ***" withFlags:0];
 	// verify
-	assertThat(result1, is(@"__*text1*__ __* marked *__"));
-	assertThat(result2, is(@"_**text1**_ _** marked **_"));
-	assertThat(result3, is(@"*__text1__* *__ marked __*"));
-	assertThat(result4, is(@"**_text1_** **_ marked _**"));
-	assertThat(result5, is(@"___text1___ ___ marked ___"));
-	assertThat(result6, is(@"***text1*** *** marked ***"));
+	XCTAssertEqualObjects(result1, @"__*text1*__ __* marked *__");
+	XCTAssertEqualObjects(result2, @"_**text1**_ _** marked **_");
+	XCTAssertEqualObjects(result3, @"*__text1__* *__ marked __*");
+	XCTAssertEqualObjects(result4, @"**_text1_** **_ marked _**");
+	XCTAssertEqualObjects(result5, @"___text1___ ___ marked ___");
+	XCTAssertEqualObjects(result6, @"***text1*** *** marked ***");
 }
 
 - (void)testStringByPreprocessingString_shouldKeepReferencesWithMarkersIntact {
@@ -125,7 +125,7 @@
 	// execute
 	NSString *result = [processor stringByPreprocessingString:@"[test_test](http://www.example.com/test_test.html)" withFlags:0];
 	// verify
-	assertThat(result, is(@"[test_test](http://www.example.com/test_test.html)"));
+	XCTAssertEqualObjects(result, @"[test_test](http://www.example.com/test_test.html)");
 }
 
 #pragma mark Class, category and protocol cross references detection
@@ -140,10 +140,10 @@
 	NSString *result3 = [processor stringByConvertingCrossReferencesInString:@"Unknown" withFlags:0];
 	NSString *result4 = [processor stringByConvertingCrossReferencesInString:@"<Unknown>" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[Class](Classes/Class.html)"));
-	assertThat(result2, is(@"[Class](Classes/Class.html)"));
-	assertThat(result3, is(@"Unknown"));
-	assertThat(result4, is(@"<Unknown>"));
+	XCTAssertEqualObjects(result1, @"[Class](Classes/Class.html)");
+	XCTAssertEqualObjects(result2, @"[Class](Classes/Class.html)");
+	XCTAssertEqualObjects(result3, @"Unknown");
+	XCTAssertEqualObjects(result4, @"<Unknown>");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldConvertCategory {
@@ -156,10 +156,10 @@
 	NSString *result3 = [processor stringByConvertingCrossReferencesInString:@"Class(Unknown)" withFlags:0];
 	NSString *result4 = [processor stringByConvertingCrossReferencesInString:@"<Class(Unknown)>" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[Class(Category)](Categories/Class+Category.html)"));
-	assertThat(result2, is(@"[Class(Category)](Categories/Class+Category.html)"));
-	assertThat(result3, is(@"Class(Unknown)"));
-	assertThat(result4, is(@"<Class(Unknown)>"));
+	XCTAssertEqualObjects(result1, @"[Class(Category)](Categories/Class+Category.html)");
+	XCTAssertEqualObjects(result2, @"[Class(Category)](Categories/Class+Category.html)");
+	XCTAssertEqualObjects(result3, @"Class(Unknown)");
+	XCTAssertEqualObjects(result4, @"<Class(Unknown)>");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldConvertProtocol {
@@ -172,10 +172,10 @@
 	NSString *result3 = [processor stringByConvertingCrossReferencesInString:@"Unknown" withFlags:0];
 	NSString *result4 = [processor stringByConvertingCrossReferencesInString:@"<Unknown>" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[Protocol](Protocols/Protocol.html)"));
-	assertThat(result2, is(@"[Protocol](Protocols/Protocol.html)"));
-	assertThat(result3, is(@"Unknown"));
-	assertThat(result4, is(@"<Unknown>"));
+	XCTAssertEqualObjects(result1, @"[Protocol](Protocols/Protocol.html)");
+	XCTAssertEqualObjects(result2, @"[Protocol](Protocols/Protocol.html)");
+	XCTAssertEqualObjects(result3, @"Unknown");
+	XCTAssertEqualObjects(result4, @"<Unknown>");
 }
 
 #pragma mark Local members cross references detection
@@ -193,12 +193,12 @@
 	NSString *result5 = [processor stringByConvertingCrossReferencesInString:@"another:" withFlags:0];
 	NSString *result6 = [processor stringByConvertingCrossReferencesInString:@"<another:>" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[method:](#//api/name/method:)"));
-	assertThat(result2, is(@"[method:](#//api/name/method:)"));
-	assertThat(result3, is(@"[method:](#//api/name/method:)"));
-	assertThat(result4, is(@"[method:](#//api/name/method:)"));
-	assertThat(result5, is(@"another:"));
-	assertThat(result6, is(@"<another:>"));
+	XCTAssertEqualObjects(result1, @"[method:](#//api/name/method:)");
+	XCTAssertEqualObjects(result2, @"[method:](#//api/name/method:)");
+	XCTAssertEqualObjects(result3, @"[method:](#//api/name/method:)");
+	XCTAssertEqualObjects(result4, @"[method:](#//api/name/method:)");
+	XCTAssertEqualObjects(result5, @"another:");
+	XCTAssertEqualObjects(result6, @"<another:>");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldConvertClassLocalClassMethod {
@@ -214,12 +214,12 @@
 	NSString *result5 = [processor stringByConvertingCrossReferencesInString:@"another:" withFlags:0];
 	NSString *result6 = [processor stringByConvertingCrossReferencesInString:@"<another:>" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[method:](#//api/name/method:)"));
-	assertThat(result2, is(@"[method:](#//api/name/method:)"));
-	assertThat(result3, is(@"[method:](#//api/name/method:)"));
-	assertThat(result4, is(@"[method:](#//api/name/method:)"));
-	assertThat(result5, is(@"another:"));
-	assertThat(result6, is(@"<another:>"));
+	XCTAssertEqualObjects(result1, @"[method:](#//api/name/method:)");
+	XCTAssertEqualObjects(result2, @"[method:](#//api/name/method:)");
+	XCTAssertEqualObjects(result3, @"[method:](#//api/name/method:)");
+	XCTAssertEqualObjects(result4, @"[method:](#//api/name/method:)");
+	XCTAssertEqualObjects(result5, @"another:");
+	XCTAssertEqualObjects(result6, @"<another:>");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldConvertClassLocalProperty {
@@ -235,12 +235,12 @@
 	NSString *result5 = [processor stringByConvertingCrossReferencesInString:@"another" withFlags:0];
 	NSString *result6 = [processor stringByConvertingCrossReferencesInString:@"<another>" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[method](#//api/name/method)"));
-	assertThat(result2, is(@"[method](#//api/name/method)"));
-	assertThat(result3, is(@"method:"));
-	assertThat(result4, is(@"<method:>"));
-	assertThat(result5, is(@"another"));
-	assertThat(result6, is(@"<another>"));
+	XCTAssertEqualObjects(result1, @"[method](#//api/name/method)");
+	XCTAssertEqualObjects(result2, @"[method](#//api/name/method)");
+	XCTAssertEqualObjects(result3, @"method:");
+	XCTAssertEqualObjects(result4, @"<method:>");
+	XCTAssertEqualObjects(result5, @"another");
+	XCTAssertEqualObjects(result6, @"<another>");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldConvertCategoryAndProtocolLocalInstanceMethod {
@@ -260,12 +260,12 @@
 	NSString *result5 = [processor2 stringByConvertingCrossReferencesInString:@"<method2:>" withFlags:0];
 	NSString *result6 = [processor2 stringByConvertingCrossReferencesInString:@"method1:" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[method1:](#//api/name/method1:)"));
-	assertThat(result2, is(@"[method1:](#//api/name/method1:)"));
-	assertThat(result3, is(@"method2:"));
-	assertThat(result4, is(@"[method2:](#//api/name/method2:)"));
-	assertThat(result5, is(@"[method2:](#//api/name/method2:)"));
-	assertThat(result6, is(@"method1:"));
+	XCTAssertEqualObjects(result1, @"[method1:](#//api/name/method1:)");
+	XCTAssertEqualObjects(result2, @"[method1:](#//api/name/method1:)");
+	XCTAssertEqualObjects(result3, @"method2:");
+	XCTAssertEqualObjects(result4, @"[method2:](#//api/name/method2:)");
+	XCTAssertEqualObjects(result5, @"[method2:](#//api/name/method2:)");
+	XCTAssertEqualObjects(result6, @"method1:");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldConvertCategoryAndProtocolLocalClassMethod {
@@ -285,12 +285,12 @@
 	NSString *result5 = [processor2 stringByConvertingCrossReferencesInString:@"<method2:>" withFlags:0];
 	NSString *result6 = [processor2 stringByConvertingCrossReferencesInString:@"method1:" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[method1:](#//api/name/method1:)"));
-	assertThat(result2, is(@"[method1:](#//api/name/method1:)"));
-	assertThat(result3, is(@"method2:"));
-	assertThat(result4, is(@"[method2:](#//api/name/method2:)"));
-	assertThat(result5, is(@"[method2:](#//api/name/method2:)"));
-	assertThat(result6, is(@"method1:"));
+	XCTAssertEqualObjects(result1, @"[method1:](#//api/name/method1:)");
+	XCTAssertEqualObjects(result2, @"[method1:](#//api/name/method1:)");
+	XCTAssertEqualObjects(result3, @"method2:");
+	XCTAssertEqualObjects(result4, @"[method2:](#//api/name/method2:)");
+	XCTAssertEqualObjects(result5, @"[method2:](#//api/name/method2:)");
+	XCTAssertEqualObjects(result6, @"method1:");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldConvertCategoryAndProtocolLocalProperty {
@@ -310,12 +310,12 @@
 	NSString *result5 = [processor2 stringByConvertingCrossReferencesInString:@"<method2>" withFlags:0];
 	NSString *result6 = [processor2 stringByConvertingCrossReferencesInString:@"method1" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[method1](#//api/name/method1)"));
-	assertThat(result2, is(@"[method1](#//api/name/method1)"));
-	assertThat(result3, is(@"method2"));
-	assertThat(result4, is(@"[method2](#//api/name/method2)"));
-	assertThat(result5, is(@"[method2](#//api/name/method2)"));
-	assertThat(result6, is(@"method1"));
+	XCTAssertEqualObjects(result1, @"[method1](#//api/name/method1)");
+	XCTAssertEqualObjects(result2, @"[method1](#//api/name/method1)");
+	XCTAssertEqualObjects(result3, @"method2");
+	XCTAssertEqualObjects(result4, @"[method2](#//api/name/method2)");
+	XCTAssertEqualObjects(result5, @"[method2](#//api/name/method2)");
+	XCTAssertEqualObjects(result6, @"method1");
 }
 
 #pragma mark Remote members cross references detection
@@ -334,12 +334,12 @@
 	NSString *result5 = [processor stringByConvertingCrossReferencesInString:@"[Unknown method:]" withFlags:0];
 	NSString *result6 = [processor stringByConvertingCrossReferencesInString:@"method:" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[[Class1 method:]](../Classes/Class1.html#//api/name/method:)"));
-	assertThat(result2, is(@"[[Class1 method:]](../Classes/Class1.html#//api/name/method:)"));
-	assertThat(result3, is(@"[[Class1 method:]](../Classes/Class1.html#//api/name/method:)"));
-	assertThat(result4, is(@"[[Class1 method:]](../Classes/Class1.html#//api/name/method:)"));
-	assertThat(result5, is(@"[Unknown method:]"));
-	assertThat(result6, is(@"method:"));
+	XCTAssertEqualObjects(result1, @"[[Class1 method:]](../Classes/Class1.html#//api/name/method:)");
+	XCTAssertEqualObjects(result2, @"[[Class1 method:]](../Classes/Class1.html#//api/name/method:)");
+	XCTAssertEqualObjects(result3, @"[[Class1 method:]](../Classes/Class1.html#//api/name/method:)");
+	XCTAssertEqualObjects(result4, @"[[Class1 method:]](../Classes/Class1.html#//api/name/method:)");
+	XCTAssertEqualObjects(result5, @"[Unknown method:]");
+	XCTAssertEqualObjects(result6, @"method:");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldConvertCategoryRemoteInstanceMethod {
@@ -356,12 +356,12 @@
 	NSString *result5 = [processor stringByConvertingCrossReferencesInString:@"[Class(Unknown) method:]" withFlags:0];
 	NSString *result6 = [processor stringByConvertingCrossReferencesInString:@"[Unknown(Category) method:]" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[[Class(Category) method:]](../Categories/Class+Category.html#//api/name/method:)"));
-	assertThat(result2, is(@"[[Class(Category) method:]](../Categories/Class+Category.html#//api/name/method:)"));
-	assertThat(result3, is(@"[[Class(Category) method:]](../Categories/Class+Category.html#//api/name/method:)"));
-	assertThat(result4, is(@"[[Class(Category) method:]](../Categories/Class+Category.html#//api/name/method:)"));
-	assertThat(result5, is(@"[Class(Unknown) method:]"));
-	assertThat(result6, is(@"[Unknown(Category) method:]"));
+	XCTAssertEqualObjects(result1, @"[[Class(Category) method:]](../Categories/Class+Category.html#//api/name/method:)");
+	XCTAssertEqualObjects(result2, @"[[Class(Category) method:]](../Categories/Class+Category.html#//api/name/method:)");
+	XCTAssertEqualObjects(result3, @"[[Class(Category) method:]](../Categories/Class+Category.html#//api/name/method:)");
+	XCTAssertEqualObjects(result4, @"[[Class(Category) method:]](../Categories/Class+Category.html#//api/name/method:)");
+	XCTAssertEqualObjects(result5, @"[Class(Unknown) method:]");
+	XCTAssertEqualObjects(result6, @"[Unknown(Category) method:]");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldConvertProtocolRemoteInstanceMethod {
@@ -378,12 +378,12 @@
 	NSString *result5 = [processor stringByConvertingCrossReferencesInString:@"[Unknown method:]" withFlags:0];
 	NSString *result6 = [processor stringByConvertingCrossReferencesInString:@"method:" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[[Protocol method:]](../Protocols/Protocol.html#//api/name/method:)"));
-	assertThat(result2, is(@"[[Protocol method:]](../Protocols/Protocol.html#//api/name/method:)"));
-	assertThat(result3, is(@"[[Protocol method:]](../Protocols/Protocol.html#//api/name/method:)"));
-	assertThat(result4, is(@"[[Protocol method:]](../Protocols/Protocol.html#//api/name/method:)"));
-	assertThat(result5, is(@"[Unknown method:]"));
-	assertThat(result6, is(@"method:"));
+	XCTAssertEqualObjects(result1, @"[[Protocol method:]](../Protocols/Protocol.html#//api/name/method:)");
+	XCTAssertEqualObjects(result2, @"[[Protocol method:]](../Protocols/Protocol.html#//api/name/method:)");
+	XCTAssertEqualObjects(result3, @"[[Protocol method:]](../Protocols/Protocol.html#//api/name/method:)");
+	XCTAssertEqualObjects(result4, @"[[Protocol method:]](../Protocols/Protocol.html#//api/name/method:)");
+	XCTAssertEqualObjects(result5, @"[Unknown method:]");
+	XCTAssertEqualObjects(result6, @"method:");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldKeepUnknownRemoteMemberEvenIfObjectIsKnown {
@@ -395,7 +395,7 @@
 	// execute
 	NSString *result = [processor stringByConvertingCrossReferencesInString:@"[Class1 unknown:]" withFlags:0];
 	// verify
-	assertThat(result, is(@"[Class1 unknown:]"));
+	XCTAssertEqualObjects(result, @"[Class1 unknown:]");
 }
 
 #pragma mark Document references detection
@@ -410,9 +410,9 @@
 	NSString *result2 = [processor stringByConvertingCrossReferencesInString:@"<Document1>" withFlags:0];
 	NSString *result3 = [processor stringByConvertingCrossReferencesInString:@"Document12" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[Document1](docs/Document1.html)"));
-	assertThat(result2, is(@"[Document1](docs/Document1.html)"));
-	assertThat(result3, is(@"Document12"));
+	XCTAssertEqualObjects(result1, @"[Document1](docs/Document1.html)");
+	XCTAssertEqualObjects(result2, @"[Document1](docs/Document1.html)");
+	XCTAssertEqualObjects(result3, @"Document12");
 }
 
 #pragma mark URL cross references detection
@@ -428,12 +428,12 @@
 	NSString *result5 = [processor stringByConvertingCrossReferencesInString:@"http://gentlebytes.com https://gentlebytes.com" withFlags:0];
 	NSString *result6 = [processor stringByConvertingCrossReferencesInString:@"https://gentlebytes.com http://gentlebytes.com" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[http://gentlebytes.com](http://gentlebytes.com)"));
-	assertThat(result2, is(@"[https://gentlebytes.com](https://gentlebytes.com)"));
-	assertThat(result3, is(@"[http://gentlebytes.com](http://gentlebytes.com)"));
-	assertThat(result4, is(@"[https://gentlebytes.com](https://gentlebytes.com)"));
-	assertThat(result5, is(@"[http://gentlebytes.com](http://gentlebytes.com) [https://gentlebytes.com](https://gentlebytes.com)"));
-	assertThat(result6, is(@"[https://gentlebytes.com](https://gentlebytes.com) [http://gentlebytes.com](http://gentlebytes.com)"));
+	XCTAssertEqualObjects(result1, @"[http://gentlebytes.com](http://gentlebytes.com)");
+	XCTAssertEqualObjects(result2, @"[https://gentlebytes.com](https://gentlebytes.com)");
+	XCTAssertEqualObjects(result3, @"[http://gentlebytes.com](http://gentlebytes.com)");
+	XCTAssertEqualObjects(result4, @"[https://gentlebytes.com](https://gentlebytes.com)");
+	XCTAssertEqualObjects(result5, @"[http://gentlebytes.com](http://gentlebytes.com) [https://gentlebytes.com](https://gentlebytes.com)");
+	XCTAssertEqualObjects(result6, @"[https://gentlebytes.com](https://gentlebytes.com) [http://gentlebytes.com](http://gentlebytes.com)");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldConvertFTP {
@@ -447,12 +447,12 @@
 	NSString *result5 = [processor stringByConvertingCrossReferencesInString:@"ftp://gentlebytes.com ftps://gentlebytes.com" withFlags:0];
 	NSString *result6 = [processor stringByConvertingCrossReferencesInString:@"ftps://gentlebytes.com ftp://gentlebytes.com" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[ftp://gentlebytes.com](ftp://gentlebytes.com)"));
-	assertThat(result2, is(@"[ftps://gentlebytes.com](ftps://gentlebytes.com)"));
-	assertThat(result3, is(@"[ftp://gentlebytes.com](ftp://gentlebytes.com)"));
-	assertThat(result4, is(@"[ftps://gentlebytes.com](ftps://gentlebytes.com)"));
-	assertThat(result5, is(@"[ftp://gentlebytes.com](ftp://gentlebytes.com) [ftps://gentlebytes.com](ftps://gentlebytes.com)"));
-	assertThat(result6, is(@"[ftps://gentlebytes.com](ftps://gentlebytes.com) [ftp://gentlebytes.com](ftp://gentlebytes.com)"));
+	XCTAssertEqualObjects(result1, @"[ftp://gentlebytes.com](ftp://gentlebytes.com)");
+	XCTAssertEqualObjects(result2, @"[ftps://gentlebytes.com](ftps://gentlebytes.com)");
+	XCTAssertEqualObjects(result3, @"[ftp://gentlebytes.com](ftp://gentlebytes.com)");
+	XCTAssertEqualObjects(result4, @"[ftps://gentlebytes.com](ftps://gentlebytes.com)");
+	XCTAssertEqualObjects(result5, @"[ftp://gentlebytes.com](ftp://gentlebytes.com) [ftps://gentlebytes.com](ftps://gentlebytes.com)");
+	XCTAssertEqualObjects(result6, @"[ftps://gentlebytes.com](ftps://gentlebytes.com) [ftp://gentlebytes.com](ftp://gentlebytes.com)");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldConvertNewsAndRSS {
@@ -466,12 +466,12 @@
 	NSString *result5 = [processor stringByConvertingCrossReferencesInString:@"rss://gentlebytes.com news://gentlebytes.com" withFlags:0];
 	NSString *result6 = [processor stringByConvertingCrossReferencesInString:@"news://gentlebytes.com rss://gentlebytes.com" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[news://gentlebytes.com](news://gentlebytes.com)"));
-	assertThat(result2, is(@"[rss://gentlebytes.com](rss://gentlebytes.com)"));
-	assertThat(result3, is(@"[news://gentlebytes.com](news://gentlebytes.com)"));
-	assertThat(result4, is(@"[rss://gentlebytes.com](rss://gentlebytes.com)"));
-	assertThat(result5, is(@"[rss://gentlebytes.com](rss://gentlebytes.com) [news://gentlebytes.com](news://gentlebytes.com)"));
-	assertThat(result6, is(@"[news://gentlebytes.com](news://gentlebytes.com) [rss://gentlebytes.com](rss://gentlebytes.com)"));
+	XCTAssertEqualObjects(result1, @"[news://gentlebytes.com](news://gentlebytes.com)");
+	XCTAssertEqualObjects(result2, @"[rss://gentlebytes.com](rss://gentlebytes.com)");
+	XCTAssertEqualObjects(result3, @"[news://gentlebytes.com](news://gentlebytes.com)");
+	XCTAssertEqualObjects(result4, @"[rss://gentlebytes.com](rss://gentlebytes.com)");
+	XCTAssertEqualObjects(result5, @"[rss://gentlebytes.com](rss://gentlebytes.com) [news://gentlebytes.com](news://gentlebytes.com)");
+	XCTAssertEqualObjects(result6, @"[news://gentlebytes.com](news://gentlebytes.com) [rss://gentlebytes.com](rss://gentlebytes.com)");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldConvertFile {
@@ -482,9 +482,9 @@
 	NSString *result2 = [processor stringByConvertingCrossReferencesInString:@"<file://gentlebytes.com>" withFlags:0];
 	NSString *result3 = [processor stringByConvertingCrossReferencesInString:@"file://first file://second" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[file://gentlebytes.com](file://gentlebytes.com)"));
-	assertThat(result2, is(@"[file://gentlebytes.com](file://gentlebytes.com)"));
-	assertThat(result3, is(@"[file://first](file://first) [file://second](file://second)"));
+	XCTAssertEqualObjects(result1, @"[file://gentlebytes.com](file://gentlebytes.com)");
+	XCTAssertEqualObjects(result2, @"[file://gentlebytes.com](file://gentlebytes.com)");
+	XCTAssertEqualObjects(result3, @"[file://first](file://first) [file://second](file://second)");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldConvertMailto {
@@ -495,9 +495,9 @@
 	NSString *result2 = [processor stringByConvertingCrossReferencesInString:@"<mailto:appledoc@gentlebytes.com>" withFlags:0];
 	NSString *result3 = [processor stringByConvertingCrossReferencesInString:@"mailto:a@b.com mailto:c@d.com" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[appledoc@gentlebytes.com](mailto:appledoc@gentlebytes.com)"));
-	assertThat(result2, is(@"[appledoc@gentlebytes.com](mailto:appledoc@gentlebytes.com)"));
-	assertThat(result3, is(@"[a@b.com](mailto:a@b.com) [c@d.com](mailto:c@d.com)"));
+	XCTAssertEqualObjects(result1, @"[appledoc@gentlebytes.com](mailto:appledoc@gentlebytes.com)");
+	XCTAssertEqualObjects(result2, @"[appledoc@gentlebytes.com](mailto:appledoc@gentlebytes.com)");
+	XCTAssertEqualObjects(result3, @"[a@b.com](mailto:a@b.com) [c@d.com](mailto:c@d.com)");
 }
 
 #pragma mark Combinations detection testing
@@ -512,8 +512,8 @@
 	NSString *result1 = [processor stringByConvertingCrossReferencesInString:@"Class Protocol" withFlags:0];
 	NSString *result2 = [processor stringByConvertingCrossReferencesInString:@"Protocol Class" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[Class](Classes/Class.html) [Protocol](Protocols/Protocol.html)"));
-	assertThat(result2, is(@"[Protocol](Protocols/Protocol.html) [Class](Classes/Class.html)"));
+	XCTAssertEqualObjects(result1, @"[Class](Classes/Class.html) [Protocol](Protocols/Protocol.html)");
+	XCTAssertEqualObjects(result2, @"[Protocol](Protocols/Protocol.html) [Class](Classes/Class.html)");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldConvertCategoryAndClass {
@@ -526,8 +526,8 @@
 	NSString *result1 = [processor stringByConvertingCrossReferencesInString:@"Class(Category) Class" withFlags:0];
 	NSString *result2 = [processor stringByConvertingCrossReferencesInString:@"Class Class(Category)" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[Class(Category)](Categories/Class+Category.html) [Class](Classes/Class.html)"));
-	assertThat(result2, is(@"[Class](Classes/Class.html) [Class(Category)](Categories/Class+Category.html)"));
+	XCTAssertEqualObjects(result1, @"[Class(Category)](Categories/Class+Category.html) [Class](Classes/Class.html)");
+	XCTAssertEqualObjects(result2, @"[Class](Classes/Class.html) [Class(Category)](Categories/Class+Category.html)");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldConvertCategoryAndProtocol {
@@ -540,8 +540,8 @@
 	NSString *result1 = [processor stringByConvertingCrossReferencesInString:@"Protocol(Category) Protocol" withFlags:0];
 	NSString *result2 = [processor stringByConvertingCrossReferencesInString:@"Protocol Protocol(Category)" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[Protocol(Category)](Categories/Protocol+Category.html) [Protocol](Protocols/Protocol.html)"));
-	assertThat(result2, is(@"[Protocol](Protocols/Protocol.html) [Protocol(Category)](Categories/Protocol+Category.html)"));
+	XCTAssertEqualObjects(result1, @"[Protocol(Category)](Categories/Protocol+Category.html) [Protocol](Protocols/Protocol.html)");
+	XCTAssertEqualObjects(result2, @"[Protocol](Protocols/Protocol.html) [Protocol(Category)](Categories/Protocol+Category.html)");
 }
 
 #pragma mark Manual links detection testing
@@ -553,8 +553,8 @@
 	NSString *result1 = [processor stringByConvertingCrossReferencesInString:@"[text](something)" withFlags:0];
 	NSString *result2 = [processor stringByConvertingCrossReferencesInString:@"[multi word](more words)" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[text](something)"));
-	assertThat(result2, is(@"[multi word](more words)"));
+	XCTAssertEqualObjects(result1, @"[text](something)");
+	XCTAssertEqualObjects(result2, @"[multi word](more words)");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldKeepManualURLLinks {
@@ -569,13 +569,13 @@
 	NSString *result6 = [processor stringByConvertingCrossReferencesInString:@"[text](rss://ab.com)" withFlags:0];
 	NSString *result7 = [processor stringByConvertingCrossReferencesInString:@"[text](mailto:a@b.com)" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[text](http://ab.com)"));
-	assertThat(result2, is(@"[text](https://ab.com)"));
-	assertThat(result3, is(@"[text](ftp://ab.com)"));
-	assertThat(result4, is(@"[text](ftps://ab.com)"));
-	assertThat(result5, is(@"[text](news://ab.com)"));
-	assertThat(result6, is(@"[text](rss://ab.com)"));
-	assertThat(result7, is(@"[text](mailto:a@b.com)"));
+	XCTAssertEqualObjects(result1, @"[text](http://ab.com)");
+	XCTAssertEqualObjects(result2, @"[text](https://ab.com)");
+	XCTAssertEqualObjects(result3, @"[text](ftp://ab.com)");
+	XCTAssertEqualObjects(result4, @"[text](ftps://ab.com)");
+	XCTAssertEqualObjects(result5, @"[text](news://ab.com)");
+	XCTAssertEqualObjects(result6, @"[text](rss://ab.com)");
+	XCTAssertEqualObjects(result7, @"[text](mailto:a@b.com)");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldKeepManualObjectLinksAndUpdateAddress {
@@ -592,10 +592,10 @@
 	NSString *result3 = [processor stringByConvertingCrossReferencesInString:@"[text](Protocol)" withFlags:0];
 	NSString *result4 = [processor stringByConvertingCrossReferencesInString:@"[text](document)" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[text](Classes/Class.html)"));
-	assertThat(result2, is(@"[text](Categories/Class+Category.html)"));
-	assertThat(result3, is(@"[text](Protocols/Protocol.html)"));
-	assertThat(result4, is(@"[text](docs/document.html)"));
+	XCTAssertEqualObjects(result1, @"[text](Classes/Class.html)");
+	XCTAssertEqualObjects(result2, @"[text](Categories/Class+Category.html)");
+	XCTAssertEqualObjects(result3, @"[text](Protocols/Protocol.html)");
+	XCTAssertEqualObjects(result4, @"[text](docs/document.html)");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldKeepManualObjectMethodLinksAndUpdateAddress {
@@ -626,16 +626,16 @@
     NSString *result7 = [processor stringByConvertingCrossReferencesInString:@"[doSomething:withVars:]([Class doSomething:withVars:]), [text with space]([Class method])" withFlags:0];
     NSString *result8 = [processor stringByConvertingCrossReferencesInString:@"[text](<-[Class value]>)" withFlags:0];
     
-	assertThat(result1, is(@"[text](Classes/Class.html#//api/name/method)"));
-    assertThat(result2, is(@"[text](Classes/Class.html#//api/name/doSomething:withVars:)"));
-    assertThat(result3, is(@"[text](Classes/Class.html#//api/name/value)"));
-	assertThat(result4, is(@"[text with space](Classes/Class.html#//api/name/method)"));
-    assertThat(result4b, is(@"[text onlyOneSpace](Classes/Class.html#//api/name/method)"));
-    assertThat(result4c, is(@"[text](Classes/Class.html#//api/name/method), [text onlyOneSpace](Classes/Class.html#//api/name/method)"));
-	assertThat(result5, is(@"[doSomething:withVars:](Classes/Class.html#//api/name/doSomething:withVars:)"));
-    assertThat(result6, is(@"[doSomething:withVars:](Classes/Class.html#//api/name/doSomething:withVars:), [text](Classes/Class.html#//api/name/method)"));
-    assertThat(result7, is(@"[doSomething:withVars:](Classes/Class.html#//api/name/doSomething:withVars:), [text with space](Classes/Class.html#//api/name/method)"));
-    assertThat(result8, is(@"[text](Classes/Class.html#//api/name/value)"));
+	XCTAssertEqualObjects(result1, @"[text](Classes/Class.html#//api/name/method)");
+    XCTAssertEqualObjects(result2, @"[text](Classes/Class.html#//api/name/doSomething:withVars:)");
+    XCTAssertEqualObjects(result3, @"[text](Classes/Class.html#//api/name/value)");
+	XCTAssertEqualObjects(result4, @"[text with space](Classes/Class.html#//api/name/method)");
+    XCTAssertEqualObjects(result4b, @"[text onlyOneSpace](Classes/Class.html#//api/name/method)");
+    XCTAssertEqualObjects(result4c, @"[text](Classes/Class.html#//api/name/method), [text onlyOneSpace](Classes/Class.html#//api/name/method)");
+	XCTAssertEqualObjects(result5, @"[doSomething:withVars:](Classes/Class.html#//api/name/doSomething:withVars:)");
+    XCTAssertEqualObjects(result6, @"[doSomething:withVars:](Classes/Class.html#//api/name/doSomething:withVars:), [text](Classes/Class.html#//api/name/method)");
+    XCTAssertEqualObjects(result7, @"[doSomething:withVars:](Classes/Class.html#//api/name/doSomething:withVars:), [text with space](Classes/Class.html#//api/name/method)");
+    XCTAssertEqualObjects(result8, @"[text](Classes/Class.html#//api/name/value)");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldIgnoreKnownObjectsInManualLinkDescriptionOrTitle {
@@ -646,7 +646,7 @@
 	// setup
 	NSString *result = [processor stringByConvertingCrossReferencesInString:@"[Class](Class \"Class\")" withFlags:0];
 	// verify
-	assertThat(result, is(@"[Class](Classes/Class.html \"Class\")"));
+	XCTAssertEqualObjects(result, @"[Class](Classes/Class.html \"Class\")");
 }
 
 - (void)testStringByConvertingCrossReferencesInString_shouldHandleMarkdownLinkReferences {
@@ -662,12 +662,12 @@
 	NSString *result5 = [processor stringByConvertingCrossReferencesInString:@"[Class]: something" withFlags:0];
 	NSString *result6 = [processor stringByConvertingCrossReferencesInString:@"[1]: something \"Class\"" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[1]: http://ab.com"));
-	assertThat(result2, is(@"[1]: http://ab.com \"title\""));
-	assertThat(result3, is(@"[1]: Classes/Class.html"));
-	assertThat(result4, is(@"[1]: Classes/Class.html \"title\""));
-	assertThat(result5, is(@"[Class]: something"));
-	assertThat(result6, is(@"[1]: something \"Class\""));
+	XCTAssertEqualObjects(result1, @"[1]: http://ab.com");
+	XCTAssertEqualObjects(result2, @"[1]: http://ab.com \"title\"");
+	XCTAssertEqualObjects(result3, @"[1]: Classes/Class.html");
+	XCTAssertEqualObjects(result4, @"[1]: Classes/Class.html \"title\"");
+	XCTAssertEqualObjects(result5, @"[Class]: something");
+	XCTAssertEqualObjects(result6, @"[1]: something \"Class\"");
 }
 
 #pragma mark Links inside of links testing
@@ -680,7 +680,7 @@
 	// execute
 	NSString *result1 = [processor stringByConvertingCrossReferencesInString:@"[Class URLWithString:@\"http://gentlebytes.com\"]" withFlags:0];
 	// verify
-	assertThat(result1, is(@"[Class URLWithString:@\"http://gentlebytes.com\"]"));
+	XCTAssertEqualObjects(result1, @"[Class URLWithString:@\"http://gentlebytes.com\"]");
 }
 
 

@@ -28,7 +28,7 @@
 	// verify
 	GBClassData *class = [[store classes] anyObject];
 	NSArray *ivars = [[class ivars] ivars];
-	assertThatInteger([ivars count], equalToInteger(0));
+	XCTAssertEqual(ivars.count, (NSUInteger)0);
 }
 
 - (void)testParseObjectsFromString_shouldIgnoreAllIVars {
@@ -40,7 +40,7 @@
 	// verify
 	GBClassData *class = [[store classes] anyObject];
 	NSArray *ivars = [[class ivars] ivars];
-	assertThatInteger([ivars count], equalToInteger(0));
+	XCTAssertEqual(ivars.count, (NSUInteger)0);
 }
 
 - (void)testParseObjectsFromString_shouldIgnoreComplexIVar {
@@ -52,7 +52,7 @@
 	// verify
 	GBClassData *class = [[store classes] anyObject];
 	NSArray *ivars = [[class ivars] ivars];
-	assertThatInteger([ivars count], equalToInteger(0));
+	XCTAssertEqual(ivars.count, (NSUInteger)0);
 }
 
 - (void)testParseObjectsFromString_shouldIgnoreIVarEndingWithParenthesis {
@@ -64,7 +64,7 @@
 	// verify
 	GBClassData *class = [[store classes] anyObject];
 	NSArray *ivars = [[class ivars] ivars];
-	assertThatInteger([ivars count], equalToInteger(0));
+	XCTAssertEqual(ivars.count, (NSUInteger)0);
 }
 
 @end

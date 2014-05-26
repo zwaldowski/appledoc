@@ -11,7 +11,7 @@
 #import "GBStore.h"
 #import "GBProcessor.h"
 
-@interface GBProcessorCommentsTesting : GHTestCase
+@interface GBProcessorCommentsTesting : XCTestCase
 
 - (OCMockObject *)mockSettingsProviderKeepObject:(BOOL)objects members:(BOOL)members;
 - (OCMockObject *)mockSettingsProviderRepeatFirst:(BOOL)repeat;
@@ -45,7 +45,9 @@
 	GBClassData *class = [GBClassData classDataWithName:@"Class"];
 	[class.methods registerMethod:[GBTestObjectsRegistry instanceMethodWithName:@"method1" comment:comment1]];
 	[class.methods registerMethod:[GBTestObjectsRegistry instanceMethodWithName:@"method2" comment:comment2]];
-	GBStore *store = [GBTestObjectsRegistry storeByPerformingSelector:@selector(registerClass:) withObject:class];
+	GBStore *store = [GBTestObjectsRegistry storeByPerformingBlock:^(GBStore *store) {
+		[store registerClass:class];
+	}];
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify - we just want to make sure we invoke comments processing!
@@ -61,7 +63,7 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat([[store.classes anyObject] comment], is(nil));
+	XCTAssertNil([[store.classes anyObject] comment]);
 }
 
 #pragma mark Categories comments processing
@@ -85,7 +87,9 @@
 	GBCategoryData *category = [GBCategoryData categoryDataWithName:@"Category" className:@"Class"];
 	[category.methods registerMethod:[GBTestObjectsRegistry instanceMethodWithName:@"method1" comment:comment1]];
 	[category.methods registerMethod:[GBTestObjectsRegistry instanceMethodWithName:@"method2" comment:comment2]];
-	GBStore *store = [GBTestObjectsRegistry storeByPerformingSelector:@selector(registerCategory:) withObject:category];
+	GBStore *store = [GBTestObjectsRegistry storeByPerformingBlock:^(GBStore *store) {
+		[store registerCategory:category];
+	}];
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify - we just want to make sure we invoke comments processing!
@@ -101,7 +105,7 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat([[store.categories anyObject] comment], is(nil));
+	XCTAssertNil([[store.categories anyObject] comment]);
 }
 
 #pragma mark Protocols comments processing
@@ -125,7 +129,9 @@
 	GBProtocolData *protocol = [GBProtocolData protocolDataWithName:@"Protocol"];
 	[protocol.methods registerMethod:[GBTestObjectsRegistry instanceMethodWithName:@"method1" comment:comment1]];
 	[protocol.methods registerMethod:[GBTestObjectsRegistry instanceMethodWithName:@"method2" comment:comment2]];
-	GBStore *store = [GBTestObjectsRegistry storeByPerformingSelector:@selector(registerProtocol:) withObject:protocol];
+	GBStore *store = [GBTestObjectsRegistry storeByPerformingBlock:^(GBStore *store) {
+		[store registerProtocol:protocol];
+	}];
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify - we just want to make sure we invoke comments processing!
@@ -141,7 +147,7 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat([[store.protocols anyObject] comment], is(nil));
+	XCTAssertNil([[store.protocols anyObject] comment]);
 }
 
 #pragma mark Document comments processing
@@ -165,7 +171,7 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat([[store.documents anyObject] comment], is(nil));
+	XCTAssertNil([[store.documents anyObject] comment]);
 }
 
 #pragma mark Method comment processing
@@ -178,11 +184,13 @@
 	GBMethodData *method = [GBTestObjectsRegistry instanceMethodWithNames:@"arg1", @"arg2", @"arg3", nil];
 	[method setComment:comment];
 	[class.methods registerMethod:method];
-	GBStore *store = [GBTestObjectsRegistry storeByPerformingSelector:@selector(registerClass:) withObject:class];
+	GBStore *store = [GBTestObjectsRegistry storeByPerformingBlock:^(GBStore *store) {
+		[store registerClass:class];
+	}];
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat(method.comment, is(nil));
+	XCTAssertNil(method.comment);
 }
 
 #pragma mark Creation methods
@@ -211,7 +219,9 @@
 	GBMethodData *method = [GBTestObjectsRegistry propertyMethodWithArgument:@"val"];
 	[method setComment:comment];
 	[class.methods registerMethod:method];
-	GBStore *result = [GBTestObjectsRegistry storeByPerformingSelector:@selector(registerClass:) withObject:class];
+	GBStore *result = [GBTestObjectsRegistry storeByPerformingBlock:^(GBStore *store) {
+		[store registerClass:class];
+	}];
 	return result;
 }
 

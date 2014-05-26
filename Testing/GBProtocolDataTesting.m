@@ -8,7 +8,7 @@
 
 #import "GBDataObjects.h"
 
-@interface GBProtocolDataTesting : GHTestCase
+@interface GBProtocolDataTesting : XCTestCase
 @end
 
 @implementation GBProtocolDataTesting
@@ -21,7 +21,7 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify - simple testing here, fully tested in GBModelBaseTesting!
-	assertThatInteger([original.sourceInfos count], equalToInteger(1));
+	XCTAssertEqual(original.sourceInfos.count, (NSUInteger)1);
 }
 
 - (void)testMergeDataFromObject_shouldMergeAdoptedProtocolsAndPreserveSourceData {
@@ -35,8 +35,8 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify
-	assertThatInteger([[original.adoptedProtocols protocols] count], equalToInteger(3));
-	assertThatInteger([[source.adoptedProtocols protocols] count], equalToInteger(2));
+	XCTAssertEqual([original.adoptedProtocols protocols].count, (NSUInteger)3);
+	XCTAssertEqual([source.adoptedProtocols protocols].count, (NSUInteger)2);
 }
 
 - (void)testMergeDataFromObject_shouldMergeMethodsAndPreserveSourceData {
@@ -50,8 +50,8 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify
-	assertThatInteger([[original.methods methods] count], equalToInteger(3));
-	assertThatInteger([[source.methods methods] count], equalToInteger(2));
+	XCTAssertEqual([original.methods methods].count, (NSUInteger)3);
+	XCTAssertEqual([source.methods methods].count, (NSUInteger)2);
 }
 
 #pragma mark Helper methods
@@ -60,7 +60,7 @@
 	// setup & execute
 	GBProtocolData *protocol = [GBProtocolData protocolDataWithName:@"Protocol"];
 	// verify
-	assertThatBool(protocol.isTopLevelObject, equalToBool(YES));
+	XCTAssertTrue(protocol.isTopLevelObject);
 }
 
 @end

@@ -8,7 +8,7 @@
 
 #import "GBDataObjects.h"
 
-@interface GBCommentComponentsListTesting : GHTestCase
+@interface GBCommentComponentsListTesting : XCTestCase
 @end
 	
 @implementation GBCommentComponentsListTesting
@@ -19,8 +19,8 @@
 	// setup & execute
 	GBCommentComponentsList *list = [[GBCommentComponentsList alloc] init];
 	// verify
-	assertThat(list.components, isNot(nil));
-	assertThatInteger([list.components count], equalToInteger(0));
+	XCTAssertNotNil(list.components);
+	XCTAssertEqual(list.components.count, (NSUInteger)0);
 }
 
 #pragma mark Registration testing
@@ -31,8 +31,8 @@
 	// execute
 	[list registerComponent:[GBCommentComponent componentWithStringValue:@"a"]];
 	// verify
-	assertThatInteger([list.components count], equalToInteger(1));
-	assertThat([[list.components objectAtIndex:0] stringValue], is(@"a"));
+	XCTAssertEqual(list.components.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[list.components objectAtIndex:0] stringValue], @"a");
 }
 
 - (void)testRegisterComponent_shouldAddComponentsToArrayInOrder {
@@ -43,10 +43,10 @@
 	[list registerComponent:[GBCommentComponent componentWithStringValue:@"b"]];
 	[list registerComponent:[GBCommentComponent componentWithStringValue:@"c"]];
 	// verify
-	assertThatInteger([list.components count], equalToInteger(3));
-	assertThat([[list.components objectAtIndex:0] stringValue], is(@"a"));
-	assertThat([[list.components objectAtIndex:1] stringValue], is(@"b"));
-	assertThat([[list.components objectAtIndex:2] stringValue], is(@"c"));
+	XCTAssertEqual(list.components.count, (NSUInteger)3);
+	XCTAssertEqualObjects([[list.components objectAtIndex:0] stringValue], @"a");
+	XCTAssertEqualObjects([[list.components objectAtIndex:1] stringValue], @"b");
+	XCTAssertEqualObjects([[list.components objectAtIndex:2] stringValue], @"c");
 }
 
 @end

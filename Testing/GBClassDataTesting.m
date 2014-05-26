@@ -8,7 +8,7 @@
 
 #import "GBDataObjects.h"
 
-@interface GBClassDataTesting : GHTestCase
+@interface GBClassDataTesting : XCTestCase
 @end
 
 @implementation GBClassDataTesting
@@ -23,7 +23,7 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify - simple testing here, fully tested in GBModelBaseTesting!
-	assertThatInteger([original.sourceInfos count], equalToInteger(1));
+	XCTAssertEqual(original.sourceInfos.count, (NSUInteger)1);
 }
 
 #pragma mark Superclass data merging
@@ -36,8 +36,8 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify
-	assertThat(original.nameOfSuperclass, is(@"NSObject"));
-	assertThat(source.nameOfSuperclass, is(@"NSObject"));
+	XCTAssertEqualObjects(original.nameOfSuperclass, @"NSObject");
+	XCTAssertEqualObjects(source.nameOfSuperclass, @"NSObject");
 }
 
 - (void)testMergeDataFromObject_shouldPreserveSourceSuperclass {
@@ -48,7 +48,7 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify
-	assertThat(source.nameOfSuperclass, is(@"NSObject"));
+	XCTAssertEqualObjects(source.nameOfSuperclass, @"NSObject");
 }
 
 - (void)testMergeDataFromObject_shouldLeaveOriginalSuperclassIfDifferent {
@@ -60,8 +60,8 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify
-	assertThat(original.nameOfSuperclass, is(@"C1"));
-	assertThat(source.nameOfSuperclass, is(@"C2"));
+	XCTAssertEqualObjects(original.nameOfSuperclass, @"C1");
+	XCTAssertEqualObjects(source.nameOfSuperclass, @"C2");
 }
 
 #pragma mark Components merging
@@ -77,8 +77,8 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify
-	assertThatInteger([[original.adoptedProtocols protocols] count], equalToInteger(3));
-	assertThatInteger([[source.adoptedProtocols protocols] count], equalToInteger(2));
+	XCTAssertEqual([original.adoptedProtocols protocols].count, (NSUInteger)3);
+	XCTAssertEqual([source.adoptedProtocols protocols].count, (NSUInteger)2);
 }
 
 - (void)testMergeDataFromObject_shouldMergeIvarsAndPreserveSourceData {
@@ -92,8 +92,8 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify
-	assertThatInteger([[original.ivars ivars] count], equalToInteger(3));
-	assertThatInteger([[source.ivars ivars] count], equalToInteger(2));
+	XCTAssertEqual([original.ivars ivars].count, (NSUInteger)3);
+	XCTAssertEqual([source.ivars ivars].count, (NSUInteger)2);
 }
 
 - (void)testMergeDataFromObject_shouldMergeMethodsAndPreserveSourceData {
@@ -107,8 +107,8 @@
 	// execute
 	[original mergeDataFromObject:source];
 	// verify
-	assertThatInteger([[original.methods methods] count], equalToInteger(3));
-	assertThatInteger([[source.methods methods] count], equalToInteger(2));
+	XCTAssertEqual([original.methods methods].count, (NSUInteger)3);
+	XCTAssertEqual([source.methods methods].count, (NSUInteger)2);
 }
 
 #pragma mark Helper methods
@@ -117,7 +117,7 @@
 	// setup & execute
 	GBClassData *class = [GBClassData classDataWithName:@"Class"];
 	// verify
-	assertThatBool(class.isTopLevelObject, equalToBool(YES));
+	XCTAssertTrue(class.isTopLevelObject);
 }
 
 @end

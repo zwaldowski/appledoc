@@ -201,35 +201,35 @@
 	// execute
 	[processor processComment:comment withContext:nil store:store];
 	// verify
-	assertThat(comment.shortDescription.settings, is(settings));
-	assertThat(comment.shortDescription.sourceInfo, isNot(nil));
+	XCTAssertEqualObjects(comment.shortDescription.settings, settings);
+	XCTAssertNotNil(comment.shortDescription.sourceInfo);
 	for (GBCommentComponent *c in comment.longDescription.components) {
-		assertThat(c.settings, is(settings));
-		assertThat(c.sourceInfo, isNot(nil));
+		XCTAssertEqualObjects(c.settings, settings);
+		XCTAssertNotNil(c.sourceInfo);
 	}
 	for (GBCommentArgument *a in comment.methodParameters) {
 		for (GBCommentComponent *c in a.argumentDescription.components) {			
-			assertThat(c.settings, is(settings));
-			assertThat(c.sourceInfo, isNot(nil));
+			XCTAssertEqualObjects(c.settings, settings);
+			XCTAssertNotNil(c.sourceInfo);
 		}
 	}
 	for (GBCommentArgument *a in comment.methodExceptions) {
 		for (GBCommentComponent *c in a.argumentDescription.components) {
-			assertThat(c.settings, is(settings));
-			assertThat(c.sourceInfo, isNot(nil));
+			XCTAssertEqualObjects(c.settings, settings);
+			XCTAssertNotNil(c.sourceInfo);
 		}
 	}
 	for (GBCommentComponent *c in comment.methodResult.components) {
-		assertThat(c.settings, is(settings));
-		assertThat(c.sourceInfo, isNot(nil));
+		XCTAssertEqualObjects(c.settings, settings);
+		XCTAssertNotNil(c.sourceInfo);
 	}
 	for (GBCommentComponent *c in comment.relatedItems.components) {
-		assertThat(c.settings, is(settings));
-		assertThat(c.sourceInfo, isNot(nil));
+		XCTAssertEqualObjects(c.settings, settings);
+		XCTAssertNotNil(c.sourceInfo);
 	}
 	for (GBCommentComponent *c in comment.availability.components) {
-		assertThat(c.settings, is(settings));
-		assertThat(c.sourceInfo, isNot(nil));
+		XCTAssertEqualObjects(c.settings, settings);
+		XCTAssertNotNil(c.sourceInfo);
 	}
 }
 
@@ -438,7 +438,7 @@
 	// execute
 	[processor processComment:comment withContext:nil store:store];
 	// verify
-	assertThatBool(comment.isProcessed, equalToBool(YES));
+	XCTAssertTrue(comment.isProcessed);
 }
 
 #pragma mark Private methods testing
@@ -501,10 +501,8 @@
 	NSRange shortRange = NSMakeRange(0, 0);
 	[processor findCommentBlockInLines:[string arrayOfLines] blockRange:&blockRange shortRange:&shortRange];
 	// verify
-	assertThatInteger(blockRange.location, equalToInteger(b.location));
-	assertThatInteger(blockRange.length, equalToInteger(b.length));
-	assertThatInteger(shortRange.location, equalToInteger(s.location));
-	assertThatInteger(shortRange.length, equalToInteger(s.length));
+	XCTAssertTrue(NSEqualRanges(blockRange, b));
+	XCTAssertTrue(NSEqualRanges(shortRange, s));
 }
 
 @end

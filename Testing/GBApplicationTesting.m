@@ -25,7 +25,7 @@
 - (NSString *)standardizeCurrentDirectoryForPath:(NSString *)path;
 @end
 
-@interface GBAppledocApplicationTesting : GHTestCase
+@interface GBAppledocApplicationTesting : XCTestCase
 - (GBApplicationSettingsProvider *)settingsByRunningWithArgs:(NSString *)first, ... NS_REQUIRES_NIL_TERMINATION;
 @property (readonly) NSString *currentPath;
 @end
@@ -39,11 +39,12 @@
 	// setup
 	GBAppledocApplication *app = [[GBAppledocApplication alloc] init];
 	//execute & verify
-	assertThat([app standardizeCurrentDirectoryForPath:@"."], is(self.currentPath));
-	assertThat([app standardizeCurrentDirectoryForPath:@"./path/subpath"], is([NSString stringWithFormat:@"%@/path/subpath", self.currentPath]));
-	assertThat([app standardizeCurrentDirectoryForPath:@"path.with/dots/."], is(@"path.with/dots/."));
-	assertThat([app standardizeCurrentDirectoryForPath:@".."], is(@".."));
-	assertThat([app standardizeCurrentDirectoryForPath:@"../path/subpath"], is(@"../path/subpath"));
+	XCTAssertEqualObjects([app standardizeCurrentDirectoryForPath:@"."], self.currentPath);
+	NSString *testSubpath = [NSString stringWithFormat:@"%@/path/subpath", self.currentPath];
+	XCTAssertEqualObjects([app standardizeCurrentDirectoryForPath:@"./path/subpath"], testSubpath);
+	XCTAssertEqualObjects([app standardizeCurrentDirectoryForPath:@"path.with/dots/."], @"path.with/dots/.");
+	XCTAssertEqualObjects([app standardizeCurrentDirectoryForPath:@".."], @"..");
+	XCTAssertEqualObjects([app standardizeCurrentDirectoryForPath:@"../path/subpath"], @"../path/subpath");
 }
 
 #pragma mark Paths settings testing
@@ -53,8 +54,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--output", @"path", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--output", @".", nil];
 	// verify
-	assertThat(settings1.outputPath, is(@"path"));
-	assertThat(settings2.outputPath, is(self.currentPath));
+	XCTAssertEqualObjects(settings1.outputPath, @"path");
+	XCTAssertEqualObjects(settings2.outputPath, self.currentPath);
 }
 
 - (void)testTemplates_shouldAssignValueToSettings {
@@ -62,8 +63,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--templates", @"path", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--templates", @".", nil];
 	// verify
-	assertThat(settings1.templatesPath, is(@"path"));
-	assertThat(settings2.templatesPath, is(self.currentPath));
+	XCTAssertEqualObjects(settings1.templatesPath, @"path");
+	XCTAssertEqualObjects(settings2.templatesPath, self.currentPath);
 }
 
 - (void)testDocsetInstallPath_shouldAssignValueToSettings {
@@ -71,8 +72,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--docset-install-path", @"path", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--docset-install-path", @".", nil];
 	// verify
-	assertThat(settings1.docsetInstallPath, is(@"path"));
-	assertThat(settings2.docsetInstallPath, is(self.currentPath));
+	XCTAssertEqualObjects(settings1.docsetInstallPath, @"path");
+	XCTAssertEqualObjects(settings2.docsetInstallPath, self.currentPath);
 }
 
 - (void)testXcrunPath_shouldAssignValueToSettings {
@@ -80,8 +81,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--xcrun-path", @"path", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--xcrun-path", @".", nil];
 	// verify
-	assertThat(settings1.xcrunPath, is(@"path"));
-	assertThat(settings2.xcrunPath, is(self.currentPath));
+	XCTAssertEqualObjects(settings1.xcrunPath, @"path");
+	XCTAssertEqualObjects(settings2.xcrunPath, self.currentPath);
 }
 
 - (void)testIndexDesc_shouldAssignValueToSettings {
@@ -89,8 +90,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--index-desc", @"path/file.txt", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--index-desc", @".", nil];
 	// verify
-	assertThat(settings1.indexDescriptionPath, is(@"path/file.txt"));
-	assertThat(settings2.indexDescriptionPath, is(self.currentPath));
+	XCTAssertEqualObjects(settings1.indexDescriptionPath, @"path/file.txt");
+	XCTAssertEqualObjects(settings2.indexDescriptionPath, self.currentPath);
 }
 
 - (void)testInclude_shouldAssignValueToSettings {
@@ -98,19 +99,19 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--include", @"path", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--include", @".", nil];
 	// verify - note that ignore should not convert dot to current path; this would prevent .m being parsed properly!
-	assertThatInteger([settings1.includePaths count], equalToInteger(1));
-	assertThatBool([settings1.includePaths containsObject:@"path"], equalToBool(YES));
-	assertThatBool([settings2.includePaths containsObject:self.currentPath], equalToBool(YES));
+	XCTAssertEqual(settings1.includePaths.count, (NSUInteger)1);
+	XCTAssertTrue([settings1.includePaths containsObject:@"path"]);
+	XCTAssertTrue([settings2.includePaths containsObject:self.currentPath]);
 }
 
 - (void)testInclude_shouldAssignMutlipleValuesToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--include", @"path1", @"--include", @"path2", @"--include", @"path3", nil];
 	// verify
-	assertThatInteger([settings.includePaths count], equalToInteger(3));
-	assertThatBool([settings.includePaths containsObject:@"path1"], equalToBool(YES));
-	assertThatBool([settings.includePaths containsObject:@"path2"], equalToBool(YES));
-	assertThatBool([settings.includePaths containsObject:@"path3"], equalToBool(YES));
+	XCTAssertEqual(settings.includePaths.count, (NSUInteger)3);
+	XCTAssertTrue([settings.includePaths containsObject:@"path1"]);
+	XCTAssertTrue([settings.includePaths containsObject:@"path2"]);
+	XCTAssertTrue([settings.includePaths containsObject:@"path3"]);
 }
 
 - (void)testIgnore_shouldAssignValueToSettings {
@@ -118,19 +119,19 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--ignore", @"path", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--ignore", @".", nil];
 	// verify - note that ignore should not convert dot to current path; this would prevent .m being parsed properly!
-	assertThatInteger([settings1.ignoredPaths count], equalToInteger(1));
-	assertThatBool([settings1.ignoredPaths containsObject:@"path"], equalToBool(YES));
-	assertThatBool([settings2.ignoredPaths containsObject:@"."], equalToBool(YES));
+	XCTAssertEqual(settings1.ignoredPaths.count, (NSUInteger)1);
+	XCTAssertTrue([settings1.ignoredPaths containsObject:@"path"]);
+	XCTAssertTrue([settings2.ignoredPaths containsObject:@"."]);
 }
 
 - (void)testIgnore_shouldAssignMutlipleValuesToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--ignore", @"path1", @"--ignore", @"path2", @"--ignore", @"path3", nil];
 	// verify
-	assertThatInteger([settings.ignoredPaths count], equalToInteger(3));
-	assertThatBool([settings.ignoredPaths containsObject:@"path1"], equalToBool(YES));
-	assertThatBool([settings.ignoredPaths containsObject:@"path2"], equalToBool(YES));
-	assertThatBool([settings.ignoredPaths containsObject:@"path3"], equalToBool(YES));
+	XCTAssertEqual(settings.ignoredPaths.count, (NSUInteger)3);
+	XCTAssertTrue([settings.ignoredPaths containsObject:@"path1"]);
+	XCTAssertTrue([settings.ignoredPaths containsObject:@"path2"]);
+	XCTAssertTrue([settings.ignoredPaths containsObject:@"path3"]);
 }
 
 #pragma mark Project settings testing
@@ -139,28 +140,28 @@
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--project-name", @"value", nil];
 	// verify
-	assertThat(settings.projectName, is(@"value"));
+	XCTAssertEqualObjects(settings.projectName, @"value");
 }
 
 - (void)testProjectVersion_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--project-version", @"value", nil];
 	// verify
-	assertThat(settings.projectVersion, is(@"value"));
+	XCTAssertEqualObjects(settings.projectVersion, @"value");
 }
 
 - (void)testProjectCompany_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--project-company", @"value", nil];
 	// verify
-	assertThat(settings.projectCompany, is(@"value"));
+	XCTAssertEqualObjects(settings.projectCompany, @"value");
 }
 
 - (void)testCompanyIdentifier_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--company-id", @"value", nil];
 	// verify
-	assertThat(settings.companyIdentifier, is(@"value"));
+	XCTAssertEqualObjects(settings.companyIdentifier, @"value");
 }
 
 #pragma mark Behavior settings testing
@@ -170,8 +171,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--clean-output", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-clean-output", nil];
 	// verify
-	assertThatBool(settings1.cleanupOutputPathBeforeRunning, equalToBool(YES));
-	assertThatBool(settings2.cleanupOutputPathBeforeRunning, equalToBool(NO));
+	XCTAssertTrue(settings1.cleanupOutputPathBeforeRunning);
+	XCTAssertFalse(settings2.cleanupOutputPathBeforeRunning);
 }
 
 - (void)testCreateHTML_shouldAssignValueToSettings {
@@ -179,11 +180,11 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--create-html", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-create-html", nil];
 	// verify
-	assertThatBool(settings1.createHTML, equalToBool(YES));
-	assertThatBool(settings2.createHTML, equalToBool(NO));
-	assertThatBool(settings2.createDocSet, equalToBool(NO));
-	assertThatBool(settings2.installDocSet, equalToBool(NO));
-	assertThatBool(settings2.publishDocSet, equalToBool(NO));
+	XCTAssertTrue(settings1.createHTML);
+	XCTAssertFalse(settings2.createHTML);
+	XCTAssertFalse(settings2.createDocSet);
+	XCTAssertFalse(settings2.installDocSet);
+	XCTAssertFalse(settings2.publishDocSet);
 }
 
 - (void)testCreateDocSet_shouldAssignValueToSettings {
@@ -191,11 +192,11 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--create-docset", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-create-docset", nil];
 	// verify
-	assertThatBool(settings1.createHTML, equalToBool(YES));
-	assertThatBool(settings2.createDocSet, equalToBool(NO));
-	assertThatBool(settings1.createDocSet, equalToBool(YES));
-	assertThatBool(settings2.installDocSet, equalToBool(NO));
-	assertThatBool(settings2.publishDocSet, equalToBool(NO));
+	XCTAssertTrue(settings1.createHTML);
+	XCTAssertFalse(settings2.createDocSet);
+	XCTAssertTrue(settings1.createDocSet);
+	XCTAssertFalse(settings2.installDocSet);
+	XCTAssertFalse(settings2.publishDocSet);
 }
 
 - (void)testInstallDocSet_shouldAssignValueToSettings {
@@ -203,11 +204,11 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--install-docset", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-install-docset", nil];
 	// verify
-	assertThatBool(settings1.createHTML, equalToBool(YES));
-	assertThatBool(settings1.createDocSet, equalToBool(YES));
-	assertThatBool(settings1.installDocSet, equalToBool(YES));
-	assertThatBool(settings2.installDocSet, equalToBool(NO));
-	assertThatBool(settings2.publishDocSet, equalToBool(NO));
+	XCTAssertTrue(settings1.createHTML);
+	XCTAssertTrue(settings1.createDocSet);
+	XCTAssertTrue(settings1.installDocSet);
+	XCTAssertFalse(settings2.installDocSet);
+	XCTAssertFalse(settings2.publishDocSet);
 }
 
 - (void)testPublishDocSet_shouldAssignValueToSettings {
@@ -215,11 +216,11 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--publish-docset", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-publish-docset", nil];
 	// verify
-	assertThatBool(settings1.createHTML, equalToBool(YES));
-	assertThatBool(settings1.createDocSet, equalToBool(YES));
-	assertThatBool(settings1.installDocSet, equalToBool(YES));
-	assertThatBool(settings1.publishDocSet, equalToBool(YES));
-	assertThatBool(settings2.publishDocSet, equalToBool(NO));
+	XCTAssertTrue(settings1.createHTML);
+	XCTAssertTrue(settings1.createDocSet);
+	XCTAssertTrue(settings1.installDocSet);
+	XCTAssertTrue(settings1.publishDocSet);
+	XCTAssertFalse(settings2.publishDocSet);
 }
 
 - (void)testUseAppleAnchors_shouldAssignValueToSettings {
@@ -228,9 +229,9 @@
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--html-anchors", @"apple", nil];
 	GBApplicationSettingsProvider *settings3 = [self settingsByRunningWithArgs:nil];
 	// verify
-	assertThatBool(settings1.htmlAnchorFormat, equalToInt(GBHTMLAnchorFormatAppleDoc));
-	assertThatBool(settings2.htmlAnchorFormat, equalToInt(GBHTMLAnchorFormatApple));
-	assertThatBool(settings3.htmlAnchorFormat, equalToInt(GBHTMLAnchorFormatAppleDoc));
+	XCTAssertEqual(settings1.htmlAnchorFormat, GBHTMLAnchorFormatAppleDoc);
+	XCTAssertEqual(settings2.htmlAnchorFormat, GBHTMLAnchorFormatApple);
+	XCTAssertEqual(settings3.htmlAnchorFormat, GBHTMLAnchorFormatAppleDoc);
 }
 
 - (void)testKeepIntermediateFiles_shouldAssignValueToSettings {
@@ -238,8 +239,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--keep-intermediate-files", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-keep-intermediate-files", nil];
 	// verify
-	assertThatBool(settings1.keepIntermediateFiles, equalToBool(YES));
-	assertThatBool(settings2.keepIntermediateFiles, equalToBool(NO));
+	XCTAssertTrue(settings1.keepIntermediateFiles);
+	XCTAssertFalse(settings2.keepIntermediateFiles);
 }
 
 - (void)testKeepUndocumentedObjects_shouldAssignValueToSettings {
@@ -247,8 +248,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--keep-undocumented-objects", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-keep-undocumented-objects", nil];
 	// verify
-	assertThatBool(settings1.keepUndocumentedObjects, equalToBool(YES));
-	assertThatBool(settings2.keepUndocumentedObjects, equalToBool(NO));
+	XCTAssertTrue(settings1.keepUndocumentedObjects);
+	XCTAssertFalse(settings2.keepUndocumentedObjects);
 }
 
 - (void)testKeepUndocumentedMembers_shouldAssignValueToSettings {
@@ -256,8 +257,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--keep-undocumented-members", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-keep-undocumented-members", nil];
 	// verify
-	assertThatBool(settings1.keepUndocumentedMembers, equalToBool(YES));
-	assertThatBool(settings2.keepUndocumentedMembers, equalToBool(NO));
+	XCTAssertTrue(settings1.keepUndocumentedMembers);
+	XCTAssertFalse(settings2.keepUndocumentedMembers);
 }
 
 - (void)testFindUndocumentedMembersDocumentation_shouldAssignValueToSettings {
@@ -265,8 +266,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--search-undocumented-doc", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-search-undocumented-doc", nil];
 	// verify
-	assertThatBool(settings1.findUndocumentedMembersDocumentation, equalToBool(YES));
-	assertThatBool(settings2.findUndocumentedMembersDocumentation, equalToBool(NO));
+	XCTAssertTrue(settings1.findUndocumentedMembersDocumentation);
+	XCTAssertFalse(settings2.findUndocumentedMembersDocumentation);
 }
 
 - (void)testRepeatFirstParagraph_shouldAssignValueToSettings {
@@ -274,8 +275,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--repeat-first-par", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-repeat-first-par", nil];
 	// verify
-	assertThatBool(settings1.repeatFirstParagraphForMemberDescription, equalToBool(YES));
-	assertThatBool(settings2.repeatFirstParagraphForMemberDescription, equalToBool(NO));
+	XCTAssertTrue(settings1.repeatFirstParagraphForMemberDescription);
+	XCTAssertFalse(settings2.repeatFirstParagraphForMemberDescription);
 }
 
 - (void)testPreprocessHeaderDoc_shouldAssignValueToSettings {
@@ -283,8 +284,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--preprocess-headerdoc", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-preprocess-headerdoc", nil];
 	// verify
-	assertThatBool(settings1.preprocessHeaderDoc, equalToBool(YES));
-	assertThatBool(settings2.preprocessHeaderDoc, equalToBool(NO));
+	XCTAssertTrue(settings1.preprocessHeaderDoc);
+	XCTAssertFalse(settings2.preprocessHeaderDoc);
 }
 
 - (void)testUseSingleStarForBold_shouldAssignValueToSettings {
@@ -292,8 +293,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--use-single-star", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-use-single-star", nil];
 	// verify
-	assertThatBool(settings1.useSingleStarForBold, equalToBool(YES));
-	assertThatBool(settings2.useSingleStarForBold, equalToBool(NO));
+	XCTAssertTrue(settings1.useSingleStarForBold);
+	XCTAssertFalse(settings2.useSingleStarForBold);
 }
 
 - (void)testMergeCategoriesToClasses_shouldAssignValueToSettings {
@@ -301,8 +302,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--merge-categories", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-merge-categories", nil];
 	// verify
-	assertThatBool(settings1.mergeCategoriesToClasses, equalToBool(YES));
-	assertThatBool(settings2.mergeCategoriesToClasses, equalToBool(NO));
+	XCTAssertTrue(settings1.mergeCategoriesToClasses);
+	XCTAssertFalse(settings2.mergeCategoriesToClasses);
 }
 
 - (void)testMergeCategoryCommentToClass_shouldAssignValueToSettings {
@@ -310,8 +311,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--merge-category-comment", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-merge-category-comment", nil];
 	// verify
-	assertThatBool(settings1.mergeCategoryCommentToClass, equalToBool(YES));
-	assertThatBool(settings2.mergeCategoryCommentToClass, equalToBool(NO));
+	XCTAssertTrue(settings1.mergeCategoryCommentToClass);
+	XCTAssertFalse(settings2.mergeCategoryCommentToClass);
 }
 
 - (void)testKeepMergedCategoriesSections_shouldAssignValueToSettings {
@@ -319,8 +320,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--keep-merged-sections", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-keep-merged-sections", nil];
 	// verify
-	assertThatBool(settings1.keepMergedCategoriesSections, equalToBool(YES));
-	assertThatBool(settings2.keepMergedCategoriesSections, equalToBool(NO));
+	XCTAssertTrue(settings1.keepMergedCategoriesSections);
+	XCTAssertFalse(settings2.keepMergedCategoriesSections);
 }
 
 - (void)testPrefixMergedCategoriesSectionsWithCategoryName_shouldAssignValueToSettings {
@@ -328,8 +329,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--prefix-merged-sections", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-prefix-merged-sections", nil];
 	// verify
-	assertThatBool(settings1.prefixMergedCategoriesSectionsWithCategoryName, equalToBool(YES));
-	assertThatBool(settings2.prefixMergedCategoriesSectionsWithCategoryName, equalToBool(NO));
+	XCTAssertTrue(settings1.prefixMergedCategoriesSectionsWithCategoryName);
+	XCTAssertFalse(settings2.prefixMergedCategoriesSectionsWithCategoryName);
 }
 
 - (void)testExplicitCrossRef_shouldAssignValueToSettings {
@@ -337,22 +338,22 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--explicit-crossref", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-explicit-crossref", nil];
 	// verify
-	assertThat(settings1.commentComponents.crossReferenceMarkersTemplate, is(@"<%@>"));
-	assertThat(settings2.commentComponents.crossReferenceMarkersTemplate, is(@"<?%@>?"));
+	XCTAssertEqualObjects(settings1.commentComponents.crossReferenceMarkersTemplate, @"<%@>");
+	XCTAssertEqualObjects(settings2.commentComponents.crossReferenceMarkersTemplate, @"<?%@>?");
 }
 
 - (void)testCrossRefFormat_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--crossref-format", @"FORMAT", nil];
 	// verify
-	assertThat(settings.commentComponents.crossReferenceMarkersTemplate, is(@"FORMAT"));
+	XCTAssertEqualObjects(settings.commentComponents.crossReferenceMarkersTemplate, @"FORMAT");
 }
 
 - (void)testExitCodeThreshold_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--exit-threshold", @"2", nil];
 	// verify
-	assertThatInteger(settings.exitCodeThreshold, equalToInteger(2));
+	XCTAssertEqual(settings.exitCodeThreshold, (int)2);
 }
 
 #pragma mark Warnings settings testing
@@ -362,8 +363,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--warn-missing-output-path", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-warn-missing-output-path", nil];
 	// verify
-	assertThatBool(settings1.warnOnMissingOutputPathArgument, equalToBool(YES));
-	assertThatBool(settings2.warnOnMissingOutputPathArgument, equalToBool(NO));
+	XCTAssertTrue(settings1.warnOnMissingOutputPathArgument);
+	XCTAssertFalse(settings2.warnOnMissingOutputPathArgument);
 }
 
 - (void)testWarnOnMissingCompanyIdentifier_shouldAssignValueToSettings {
@@ -371,8 +372,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--warn-missing-company-id", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-warn-missing-company-id", nil];
 	// verify
-	assertThatBool(settings1.warnOnMissingCompanyIdentifier, equalToBool(YES));
-	assertThatBool(settings2.warnOnMissingCompanyIdentifier, equalToBool(NO));
+	XCTAssertTrue(settings1.warnOnMissingCompanyIdentifier);
+	XCTAssertFalse(settings2.warnOnMissingCompanyIdentifier);
 }
 
 - (void)testWarnOnUndocumentedObject_shouldAssignValueToSettings {
@@ -380,8 +381,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--warn-undocumented-object", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-warn-undocumented-object", nil];
 	// verify
-	assertThatBool(settings1.warnOnUndocumentedObject, equalToBool(YES));
-	assertThatBool(settings2.warnOnUndocumentedObject, equalToBool(NO));
+	XCTAssertTrue(settings1.warnOnUndocumentedObject);
+	XCTAssertFalse(settings2.warnOnUndocumentedObject);
 }
 
 - (void)testWarnOnUndocumentedMember_shouldAssignValueToSettings {
@@ -389,8 +390,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--warn-undocumented-member", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-warn-undocumented-member", nil];
 	// verify
-	assertThatBool(settings1.warnOnUndocumentedMember, equalToBool(YES));
-	assertThatBool(settings2.warnOnUndocumentedMember, equalToBool(NO));
+	XCTAssertTrue(settings1.warnOnUndocumentedMember);
+	XCTAssertFalse(settings2.warnOnUndocumentedMember);
 }
 
 - (void)testWarnOnEmptyDescription_shouldAssignValueToSettings {
@@ -398,8 +399,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--warn-empty-description", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-warn-empty-description", nil];
 	// verify
-	assertThatBool(settings1.warnOnEmptyDescription, equalToBool(YES));
-	assertThatBool(settings2.warnOnEmptyDescription, equalToBool(NO));
+	XCTAssertTrue(settings1.warnOnEmptyDescription);
+	XCTAssertFalse(settings2.warnOnEmptyDescription);
 }
 
 - (void)testWarnOnUnknownDirective_shouldAssignValueToSettings {
@@ -407,8 +408,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--warn-unknown-directive", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-warn-unknown-directive", nil];
 	// verify
-	assertThatBool(settings1.warnOnUnknownDirective, equalToBool(YES));
-	assertThatBool(settings2.warnOnUnknownDirective, equalToBool(NO));
+	XCTAssertTrue(settings1.warnOnUnknownDirective);
+	XCTAssertFalse(settings2.warnOnUnknownDirective);
 }
 
 - (void)testWarnOnInvalidCrossReference_shouldAssignValueToSettings {
@@ -416,8 +417,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--warn-invalid-crossref", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-warn-invalid-crossref", nil];
 	// verify
-	assertThatBool(settings1.warnOnInvalidCrossReference, equalToBool(YES));
-	assertThatBool(settings2.warnOnInvalidCrossReference, equalToBool(NO));
+	XCTAssertTrue(settings1.warnOnInvalidCrossReference);
+	XCTAssertFalse(settings2.warnOnInvalidCrossReference);
 }
 
 - (void)testWarnOnMissingMethodArgument_shouldAssignValueToSettings {
@@ -425,8 +426,8 @@
 	GBApplicationSettingsProvider *settings1 = [self settingsByRunningWithArgs:@"--warn-missing-arg", nil];
 	GBApplicationSettingsProvider *settings2 = [self settingsByRunningWithArgs:@"--no-warn-missing-arg", nil];
 	// verify
-	assertThatBool(settings1.warnOnMissingMethodArgument, equalToBool(YES));
-	assertThatBool(settings2.warnOnMissingMethodArgument, equalToBool(NO));
+	XCTAssertTrue(settings1.warnOnMissingMethodArgument);
+	XCTAssertFalse(settings2.warnOnMissingMethodArgument);
 }
 
 #pragma mark Documentation set settings testing
@@ -435,42 +436,42 @@
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-bundle-id", @"value", nil];
 	// verify
-	assertThat(settings.docsetBundleIdentifier, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetBundleIdentifier, @"value");
 }
 
 - (void)testDocSetBundleName_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-bundle-name", @"value", nil];
 	// verify
-	assertThat(settings.docsetBundleName, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetBundleName, @"value");
 }
 
 - (void)testDocSetDescription_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-desc", @"value", nil];
 	// verify
-	assertThat(settings.docsetDescription, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetDescription, @"value");
 }
 
 - (void)testDocSetCopyright_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-copyright", @"value", nil];
 	// verify
-	assertThat(settings.docsetCopyrightMessage, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetCopyrightMessage, @"value");
 }
 
 - (void)testDocSetFeedName_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-feed-name", @"value", nil];
 	// verify
-	assertThat(settings.docsetFeedName, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetFeedName, @"value");
 }
 
 - (void)testDocSetFeedURL_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-feed-url", @"value", nil];
 	// verify
-	assertThat(settings.docsetFeedURL, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetFeedURL, @"value");
 }
 
 - (void)testDocSetFeedFormat_shouldAssignValueToSettings {
@@ -481,95 +482,95 @@
     GBApplicationSettingsProvider *settings4 = [self settingsByRunningWithArgs:@"--docset-feed-formats", @"atom,xml", nil];
     GBApplicationSettingsProvider *settings5 = [self settingsByRunningWithArgs:@"--docset-feed-formats", @"xml,atom", nil];
     // verify
-    assertThatInteger(settings1.docsetFeedFormats, equalToInteger(0));
-    assertThatInteger(settings2.docsetFeedFormats, equalToInteger(GBPublishedFeedFormatAtom));
-    assertThatInteger(settings3.docsetFeedFormats, equalToInteger(GBPublishedFeedFormatXML));
-    assertThatInteger(settings4.docsetFeedFormats, equalToInteger(GBPublishedFeedFormatAtom | GBPublishedFeedFormatXML));
-    assertThatInteger(settings5.docsetFeedFormats, equalToInteger(GBPublishedFeedFormatAtom | GBPublishedFeedFormatXML));
+	XCTAssertEqual(settings1.docsetFeedFormats, (GBPublishedFeedFormats)0);
+    XCTAssertEqual(settings2.docsetFeedFormats, GBPublishedFeedFormatAtom);
+    XCTAssertEqual(settings3.docsetFeedFormats, GBPublishedFeedFormatXML);
+    XCTAssertEqual(settings4.docsetFeedFormats, GBPublishedFeedFormatAtom | GBPublishedFeedFormatXML);
+    XCTAssertEqual(settings5.docsetFeedFormats, GBPublishedFeedFormatAtom | GBPublishedFeedFormatXML);
 }
 
 - (void)testDocSetPackageURL_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-package-url", @"value", nil];
 	// verify
-	assertThat(settings.docsetPackageURL, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetPackageURL, @"value");
 }
 
 - (void)testDocSetFallbackURL_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-fallback-url", @"value", nil];
 	// verify
-	assertThat(settings.docsetFallbackURL, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetFallbackURL, @"value");
 }
 
 - (void)testDocSetPublisherIdentifier_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-publisher-id", @"value", nil];
 	// verify
-	assertThat(settings.docsetPublisherIdentifier, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetPublisherIdentifier, @"value");
 }
 
 - (void)testDocSetPublisherName_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-publisher-name", @"value", nil];
 	// verify
-	assertThat(settings.docsetPublisherName, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetPublisherName, @"value");
 }
 
 - (void)testDocSetMinXcodeVersion_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-min-xcode-version", @"value", nil];
 	// verify
-	assertThat(settings.docsetMinimumXcodeVersion, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetMinimumXcodeVersion, @"value");
 }
 
 - (void)testDocSetPlatformFamily_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-platform-family", @"value", nil];
 	// verify
-	assertThat(settings.docsetPlatformFamily, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetPlatformFamily, @"value");
 }
 
 - (void)testDocSetCertificateIssuer_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-cert-issuer", @"value", nil];
 	// verify
-	assertThat(settings.docsetCertificateIssuer, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetCertificateIssuer, @"value");
 }
 
 - (void)testDocSetCertificateSigner_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-cert-signer", @"value", nil];
 	// verify
-	assertThat(settings.docsetCertificateSigner, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetCertificateSigner, @"value");
 }
 
 - (void)testDocSetBundleFilename_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-bundle-filename", @"value", nil];
 	// verify
-	assertThat(settings.docsetBundleFilename, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetBundleFilename, @"value");
 }
 
 - (void)testDocSetAtomFilename_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-atom-filename", @"value", nil];
 	// verify
-	assertThat(settings.docsetAtomFilename, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetAtomFilename, @"value");
 }
 
 - (void)testDocSetXMLFilename_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-xml-filename", @"value", nil];
 	// verify
-	assertThat(settings.docsetXMLFilename, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetXMLFilename, @"value");
 }
 
 - (void)testDocSetPackageFilename_shouldAssignValueToSettings {
 	// setup & execute
 	GBApplicationSettingsProvider *settings = [self settingsByRunningWithArgs:@"--docset-package-filename", @"value", nil];
 	// verify
-	assertThat(settings.docsetPackageFilename, is(@"value"));
+	XCTAssertEqualObjects(settings.docsetPackageFilename, @"value");
 }
 
 #pragma mark Creation methods

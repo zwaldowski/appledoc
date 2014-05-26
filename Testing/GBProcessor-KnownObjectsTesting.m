@@ -11,7 +11,7 @@
 #import "GBStore.h"
 #import "GBProcessor.h"
 
-@interface GBProcessorKnownObjectsTesting : GHTestCase
+@interface GBProcessorKnownObjectsTesting : XCTestCase
 
 - (OCMockObject *)mockSettingsProvider;
 
@@ -39,9 +39,9 @@
 	[processor processObjectsFromStore:store];
 	// verify
 	NSArray *protocols = [class.adoptedProtocols protocolsSortedByName];
-	assertThatInteger([protocols count], equalToInteger(2));
-	assertThat([protocols objectAtIndex:0], is(realProtocol));
-	assertThat([protocols objectAtIndex:1], is(adoptedProtocol2));
+	XCTAssertEqual(protocols.count, (NSUInteger)2);
+	XCTAssertEqualObjects([protocols objectAtIndex:0], realProtocol);
+	XCTAssertEqualObjects([protocols objectAtIndex:1], adoptedProtocol2);
 }
 
 - (void)testProcessObjectsFromStore_shouldReplaceKnownCategoryAdoptedProtocolsWithProtocolsFromStore {
@@ -60,9 +60,9 @@
 	[processor processObjectsFromStore:store];
 	// verify
 	NSArray *protocols = [category.adoptedProtocols protocolsSortedByName];
-	assertThatInteger([protocols count], equalToInteger(2));
-	assertThat([protocols objectAtIndex:0], is(realProtocol));
-	assertThat([protocols objectAtIndex:1], is(adoptedProtocol2));
+	XCTAssertEqual(protocols.count, (NSUInteger)2);
+	XCTAssertEqualObjects([protocols objectAtIndex:0], realProtocol);
+	XCTAssertEqualObjects([protocols objectAtIndex:1], adoptedProtocol2);
 }
 
 - (void)testProcessObjectsFromStore_shouldReplaceKnownProtocolAdoptedProtocolsWithProtocolsFromStore {
@@ -81,9 +81,9 @@
 	[processor processObjectsFromStore:store];
 	// verify
 	NSArray *protocols = [protocol.adoptedProtocols protocolsSortedByName];
-	assertThatInteger([protocols count], equalToInteger(2));
-	assertThat([protocols objectAtIndex:0], is(realProtocol));
-	assertThat([protocols objectAtIndex:1], is(adoptedProtocol2));
+	XCTAssertEqual(protocols.count, (NSUInteger)2);
+	XCTAssertEqualObjects([protocols objectAtIndex:0], realProtocol);
+	XCTAssertEqualObjects([protocols objectAtIndex:1], adoptedProtocol2);
 }
 
 #pragma mark Subclasses handling
@@ -106,10 +106,10 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat(class1.superclass, is(nil));
-	assertThat(class2.superclass, is(class1));
-	assertThat(class3.superclass, is(class2));
-	assertThat(class4.superclass, is(nil));
+	XCTAssertNil(class1.superclass);
+	XCTAssertEqualObjects(class2.superclass, class1);
+	XCTAssertEqualObjects(class3.superclass, class2);
+	XCTAssertNil(class4.superclass);
 }
 
 #pragma mark Objects and methods references handling
@@ -130,10 +130,10 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat(class1.htmlLocalReference, is(@"#class1"));
-	assertThat(class2.htmlLocalReference, is(@"#class2"));
-	assertThat(class1.htmlReferenceName, is(@"class1"));
-	assertThat(class2.htmlReferenceName, is(@"class2"));
+	XCTAssertEqualObjects(class1.htmlLocalReference, @"#class1");
+	XCTAssertEqualObjects(class2.htmlLocalReference, @"#class2");
+	XCTAssertEqualObjects(class1.htmlReferenceName, @"class1");
+	XCTAssertEqualObjects(class2.htmlReferenceName, @"class2");
 }
 
 - (void)testProcessObjectsFromStore_shouldAssignHtmlReferencesToCategories {
@@ -152,10 +152,10 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat(category1.htmlLocalReference, is(@"#category1"));
-	assertThat(category2.htmlLocalReference, is(@"#category2"));
-	assertThat(category1.htmlReferenceName, is(@"category1"));
-	assertThat(category2.htmlReferenceName, is(@"category2"));
+	XCTAssertEqualObjects(category1.htmlLocalReference, @"#category1");
+	XCTAssertEqualObjects(category2.htmlLocalReference, @"#category2");
+	XCTAssertEqualObjects(category1.htmlReferenceName, @"category1");
+	XCTAssertEqualObjects(category2.htmlReferenceName, @"category2");
 }
 
 - (void)testProcessObjectsFromStore_shouldAssignHtmlReferencesToExtensions {
@@ -174,10 +174,10 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat(category1.htmlLocalReference, is(@"#category1"));
-	assertThat(category2.htmlLocalReference, is(@"#category2"));
-	assertThat(category1.htmlReferenceName, is(@"category1"));
-	assertThat(category2.htmlReferenceName, is(@"category2"));
+	XCTAssertEqualObjects(category1.htmlLocalReference, @"#category1");
+	XCTAssertEqualObjects(category2.htmlLocalReference, @"#category2");
+	XCTAssertEqualObjects(category1.htmlReferenceName, @"category1");
+	XCTAssertEqualObjects(category2.htmlReferenceName, @"category2");
 }
 
 - (void)testProcessObjectsFromStore_shouldAssignHtmlReferencesToProtocols {
@@ -196,10 +196,10 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat(protocol1.htmlLocalReference, is(@"#protocol1"));
-	assertThat(protocol2.htmlLocalReference, is(@"#protocol2"));
-	assertThat(protocol1.htmlReferenceName, is(@"protocol1"));
-	assertThat(protocol2.htmlReferenceName, is(@"protocol2"));
+	XCTAssertEqualObjects(protocol1.htmlLocalReference, @"#protocol1");
+	XCTAssertEqualObjects(protocol2.htmlLocalReference, @"#protocol2");
+	XCTAssertEqualObjects(protocol1.htmlReferenceName, @"protocol1");
+	XCTAssertEqualObjects(protocol2.htmlReferenceName, @"protocol2");
 }
 
 - (void)testProcessObjectsFromStore_shouldAssignHtmlReferencesToMethods {
@@ -224,12 +224,12 @@
 	// execute
 	[processor processObjectsFromStore:store];
 	// verify
-	assertThat(method1.htmlLocalReference, is(@"#method1"));
-	assertThat(method2.htmlLocalReference, is(@"#method2"));
-	assertThat(property.htmlLocalReference, is(@"#property"));
-	assertThat(method1.htmlReferenceName, is(@"method1"));
-	assertThat(method2.htmlReferenceName, is(@"method2"));
-	assertThat(property.htmlReferenceName, is(@"property"));
+	XCTAssertEqualObjects(method1.htmlLocalReference, @"#method1");
+	XCTAssertEqualObjects(method2.htmlLocalReference, @"#method2");
+	XCTAssertEqualObjects(property.htmlLocalReference, @"#property");
+	XCTAssertEqualObjects(method1.htmlReferenceName, @"method1");
+	XCTAssertEqualObjects(method2.htmlReferenceName, @"method2");
+	XCTAssertEqualObjects(property.htmlReferenceName, @"property");
 }
 
 #pragma mark Creation methods

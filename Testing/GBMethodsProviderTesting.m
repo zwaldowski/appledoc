@@ -10,7 +10,7 @@
 #import "GBDataObjects.h"
 #import "GBMethodsProvider.h"
 
-@interface GBMethodsProviderTesting : GHTestCase
+@interface GBMethodsProviderTesting : XCTestCase
 @end
 
 @implementation GBMethodsProviderTesting
@@ -24,8 +24,8 @@
 	// execute
 	[provider registerMethod:method];
 	// verify
-	assertThatInteger([provider.methods count], equalToInteger(1));
-	assertThat([[provider.methods objectAtIndex:0] methodSelector], is(@"method:"));
+	XCTAssertEqual(provider.methods.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[provider.methods objectAtIndex:0] methodSelector], @"method:");
 }
 
 - (void)testRegisterMethod_shouldSetParentObject {
@@ -35,7 +35,7 @@
 	// execute
 	[provider registerMethod:method];
 	// verify
-	assertThat(method.parentObject, is(self));
+	XCTAssertEqualObjects(method.parentObject, self);
 }
 
 - (void)testRegisterMethod_shouldIgnoreSameInstance {
@@ -46,7 +46,7 @@
 	[provider registerMethod:method];
 	[provider registerMethod:method];
 	// verify
-	assertThatInteger([provider.methods count], equalToInteger(1));
+	XCTAssertEqual(provider.methods.count, (NSUInteger)1);
 }
 
 - (void)testRegisterMethod_shouldAllowSameSelectorIfDifferentType {
@@ -58,11 +58,11 @@
 	[provider registerMethod:method1];
 	[provider registerMethod:method2];
 	// verify
-	assertThatInteger([provider.methods count], equalToInteger(2));
-	assertThat([[provider.methods objectAtIndex:0] methodSelector], is(@"method:"));
-	assertThatInteger([[provider.methods objectAtIndex:0] methodType], equalToInteger(GBMethodTypeInstance));
-	assertThat([[provider.methods objectAtIndex:1] methodSelector], is(@"method:"));
-	assertThatInteger([[provider.methods objectAtIndex:1] methodType], equalToInteger(GBMethodTypeClass));
+	XCTAssertEqual(provider.methods.count, (NSUInteger)2);
+	XCTAssertEqualObjects([[provider.methods objectAtIndex:0] methodSelector], @"method:");
+	XCTAssertEqual([provider.methods[0] methodType], GBMethodTypeInstance);
+	XCTAssertEqualObjects([[provider.methods objectAtIndex:1] methodSelector], @"method:");
+	XCTAssertEqual([provider.methods[1] methodType], GBMethodTypeClass);
 }
 
 - (void)testRegisterMethod_shouldMapMethodBySelectorToInstanceMethodRegardlessOfRegistrationOrder {
@@ -77,8 +77,8 @@
 	[provider2 registerMethod:method2];
 	[provider2 registerMethod:method1];
 	// verify
-	assertThat([provider1 methodBySelector:@"method:"], is(method1));
-	assertThat([provider2 methodBySelector:@"method:"], is(method1));
+	XCTAssertEqualObjects([provider1 methodBySelector:@"method:"], method1);
+	XCTAssertEqualObjects([provider2 methodBySelector:@"method:"], method1);
 }
 
 - (void)testRegisterMethod_shouldMapMethodBySelectorToPropertyRegardlessOfRegistrationOrder {
@@ -93,8 +93,8 @@
 	[provider2 registerMethod:method2];
 	[provider2 registerMethod:method1];
 	// verify
-	assertThat([provider1 methodBySelector:@"method"], is(method1));
-	assertThat([provider2 methodBySelector:@"method"], is(method1));
+	XCTAssertEqualObjects([provider1 methodBySelector:@"method"], method1);
+	XCTAssertEqualObjects([provider2 methodBySelector:@"method"], method1);
 }
 
 - (void)testRegisterMethod_shouldMergeDifferentInstanceWithSameName {
@@ -122,8 +122,8 @@
 	// execute
 	[provider registerMethod:method];
 	// verify
-	assertThatInteger([provider.classMethods count], equalToInteger(1));
-	assertThat([provider.classMethods objectAtIndex:0], is(method));
+	XCTAssertEqual(provider.classMethods.count, (NSUInteger)1);
+	XCTAssertEqualObjects([provider.classMethods objectAtIndex:0], method);
 }
 
 - (void)testRegisterMethod_shouldRegisterInstanceMethod {
@@ -133,8 +133,8 @@
 	// execute
 	[provider registerMethod:method];
 	// verify
-	assertThatInteger([provider.instanceMethods count], equalToInteger(1));
-	assertThat([provider.instanceMethods objectAtIndex:0], is(method));
+	XCTAssertEqual(provider.instanceMethods.count, (NSUInteger)1);
+	XCTAssertEqualObjects([provider.instanceMethods objectAtIndex:0], method);
 }
 
 - (void)testRegisterMethod_shouldRegisterProperty {
@@ -144,8 +144,8 @@
 	// execute
 	[provider registerMethod:method];
 	// verify
-	assertThatInteger([provider.properties count], equalToInteger(1));
-	assertThat([provider.properties objectAtIndex:0], is(method));
+	XCTAssertEqual(provider.properties.count, (NSUInteger)1);
+	XCTAssertEqualObjects([provider.properties objectAtIndex:0], method);
 }
 
 - (void)testRegisterMethod_shouldRegisterDifferentTypesOfMethodsAndUseProperSorting {
@@ -165,15 +165,15 @@
 	[provider registerMethod:property1];
 	[provider registerMethod:instance1];
 	// verify
-	assertThatInteger([provider.classMethods count], equalToInteger(2));
-	assertThat([provider.classMethods objectAtIndex:0], is(class1));
-	assertThat([provider.classMethods objectAtIndex:1], is(class2));
-	assertThatInteger([provider.instanceMethods count], equalToInteger(2));
-	assertThat([provider.instanceMethods objectAtIndex:0], is(instance1));
-	assertThat([provider.instanceMethods objectAtIndex:1], is(instance2));
-	assertThatInteger([provider.properties count], equalToInteger(2));
-	assertThat([provider.properties objectAtIndex:0], is(property1));
-	assertThat([provider.properties objectAtIndex:1], is(property2));
+	XCTAssertEqual(provider.classMethods.count, (NSUInteger)2);
+	XCTAssertEqualObjects([provider.classMethods objectAtIndex:0], class1);
+	XCTAssertEqualObjects([provider.classMethods objectAtIndex:1], class2);
+	XCTAssertEqual(provider.instanceMethods.count, (NSUInteger)2);
+	XCTAssertEqualObjects([provider.instanceMethods objectAtIndex:0], instance1);
+	XCTAssertEqualObjects([provider.instanceMethods objectAtIndex:1], instance2);
+	XCTAssertEqual(provider.properties.count, (NSUInteger)2);
+	XCTAssertEqualObjects([provider.properties objectAtIndex:0], property1);
+	XCTAssertEqualObjects([provider.properties objectAtIndex:1], property2);
 }
 
 - (void)testRegisterMethod_shouldProperlyHandlePropertyGettersAndSetters {
@@ -189,25 +189,25 @@
 	[provider registerMethod:property3];
 	[provider registerMethod:property4];
 	// verify
-	assertThat([provider methodBySelector:@"name1"], is(property1));
-	assertThat([provider methodBySelector:@"isName1"], is(nil));
-	assertThat([provider methodBySelector:@"setName1:"], is(property1));
-	assertThat([provider methodBySelector:@"setTheName1:"], is(nil));
+	XCTAssertEqualObjects([provider methodBySelector:@"name1"], property1);
+	XCTAssertNil([provider methodBySelector:@"isName1"]);
+	XCTAssertEqualObjects([provider methodBySelector:@"setName1:"], property1);
+	XCTAssertNil([provider methodBySelector:@"setTheName1:"]);
 	
-	assertThat([provider methodBySelector:@"name2"], is(property2));
-	assertThat([provider methodBySelector:@"isName2"], is(property2));
-	assertThat([provider methodBySelector:@"setName2:"], is(property2));
-	assertThat([provider methodBySelector:@"setTheName2:"], is(nil));
+	XCTAssertEqualObjects([provider methodBySelector:@"name2"], property2);
+	XCTAssertEqualObjects([provider methodBySelector:@"isName2"], property2);
+	XCTAssertEqualObjects([provider methodBySelector:@"setName2:"], property2);
+	XCTAssertNil([provider methodBySelector:@"setTheName2:"]);
 	
-	assertThat([provider methodBySelector:@"name3"], is(property3));
-	assertThat([provider methodBySelector:@"isName3"], is(nil));
-	assertThat([provider methodBySelector:@"setName3:"], is(nil));
-	assertThat([provider methodBySelector:@"setTheName3:"], is(property3));
+	XCTAssertEqualObjects([provider methodBySelector:@"name3"], property3);
+	XCTAssertNil([provider methodBySelector:@"isName3"]);
+	XCTAssertNil([provider methodBySelector:@"setName3:"]);
+	XCTAssertEqualObjects([provider methodBySelector:@"setTheName3:"], property3);
 
-	assertThat([provider methodBySelector:@"name4"], is(property4));
-	assertThat([provider methodBySelector:@"isName4"], is(property4));
-	assertThat([provider methodBySelector:@"setName4:"], is(nil));
-	assertThat([provider methodBySelector:@"setTheName4:"], is(property4));
+	XCTAssertEqualObjects([provider methodBySelector:@"name4"], property4);
+	XCTAssertEqualObjects([provider methodBySelector:@"isName4"], property4);
+	XCTAssertNil([provider methodBySelector:@"setName4:"]);
+	XCTAssertEqualObjects([provider methodBySelector:@"setTheName4:"], property4);
 }
 
 #pragma mark Sections handling
@@ -221,9 +221,9 @@
 	// execute
 	[provider registerMethod:method];
 	// verify
-	assertThatInteger([[section1 methods] count], equalToInteger(0));
-	assertThatInteger([[section2 methods] count], equalToInteger(1));
-	assertThat([section2.methods objectAtIndex:0], is(method));
+	XCTAssertEqual([section1 methods].count, (NSUInteger)0);
+	XCTAssertEqual([section2 methods].count, (NSUInteger)1);
+	XCTAssertEqualObjects([section2.methods objectAtIndex:0], method);
 }
 
 - (void)testRegisterMethod_shouldCreateDefaultSectionIfNoneExists {
@@ -233,10 +233,10 @@
 	// execute
 	[provider registerMethod:method];
 	// verify
-	assertThatInteger([[provider sections] count], equalToInteger(1));
+	XCTAssertEqual([provider sections].count, (NSUInteger)1);
 	GBMethodSectionData *section = [[provider sections] objectAtIndex:0];
-	assertThatInteger([[section methods] count], equalToInteger(1));
-	assertThat([section.methods objectAtIndex:0], is(method));
+	XCTAssertEqual([section methods].count, (NSUInteger)1);
+	XCTAssertEqualObjects([section.methods objectAtIndex:0], method);
 }
 
 - (void)testRegisterSectionWithName_shouldCreateEmptySectionWithGivenName {
@@ -245,9 +245,9 @@
 	// execute
 	GBMethodSectionData *section = [provider registerSectionWithName:@"section"];
 	// verify
-	assertThatInteger([[provider sections] count], equalToInteger(1));
-	assertThat(section.sectionName, is(@"section"));
-	assertThatInteger([section.methods count], equalToInteger(0));
+	XCTAssertEqual([provider sections].count, (NSUInteger)1);
+	XCTAssertEqualObjects(section.sectionName, @"section");
+	XCTAssertEqual(section.methods.count, (NSUInteger)0);
 }
 
 - (void)testRegisterSectionIfNameIsValid_shouldAcceptNonEmptyString {
@@ -256,17 +256,17 @@
 	// execute
 	GBMethodSectionData *section = [provider registerSectionIfNameIsValid:@"s"];
 	// verify
-	assertThat(section, isNot(nil));
-	assertThat(section.sectionName, is(@"s"));
+	XCTAssertNotNil(section);
+	XCTAssertEqualObjects(section.sectionName, @"s");
 }
 
 - (void)testRegisterSectionIfNameIsValid_shouldRejectNilWhitespaceOnlyOrEmptyString {
 	// setup
 	GBMethodsProvider *provider = [[GBMethodsProvider alloc] initWithParentObject:self];
 	// execute & verify
-	assertThat([provider registerSectionIfNameIsValid:nil], is(nil));
-	assertThat([provider registerSectionIfNameIsValid:@" \t\n\r"], is(nil));
-	assertThat([provider registerSectionIfNameIsValid:@""], is(nil));
+	XCTAssertNil([provider registerSectionIfNameIsValid:nil]);
+	XCTAssertNil([provider registerSectionIfNameIsValid:@" \t\n\r"]);
+	XCTAssertNil([provider registerSectionIfNameIsValid:@""]);
 }
 
 - (void)testRegisterSectionIfNameIsValid_shouldRejectStringIfEqualsToLastRegisteredSectionName {
@@ -274,7 +274,7 @@
 	GBMethodsProvider *provider = [[GBMethodsProvider alloc] initWithParentObject:self];
 	[provider registerSectionWithName:@"name"];
 	// execute & verify
-	assertThat([provider registerSectionIfNameIsValid:@"name"], is(nil));
+	XCTAssertNil([provider registerSectionIfNameIsValid:@"name"]);
 }
 
 - (void)testUnregisterEmptySections_shouldRemoveAllEmptySections {
@@ -287,8 +287,8 @@
 	// execute
 	[provider unregisterEmptySections];
 	// verify
-	assertThatInteger([[provider sections] count], equalToInteger(1));
-	assertThat([[[provider sections] objectAtIndex:0] sectionName], is(@"Used"));
+	XCTAssertEqual([provider sections].count, (NSUInteger)1);
+	XCTAssertEqualObjects([[[provider sections] objectAtIndex:0] sectionName], @"Used");
 }
 
 #pragma mark Output helpers testing
@@ -297,59 +297,59 @@
 	// setup
 	GBMethodsProvider *provider = [[GBMethodsProvider alloc] initWithParentObject:self];
 	// execute & verify
-	assertThatBool(provider.hasSections, equalToBool(NO));
+	XCTAssertFalse(provider.hasSections);
 	[provider registerSectionWithName:@"name"];
-	assertThatBool(provider.hasSections, equalToBool(YES));
+	XCTAssertTrue(provider.hasSections);
 }
 
 - (void)testHasMultipleSections_shouldReturnProperValue {
 	// setup
 	GBMethodsProvider *provider = [[GBMethodsProvider alloc] initWithParentObject:self];
 	// execute & verify
-	assertThatBool(provider.hasMultipleSections, equalToBool(NO));
+	XCTAssertFalse(provider.hasMultipleSections);
 	[provider registerSectionWithName:@"name1"];
-	assertThatBool(provider.hasMultipleSections, equalToBool(NO));
+	XCTAssertFalse(provider.hasMultipleSections);
 	[provider registerSectionWithName:@"name2"];
-	assertThatBool(provider.hasMultipleSections, equalToBool(YES));
+	XCTAssertTrue(provider.hasMultipleSections);
 }
 
 - (void)testHasClassMethods_shouldReturnProperValue {
 	// setup
 	GBMethodsProvider *provider = [[GBMethodsProvider alloc] initWithParentObject:self];
 	// execute & verify
-	assertThatBool(provider.hasClassMethods, equalToBool(NO));
+	XCTAssertFalse(provider.hasClassMethods);
 	[provider registerMethod:[GBTestObjectsRegistry instanceMethodWithNames:@"method", nil]];
-	assertThatBool(provider.hasClassMethods, equalToBool(NO));
+	XCTAssertFalse(provider.hasClassMethods);
 	[provider registerMethod:[GBTestObjectsRegistry propertyMethodWithArgument:@"value"]];
-	assertThatBool(provider.hasClassMethods, equalToBool(NO));
+	XCTAssertFalse(provider.hasClassMethods);
 	[provider registerMethod:[GBTestObjectsRegistry classMethodWithNames:@"method", nil]];
-	assertThatBool(provider.hasClassMethods, equalToBool(YES));
+	XCTAssertTrue(provider.hasClassMethods);
 }
 
 - (void)testHasInstanceMethods_shouldReturnProperValue {
 	// setup
 	GBMethodsProvider *provider = [[GBMethodsProvider alloc] initWithParentObject:self];
 	// execute & verify
-	assertThatBool(provider.hasInstanceMethods, equalToBool(NO));
+	XCTAssertFalse(provider.hasInstanceMethods);
 	[provider registerMethod:[GBTestObjectsRegistry classMethodWithNames:@"method1", nil]];
-	assertThatBool(provider.hasInstanceMethods, equalToBool(NO));
+	XCTAssertFalse(provider.hasInstanceMethods);
 	[provider registerMethod:[GBTestObjectsRegistry propertyMethodWithArgument:@"value"]];
-	assertThatBool(provider.hasInstanceMethods, equalToBool(NO));
+	XCTAssertFalse(provider.hasInstanceMethods);
 	[provider registerMethod:[GBTestObjectsRegistry instanceMethodWithNames:@"method2", nil]];
-	assertThatBool(provider.hasInstanceMethods, equalToBool(YES));
+	XCTAssertTrue(provider.hasInstanceMethods);
 }
 
 - (void)testHasProperties_shouldReturnProperValue {
 	// setup
 	GBMethodsProvider *provider = [[GBMethodsProvider alloc] initWithParentObject:self];
 	// execute & verify
-	assertThatBool(provider.hasProperties, equalToBool(NO));
+	XCTAssertFalse(provider.hasProperties);
 	[provider registerMethod:[GBTestObjectsRegistry instanceMethodWithNames:@"method1", nil]];
-	assertThatBool(provider.hasProperties, equalToBool(NO));
+	XCTAssertFalse(provider.hasProperties);
 	[provider registerMethod:[GBTestObjectsRegistry classMethodWithNames:@"method2", nil]];
-	assertThatBool(provider.hasProperties, equalToBool(NO));
+	XCTAssertFalse(provider.hasProperties);
 	[provider registerMethod:[GBTestObjectsRegistry propertyMethodWithArgument:@"value"]];
-	assertThatBool(provider.hasProperties, equalToBool(YES));
+	XCTAssertTrue(provider.hasProperties);
 }
 
 #pragma mark Method merging testing
@@ -366,10 +366,10 @@
 	[original mergeDataFromMethodsProvider:source];
 	// verify - only basic testing here, details at GBMethodDataTesting!
 	NSArray *methods = [original methods];
-	assertThatInteger([methods count], equalToInteger(3));
-	assertThat([[methods objectAtIndex:0] methodSelector], is(@"m1:"));
-	assertThat([[methods objectAtIndex:1] methodSelector], is(@"m2:"));
-	assertThat([[methods objectAtIndex:2] methodSelector], is(@"m3:"));
+	XCTAssertEqual(methods.count, (NSUInteger)3);
+	XCTAssertEqualObjects([[methods objectAtIndex:0] methodSelector], @"m1:");
+	XCTAssertEqualObjects([[methods objectAtIndex:1] methodSelector], @"m2:");
+	XCTAssertEqualObjects([[methods objectAtIndex:2] methodSelector], @"m3:");
 }
 
 - (void)testMergeDataFromObjectsProvider_shouldPreserveSourceData {
@@ -384,9 +384,9 @@
 	[original mergeDataFromMethodsProvider:source];
 	// verify - only basic testing here, details at GBMethodDataTesting!
 	NSArray *methods = [source methods];
-	assertThatInteger([methods count], equalToInteger(2));
-	assertThat([[methods objectAtIndex:0] methodSelector], is(@"m1:"));
-	assertThat([[methods objectAtIndex:1] methodSelector], is(@"m3:"));
+	XCTAssertEqual(methods.count, (NSUInteger)2);
+	XCTAssertEqualObjects([[methods objectAtIndex:0] methodSelector], @"m1:");
+	XCTAssertEqualObjects([[methods objectAtIndex:1] methodSelector], @"m3:");
 }
 
 - (void)testMergeDataFromObjectsProvider_shouldMergeSections {
@@ -405,17 +405,17 @@
 	// verify
 	GBMethodSectionData *section = nil;
 	NSArray *sections = [original sections];
-	assertThatInteger([sections count], equalToInteger(2));
+	XCTAssertEqual(sections.count, (NSUInteger)2);
 	section = [sections objectAtIndex:0];
-	assertThat([section sectionName], is(@"Section1"));
-	assertThatInteger([section.methods count], equalToInteger(2));
-	assertThat([[section.methods objectAtIndex:0] methodSelector], is(@"m1:"));
-	assertThat([[section.methods objectAtIndex:1] methodSelector], is(@"m4:"));
+	XCTAssertEqualObjects([section sectionName], @"Section1");
+	XCTAssertEqual(section.methods.count, (NSUInteger)2);
+	XCTAssertEqualObjects([[section.methods objectAtIndex:0] methodSelector], @"m1:");
+	XCTAssertEqualObjects([[section.methods objectAtIndex:1] methodSelector], @"m4:");
 	section = [sections objectAtIndex:1];
-	assertThat([section sectionName], is(@"Section2"));
-	assertThatInteger([section.methods count], equalToInteger(2));
-	assertThat([[section.methods objectAtIndex:0] methodSelector], is(@"m2:"));
-	assertThat([[section.methods objectAtIndex:1] methodSelector], is(@"m3:"));
+	XCTAssertEqualObjects([section sectionName], @"Section2");
+	XCTAssertEqual(section.methods.count, (NSUInteger)2);
+	XCTAssertEqualObjects([[section.methods objectAtIndex:0] methodSelector], @"m2:");
+	XCTAssertEqualObjects([[section.methods objectAtIndex:1] methodSelector], @"m3:");
 }
 
 - (void)testMergeDataFromObjectsProvider_shouldAddMergedSectionsToEndOfOriginalSections {
@@ -433,16 +433,16 @@
 	// verify
 	GBMethodSectionData *section = nil;
 	NSArray *sections = [original sections];
-	assertThatInteger([sections count], equalToInteger(2));
+	XCTAssertEqual(sections.count, (NSUInteger)2);
 	section = [sections objectAtIndex:0];
-	assertThat([section sectionName], is(@"Section2"));
-	assertThatInteger([section.methods count], equalToInteger(2));
-	assertThat([[section.methods objectAtIndex:0] methodSelector], is(@"m1:"));
-	assertThat([[section.methods objectAtIndex:1] methodSelector], is(@"m3:"));
+	XCTAssertEqualObjects([section sectionName], @"Section2");
+	XCTAssertEqual(section.methods.count, (NSUInteger)2);
+	XCTAssertEqualObjects([[section.methods objectAtIndex:0] methodSelector], @"m1:");
+	XCTAssertEqualObjects([[section.methods objectAtIndex:1] methodSelector], @"m3:");
 	section = [sections objectAtIndex:1];
-	assertThat([section sectionName], is(@"Section1"));
-	assertThatInteger([section.methods count], equalToInteger(1));
-	assertThat([[section.methods objectAtIndex:0] methodSelector], is(@"m2:"));
+	XCTAssertEqualObjects([section sectionName], @"Section1");
+	XCTAssertEqual(section.methods.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[section.methods objectAtIndex:0] methodSelector], @"m2:");
 }
 
 - (void)testMergeDataFromObjectsProvider_shouldPreserveCurrentSectionForNewMethods {
@@ -460,17 +460,17 @@
 	// verify
 	GBMethodSectionData *section = nil;
 	NSArray *sections = [original sections];
-	assertThatInteger([sections count], equalToInteger(2));
+	XCTAssertEqual(sections.count, (NSUInteger)2);
 	section = [sections objectAtIndex:0];
-	assertThat([section sectionName], is(@"Section1"));
-	assertThatInteger([section.methods count], equalToInteger(3));
-	assertThat([[section.methods objectAtIndex:0] methodSelector], is(@"m1:"));
-	assertThat([[section.methods objectAtIndex:1] methodSelector], is(@"m3:"));
-	assertThat([[section.methods objectAtIndex:2] methodSelector], is(@"m4:"));
+	XCTAssertEqualObjects([section sectionName], @"Section1");
+	XCTAssertEqual(section.methods.count, (NSUInteger)3);
+	XCTAssertEqualObjects([[section.methods objectAtIndex:0] methodSelector], @"m1:");
+	XCTAssertEqualObjects([[section.methods objectAtIndex:1] methodSelector], @"m3:");
+	XCTAssertEqualObjects([[section.methods objectAtIndex:2] methodSelector], @"m4:");
 	section = [sections objectAtIndex:1];
-	assertThat([section sectionName], is(@"Section2"));
-	assertThatInteger([section.methods count], equalToInteger(1));
-	assertThat([[section.methods objectAtIndex:0] methodSelector], is(@"m2:"));
+	XCTAssertEqualObjects([section sectionName], @"Section2");
+	XCTAssertEqual(section.methods.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[section.methods objectAtIndex:0] methodSelector], @"m2:");
 }
 
 - (void)testMergeDataFromObjectsProvider_shouldUseOriginalSectionForExistingMethodsEvenIfFoundInDifferentSection {
@@ -485,11 +485,11 @@
 	[original mergeDataFromMethodsProvider:source];
 	// verify
 	NSArray *sections = [original sections];
-	assertThatInteger([sections count], equalToInteger(1));
+	XCTAssertEqual(sections.count, (NSUInteger)1);
 	GBMethodSectionData *section = [sections objectAtIndex:0];
-	assertThat([section sectionName], is(@"Section1"));
-	assertThatInteger([section.methods count], equalToInteger(1));
-	assertThat([[section.methods objectAtIndex:0] methodSelector], is(@"m1:"));
+	XCTAssertEqualObjects([section sectionName], @"Section1");
+	XCTAssertEqual(section.methods.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[section.methods objectAtIndex:0] methodSelector], @"m1:");
 }
 
 - (void)testMergeDataFromObjectsProvider_shouldUseOriginalSectionForExistingMethodsFromDefaultSection {
@@ -503,11 +503,11 @@
 	[original mergeDataFromMethodsProvider:source];
 	// verify
 	NSArray *sections = [original sections];
-	assertThatInteger([sections count], equalToInteger(1));
+	XCTAssertEqual(sections.count, (NSUInteger)1);
 	GBMethodSectionData *section = [sections objectAtIndex:0];
-	assertThat([section sectionName], is(@"Section1"));
-	assertThatInteger([section.methods count], equalToInteger(1));
-	assertThat([[section.methods objectAtIndex:0] methodSelector], is(@"m1:"));
+	XCTAssertEqualObjects([section sectionName], @"Section1");
+	XCTAssertEqual(section.methods.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[section.methods objectAtIndex:0] methodSelector], @"m1:");
 }
 
 #pragma mark Unregistering handling
@@ -522,8 +522,8 @@
 	// execute
 	[provider unregisterMethod:method1];
 	// verify
-	assertThatInteger([provider.methods count], equalToInteger(1));
-	assertThat([provider.methods objectAtIndex:0], is(method2));
+	XCTAssertEqual(provider.methods.count, (NSUInteger)1);
+	XCTAssertEqualObjects([provider.methods objectAtIndex:0], method2);
 }
 
 - (void)testUnregisterMethod_shouldRemoveMethodFromMethodsBySelectors {
@@ -534,7 +534,7 @@
 	// execute
 	[provider unregisterMethod:method];
 	// verify
-	assertThat([provider methodBySelector:@"method:"], is(nil));
+	XCTAssertNil([provider methodBySelector:@"method:"]);
 }
 
 - (void)testUnregisterMethod_shouldRemoveMethodFromClassMethods {
@@ -547,8 +547,8 @@
 	// execute
 	[provider unregisterMethod:method1];
 	// verify
-	assertThatInteger([provider.classMethods count], equalToInteger(1));
-	assertThat([provider.classMethods objectAtIndex:0], is(method2));
+	XCTAssertEqual(provider.classMethods.count, (NSUInteger)1);
+	XCTAssertEqualObjects([provider.classMethods objectAtIndex:0], method2);
 }
 
 - (void)testUnregisterMethod_shouldRemoveMethodFromInstanceMethods {
@@ -561,8 +561,8 @@
 	// execute
 	[provider unregisterMethod:method1];
 	// verify
-	assertThatInteger([provider.instanceMethods count], equalToInteger(1));
-	assertThat([provider.instanceMethods objectAtIndex:0], is(method2));
+	XCTAssertEqual(provider.instanceMethods.count, (NSUInteger)1);
+	XCTAssertEqualObjects([provider.instanceMethods objectAtIndex:0], method2);
 }
 
 - (void)testUnregisterMethod_shouldRemoveMethodFromProperties {
@@ -575,8 +575,8 @@
 	// execute
 	[provider unregisterMethod:method1];
 	// verify
-	assertThatInteger([provider.properties count], equalToInteger(1));
-	assertThat([provider.properties objectAtIndex:0], is(method2));
+	XCTAssertEqual(provider.properties.count, (NSUInteger)1);
+	XCTAssertEqualObjects([provider.properties objectAtIndex:0], method2);
 }
 
 - (void)testUnregisterMethod_shouldRemoveMethodFromSection {
@@ -590,10 +590,10 @@
 	// execute
 	[provider unregisterMethod:method1];
 	// verify
-	assertThatInteger([provider.sections count], equalToInteger(1));
+	XCTAssertEqual(provider.sections.count, (NSUInteger)1);
 	GBMethodSectionData *section = [provider.sections objectAtIndex:0];
-	assertThatInteger([section.methods count], equalToInteger(1));
-	assertThat([section.methods objectAtIndex:0], is(method2));
+	XCTAssertEqual(section.methods.count, (NSUInteger)1);
+	XCTAssertEqualObjects([section.methods objectAtIndex:0], method2);
 }
 
 - (void)testUnregisterMethod_shouldRemoveSectionIfItContainsNoMoreMethod {
@@ -605,7 +605,7 @@
 	// execute
 	[provider unregisterMethod:method1];
 	// verify
-	assertThatInteger([provider.sections count], equalToInteger(0));
+	XCTAssertEqual(provider.sections.count, (NSUInteger)0);
 }
 
 #pragma mark Helper methods testing
@@ -622,14 +622,14 @@
 	[provider registerMethod:method3];
 	[provider registerMethod:property];
 	// execute & verify
-	assertThat([provider methodBySelector:@"method1:"], is(method1));
-	assertThat([provider methodBySelector:@"method:arg:"], is(method2));
-	assertThat([provider methodBySelector:@"method3:"], is(method3));
-	assertThat([provider methodBySelector:@"name"], is(property));
-	assertThat([provider methodBySelector:@"some:other:"], is(nil));
-	assertThat([provider methodBySelector:@"single"], is(nil));
-	assertThat([provider methodBySelector:@""], is(nil));
-	assertThat([provider methodBySelector:nil], is(nil));
+	XCTAssertEqualObjects([provider methodBySelector:@"method1:"], method1);
+	XCTAssertEqualObjects([provider methodBySelector:@"method:arg:"], method2);
+	XCTAssertEqualObjects([provider methodBySelector:@"method3:"], method3);
+	XCTAssertEqualObjects([provider methodBySelector:@"name"], property);
+	XCTAssertNil([provider methodBySelector:@"some:other:"]);
+	XCTAssertNil([provider methodBySelector:@"single"]);
+	XCTAssertNil([provider methodBySelector:@""]);
+	XCTAssertNil([provider methodBySelector:nil]);
 }
 
 - (void)testMethodBySelector_prefersInstanceMethodToClassMethod {
@@ -640,7 +640,7 @@
 	[provider registerMethod:method1];
 	[provider registerMethod:method2];
 	// execute & verify
-	assertThat([provider methodBySelector:@"method:"], is(method1));
+	XCTAssertEqualObjects([provider methodBySelector:@"method:"], method1);
 }
 
 - (void)testMethodBySelector_prefersPropertyToClassMethod {
@@ -651,7 +651,7 @@
 	[provider registerMethod:method1];
 	[provider registerMethod:method2];
 	// execute & verify
-	assertThat([provider methodBySelector:@"method"], is(method1));
+	XCTAssertEqualObjects([provider methodBySelector:@"method"], method1);
 }
 
 @end

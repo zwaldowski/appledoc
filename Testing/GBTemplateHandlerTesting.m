@@ -10,17 +10,11 @@
 #import "GBTemplateHandler.h"
 
 @interface GBTemplateHandler (TestingAPI)
-@property (readonly) NSString *templateString;
 @property (readonly) NSDictionary *templateSections;
 @property (readonly) GRMustacheTemplate *template;
 @end
 
 @implementation GBTemplateHandler (TestingAPI)
-//method below is intenionally overwritten so we want to silent the warning
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wobjc-protocol-method-implementation"
-- (NSString *)templateString { return [self valueForKey:@"_templateString"]; }
-#pragma clang diagnostic pop
 
 - (NSDictionary *)templateSections { return [self valueForKey:@"_templateSections"]; }
 - (GRMustacheTemplate *)template { return [self valueForKey:@"_template"]; }
@@ -28,7 +22,7 @@
 
 #pragma mark -
 
-@interface GBTemplateHandlerTesting : GHTestCase
+@interface GBTemplateHandlerTesting : XCTestCase
 @end
 
 @implementation GBTemplateHandlerTesting
@@ -41,9 +35,9 @@
 	// execute
 	BOOL result = [loader parseTemplate:@"" error:nil];
 	// verify
-	assertThatBool(result, equalToBool(YES));
-	assertThatInteger([loader.templateSections count], equalToInteger(0));
-	assertThat(loader.templateString, is(@""));
+	XCTAssertTrue(result);
+	XCTAssertEqual(loader.templateSections.count, (NSUInteger)0);
+	XCTAssertEqualObjects(loader.templateString, @"");
 }
 
 - (void)testParseTemplate_empty_shouldClearBeforeReading {
@@ -53,9 +47,9 @@
 	// execute
 	BOOL result = [loader parseTemplate:@"" error:nil];
 	// verify
-	assertThatBool(result, equalToBool(YES));
-	assertThat(loader.templateString, is(@""));
-	assertThatInteger([loader.templateSections count], equalToInteger(0));
+	XCTAssertTrue(result);
+	XCTAssertEqualObjects(loader.templateString, @"");
+	XCTAssertEqual(loader.templateSections.count, (NSUInteger)0);
 }
 
 #pragma mark Template sections
@@ -67,9 +61,9 @@
 	// execute
 	BOOL result = [loader parseTemplate:template error:nil];
 	// verify
-	assertThatBool(result, equalToBool(YES));
-	assertThatInteger([loader.templateSections count], equalToInteger(1));
-	assertThat([loader.templateSections objectForKey:@"name"], is(@"text"));
+	XCTAssertTrue(result);
+	XCTAssertEqual(loader.templateSections.count, (NSUInteger)1);
+	XCTAssertEqualObjects([loader.templateSections objectForKey:@"name"], @"text");
 }
 
 - (void)testParseTemplateError_sections_shouldReadAllTemplateSections {
@@ -79,10 +73,10 @@
 	// execute
 	BOOL result = [loader parseTemplate:template error:nil];
 	// verify
-	assertThatBool(result, equalToBool(YES));
-	assertThatInteger([loader.templateSections count], equalToInteger(2));
-	assertThat([loader.templateSections objectForKey:@"name1"], is(@"text1"));
-	assertThat([loader.templateSections objectForKey:@"name2"], is(@"text2"));
+	XCTAssertTrue(result);
+	XCTAssertEqual(loader.templateSections.count, (NSUInteger)2);
+	XCTAssertEqualObjects([loader.templateSections objectForKey:@"name1"], @"text1");
+	XCTAssertEqualObjects([loader.templateSections objectForKey:@"name2"], @"text2");
 }
 
 - (void)testParseTemplate_sections_shouldReadComplexTemplateSectionValue {
@@ -92,9 +86,9 @@
 	// execute
 	BOOL result = [loader parseTemplate:template error:nil];
 	// verify
-	assertThatBool(result, equalToBool(YES));
-	assertThatInteger([loader.templateSections count], equalToInteger(1));
-	assertThat([loader.templateSections objectForKey:@"name"], is(@"first line\nsecond line"));
+	XCTAssertTrue(result);
+	XCTAssertEqual(loader.templateSections.count, (NSUInteger)1);
+	XCTAssertEqualObjects([loader.templateSections objectForKey:@"name"], @"first line\nsecond line");
 }
 
 - (void)testParseTemplate_sections_shouldClearBeforeReading {
@@ -104,10 +98,10 @@
 	// execute
 	BOOL result = [loader parseTemplate:@"Section name2 text2 EndSection" error:nil];
 	// verify
-	assertThatBool(result, equalToBool(YES));
-	assertThatInteger([loader.templateSections count], equalToInteger(1));
-	assertThat([loader.templateSections objectForKey:@"name1"], is(nil));
-	assertThat([loader.templateSections objectForKey:@"name2"], isNot(nil));
+	XCTAssertTrue(result);
+	XCTAssertEqual(loader.templateSections.count, (NSUInteger)1);
+	XCTAssertNil([loader.templateSections objectForKey:@"name1"]);
+	XCTAssertNotNil([loader.templateSections objectForKey:@"name2"]);
 }
 
 #pragma mark Template string
@@ -119,9 +113,9 @@
 	// execute
 	BOOL result = [loader parseTemplate:template error:nil];
 	// verify
-	assertThatBool(result, equalToBool(YES));
-	assertThat(loader.templateString, is(@"This is template text"));
-	assertThatInteger([loader.templateSections count], equalToInteger(0));
+	XCTAssertTrue(result);
+	XCTAssertEqualObjects(loader.templateString, @"This is template text");
+	XCTAssertEqual(loader.templateSections.count, (NSUInteger)0);
 }
 
 - (void)testParseTemplate_string_shouldTrimStringBeforeTemplateSections {
@@ -131,8 +125,8 @@
 	// execute
 	BOOL result = [loader parseTemplate:template error:nil];
 	// verify
-	assertThatBool(result, equalToBool(YES));
-	assertThat(loader.templateString, is(@"This is template text"));
+	XCTAssertTrue(result);
+	XCTAssertEqualObjects(loader.templateString, @"This is template text");
 }
 
 - (void)testParseTemplate_string_shouldTrimStringBetweenTemplateSections {
@@ -142,8 +136,8 @@
 	// execute
 	BOOL result = [loader parseTemplate:template error:nil];
 	// verify
-	assertThatBool(result, equalToBool(YES));
-	assertThat(loader.templateString, is(@"This is text in the middle"));
+	XCTAssertTrue(result);
+	XCTAssertEqualObjects(loader.templateString, @"This is text in the middle");
 }
 
 - (void)testParseTemplate_string_shouldTrimStringAfterTemplateSections {
@@ -153,8 +147,8 @@
 	// execute
 	BOOL result = [loader parseTemplate:template error:nil];
 	// verify
-	assertThatBool(result, equalToBool(YES));
-	assertThat(loader.templateString, is(@"This is template text"));
+	XCTAssertTrue(result);
+	XCTAssertEqualObjects(loader.templateString, @"This is template text");
 }
 
 #pragma mark Complex examples
@@ -171,11 +165,11 @@
 	// execute
 	BOOL result = [loader parseTemplate:template error:nil];
 	// verify
-	assertThatBool(result, equalToBool(YES));
-	assertThat(loader.templateString, is(@"Some text\nin multiple lines\nFollowed\nby middle\ntext\nAnd by some\n\tprefix"));
-	assertThatInteger([loader.templateSections count], equalToInteger(2));
-	assertThat([loader.templateSections objectForKey:@"name1"], is(@"text\nline2"));
-	assertThat([loader.templateSections objectForKey:@"name2"], is(@"text2\n\tline2"));
+	XCTAssertTrue(result);
+	XCTAssertEqualObjects(loader.templateString, @"Some text\nin multiple lines\nFollowed\nby middle\ntext\nAnd by some\n\tprefix");
+	XCTAssertEqual(loader.templateSections.count, (NSUInteger)2);
+	XCTAssertEqualObjects([loader.templateSections objectForKey:@"name1"], @"text\nline2");
+	XCTAssertEqualObjects([loader.templateSections objectForKey:@"name2"], @"text2\n\tline2");
 }
 
 #pragma mark Template handling
@@ -187,7 +181,7 @@
 	// execute
 	[loader parseTemplate:template error:nil];
 	// verify
-	assertThat(loader.template, isNot(nil));
+	XCTAssertNotNil(loader.template);
 }
 
 - (void)testParseTemplate_template_shouldSetEmptyTemplateIfEmptyTemplateIsGiven {
@@ -196,7 +190,7 @@
 	// execute
 	[loader parseTemplate:@"" error:nil];
 	// verify
-	assertThat(loader.template, is(nil));
+	XCTAssertNil(loader.template);
 }
 
 - (void)testParseTemplate_template_shouldResetTemplateInstanceIfEmptyTemplateIsGiven {
@@ -206,7 +200,7 @@
 	// execute
 	[loader parseTemplate:@"" error:nil];
 	// verify
-	assertThat(loader.template, is(nil));
+	XCTAssertNil(loader.template);
 }
 
 #pragma mark Rendering handling (just simple testing, we rely on GRMustache for correct behavior!)
@@ -218,7 +212,7 @@
 	// execute
 	NSString *result = [loader renderObject:[NSDictionary dictionaryWithObjectsAndKeys:@"value1", @"var1", @"value2", @"var2", nil]];
 	// verify
-	assertThat(result, is(@"prefix value1---value2 suffix"));
+	XCTAssertEqualObjects(result, @"prefix value1---value2 suffix");
 }
 
 - (void)testRenderObject_shouldRenderSectionIfCalled {
@@ -228,7 +222,7 @@
 	// execute
 	NSString *result = [loader renderObject:nil];
 	// verify
-	assertThat(result, is(@"prefix text!"));
+	XCTAssertEqualObjects(result, @"prefix text!");
 }
 
 - (void)testRenderObject_shouldNotRenderSectionIfNotCalled {
@@ -238,7 +232,7 @@
 	// execute
 	NSString *result = [loader renderObject:nil];
 	// verify
-	assertThat(result, is(@"prefix"));
+	XCTAssertEqualObjects(result, @"prefix");
 }
 
 - (void)testRenderObject_shouldPassProperObjectToSections {
@@ -250,7 +244,7 @@
 	// execute
 	NSString *result = [loader renderObject:[NSDictionary dictionaryWithObjectsAndKeys:var1, @"var1", var2, @"var2", nil]];
 	// verify
-	assertThat(result, is(@"prefix value1! value2?"));
+	XCTAssertEqualObjects(result, @"prefix value1! value2?");
 }
 
 @end

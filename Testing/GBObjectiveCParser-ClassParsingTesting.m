@@ -27,8 +27,8 @@
 	[parser parseObjectsFromString:@"@interface MyClass @end" sourceFile:@"filename.h" toStore:store];
 	// verify
 	NSArray *classes = [store classesSortedByName];
-	assertThatInteger([classes count], equalToInteger(1));
-	assertThat([[classes objectAtIndex:0] nameOfClass], is(@"MyClass"));
+	XCTAssertEqual(classes.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[classes objectAtIndex:0] nameOfClass], @"MyClass");
 }
 
 - (void)testParseObjectsFromString_shouldRegisterClassDefinitionSourceFileAndLineNumber {
@@ -39,9 +39,9 @@
 	[parser parseObjectsFromString:@"@interface MyClass @end" sourceFile:@"filename.h" toStore:store];
 	// verify
 	NSSet *files = [[[store classesSortedByName] objectAtIndex:0] sourceInfos];
-	assertThatInteger([files count], equalToInteger(1));
-	assertThat([[files anyObject] filename], is(@"filename.h"));
-	assertThatInteger([[files anyObject] lineNumber], equalToInteger(1));
+	XCTAssertEqual(files.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[files anyObject] filename], @"filename.h");
+	XCTAssertEqual([[files anyObject] lineNumber], (NSInteger)1);
 }
 
 - (void)testParseObjectsFromString_shouldRegisterClassDefinitionProperSourceLineNumber {
@@ -52,7 +52,7 @@
 	[parser parseObjectsFromString:@"\n// cmt\n\n#define DEBUG\n\n/// hello\n@interface MyClass @end" sourceFile:@"filename.h" toStore:store];
 	// verify
 	NSSet *files = [[[store classesSortedByName] objectAtIndex:0] sourceInfos];
-	assertThatInteger([[files anyObject] lineNumber], equalToInteger(7));
+	XCTAssertEqual([[files anyObject] lineNumber], (NSInteger)7);
 }
 
 - (void)testParseObjectsFromString_shouldRegisterAllClassDefinitions {
@@ -63,9 +63,9 @@
 	[parser parseObjectsFromString:@"@interface MyClass1 @end   @interface MyClass2 @end" sourceFile:@"filename.h" toStore:store];
 	// verify
 	NSArray *classes = [store classesSortedByName];
-	assertThatInteger([classes count], equalToInteger(2));
-	assertThat([[classes objectAtIndex:0] nameOfClass], is(@"MyClass1"));
-	assertThat([[classes objectAtIndex:1] nameOfClass], is(@"MyClass2"));
+	XCTAssertEqual(classes.count, (NSUInteger)2);
+	XCTAssertEqualObjects([[classes objectAtIndex:0] nameOfClass], @"MyClass1");
+	XCTAssertEqualObjects([[classes objectAtIndex:1] nameOfClass], @"MyClass2");
 }
 
 - (void)testParseObjectsFromString_shouldRegisterRootClass {
@@ -76,7 +76,7 @@
 	[parser parseObjectsFromString:@"@interface MyClass @end" sourceFile:@"filename.h" toStore:store];
 	// verify
 	GBClassData *class = [[store classes] anyObject];
-	assertThat(class.nameOfSuperclass, is(nil));
+	XCTAssertNil(class.nameOfSuperclass);
 }
 
 - (void)testParseObjectsFromString_shouldRegisterDerivedClass {
@@ -87,7 +87,7 @@
 	[parser parseObjectsFromString:@"@interface MyClass : NSObject @end" sourceFile:@"filename.h" toStore:store];
 	// verify
 	GBClassData *class = [[store classes] anyObject];
-	assertThat(class.nameOfSuperclass, is(@"NSObject"));
+	XCTAssertEqualObjects(class.nameOfSuperclass, @"NSObject");
 }
 
 #pragma mark Classes declarations parsing testing
@@ -100,8 +100,8 @@
 	[parser parseObjectsFromString:@"@implementation MyClass @end" sourceFile:@"filename.h" toStore:store];
 	// verify
 	NSArray *classes = [store classesSortedByName];
-	assertThatInteger([classes count], equalToInteger(1));
-	assertThat([[classes objectAtIndex:0] nameOfClass], is(@"MyClass"));
+	XCTAssertEqual(classes.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[classes objectAtIndex:0] nameOfClass], @"MyClass");
 }
 
 - (void)testParseObjectsFromString_shouldRegisterClassDeclarationSourceFileAndLineNumber {
@@ -112,9 +112,9 @@
 	[parser parseObjectsFromString:@"@implementation MyClass @end" sourceFile:@"filename.h" toStore:store];
 	// verify
 	NSSet *files = [[[store classesSortedByName] objectAtIndex:0] sourceInfos];
-	assertThatInteger([files count], equalToInteger(1));
-	assertThat([[files anyObject] filename], is(@"filename.h"));
-	assertThatInteger([[files anyObject] lineNumber], equalToInteger(1));
+	XCTAssertEqual(files.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[files anyObject] filename], @"filename.h");
+	XCTAssertEqual([[files anyObject] lineNumber], (NSInteger)1);
 }
 
 - (void)testParseObjectsFromString_shouldRegisterClassDeclarationProperSourceLineNumber {
@@ -125,7 +125,7 @@
 	[parser parseObjectsFromString:@"\n// cmt\n\n#define DEBUG\n\n/// hello\n@implementation MyClass @end" sourceFile:@"filename.h" toStore:store];
 	// verify
 	NSSet *files = [[[store classesSortedByName] objectAtIndex:0] sourceInfos];
-	assertThatInteger([[files anyObject] lineNumber], equalToInteger(7));
+	XCTAssertEqual([[files anyObject] lineNumber], (NSInteger)7);
 }
 
 - (void)testParseObjectsFromString_shouldRegisterAllClassDeclarations {
@@ -136,9 +136,9 @@
 	[parser parseObjectsFromString:@"@implementation MyClass1 @end   @implementation MyClass2 @end" sourceFile:@"filename.h" toStore:store];
 	// verify
 	NSArray *classes = [store classesSortedByName];
-	assertThatInteger([classes count], equalToInteger(2));
-	assertThat([[classes objectAtIndex:0] nameOfClass], is(@"MyClass1"));
-	assertThat([[classes objectAtIndex:1] nameOfClass], is(@"MyClass2"));
+	XCTAssertEqual(classes.count, (NSUInteger)2);
+	XCTAssertEqualObjects([[classes objectAtIndex:0] nameOfClass], @"MyClass1");
+	XCTAssertEqualObjects([[classes objectAtIndex:1] nameOfClass], @"MyClass2");
 }
 
 #pragma mark Class comments parsing testing
@@ -151,7 +151,7 @@
 	[parser parseObjectsFromString:@"/** Comment */ @interface MyClass @end" sourceFile:@"filename.h" toStore:store];
 	// verify
 	GBClassData *class = [[store classes] anyObject];
-	assertThat(class.comment.stringValue, is(@"Comment"));
+	XCTAssertEqualObjects(class.comment.stringValue, @"Comment");
 }
 
 - (void)testParseObjectsFromString_shouldRegisterClassDeclarationComment {
@@ -162,7 +162,7 @@
 	[parser parseObjectsFromString:@"/** Comment */ @implementation MyClass @end" sourceFile:@"filename.m" toStore:store];
 	// verify
 	GBClassData *class = [[store classes] anyObject];
-	assertThat(class.comment.stringValue, is(@"Comment"));
+	XCTAssertEqualObjects(class.comment.stringValue, @"Comment");
 }
 
 - (void)testParseObjectsFromString_shouldRegisterClassDefinitionCommentSourceFileAndLineNumber {
@@ -173,8 +173,8 @@
 	[parser parseObjectsFromString:@"/// comment\n\n#define SOMETHING\n\n/** comment */ @interface MyClass @end" sourceFile:@"filename.h" toStore:store];
 	// verify
 	GBClassData *class = [[store classes] anyObject];
-	assertThat(class.comment.sourceInfo.filename, is(@"filename.h"));
-	assertThatInteger(class.comment.sourceInfo.lineNumber, equalToInteger(5));
+	XCTAssertEqualObjects(class.comment.sourceInfo.filename, @"filename.h");
+	XCTAssertEqual(class.comment.sourceInfo.lineNumber, (NSInteger)5);
 }
 
 - (void)testParseObjectsFromString_shouldRegisterClassDeclarationCommentProperSourceLineNumber {
@@ -185,8 +185,8 @@
 	[parser parseObjectsFromString:@"/// comment\n\n#define SOMETHING\n\n/** comment */ @implementation MyClass @end" sourceFile:@"filename.h" toStore:store];
 	// verify
 	GBClassData *class = [[store classes] anyObject];
-	assertThat(class.comment.sourceInfo.filename, is(@"filename.h"));
-	assertThatInteger(class.comment.sourceInfo.lineNumber, equalToInteger(5));
+	XCTAssertEqualObjects(class.comment.sourceInfo.filename, @"filename.h");
+	XCTAssertEqual(class.comment.sourceInfo.lineNumber, (NSInteger)5);
 }
 
 - (void)testParseObjectsFromString_shouldRegisterClassDefinitionCommentForComplexDeclarations {
@@ -204,9 +204,9 @@
 	 @"@end" sourceFile:@"filename.h" toStore:store];
 	// verify
 	GBClassData *class = [[store classes] anyObject];
-	assertThat(class.nameOfClass, is(@"MyClass"));
-	assertThat(class.nameOfSuperclass, is(@"SuperClass"));
-	assertThat(class.comment.stringValue, is(@"Comment"));
+	XCTAssertEqualObjects(class.nameOfClass, @"MyClass");
+	XCTAssertEqualObjects(class.nameOfSuperclass, @"SuperClass");
+	XCTAssertEqualObjects(class.comment.stringValue, @"Comment");
 }
 
 - (void)testParseObjectsFromString_shouldProperlyResetComments { 
@@ -218,7 +218,7 @@
 	// verify
 	GBClassData *class = [[store classes] anyObject];
 	GBMethodData *method = [class.methods.methods lastObject];
-	assertThat(method.comment, is(nil));
+	XCTAssertNil(method.comment);
 }
 
 #pragma mark Class definition components parsing testing
@@ -232,8 +232,8 @@
 	// verify
 	GBClassData *class = [[store classes] anyObject];
 	NSArray *protocols = [class.adoptedProtocols protocolsSortedByName];
-	assertThatInteger([protocols count], equalToInteger(1));
-	assertThat([[protocols objectAtIndex:0] nameOfProtocol], is(@"Protocol"));
+	XCTAssertEqual(protocols.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[protocols objectAtIndex:0] nameOfProtocol], @"Protocol");
 }
 
 - (void)testParseObjectsFromString_shouldRegisterRootClassAdoptedProtocols {
@@ -245,8 +245,8 @@
 	// verify
 	GBClassData *class = [[store classes] anyObject];
 	NSArray *protocols = [class.adoptedProtocols protocolsSortedByName];
-	assertThatInteger([protocols count], equalToInteger(1));
-	assertThat([[protocols objectAtIndex:0] nameOfProtocol], is(@"Protocol"));
+	XCTAssertEqual(protocols.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[protocols objectAtIndex:0] nameOfProtocol], @"Protocol");
 }
 
 - (void)testParseObjectsFromString_shouldIgnoreIvars {
@@ -258,7 +258,7 @@
 	// verify
 	GBClassData *class = [[store classes] anyObject];
 	NSArray *ivars = [class.ivars ivars];
-	assertThatInteger([ivars count], equalToInteger(0));
+	XCTAssertEqual(ivars.count, (NSUInteger)0);
 }
 
 - (void)testParseObjectsFromString_shouldRegisterMethodDefinitions {
@@ -270,8 +270,8 @@
 	// verify
 	GBClassData *class = [[store classes] anyObject];
 	NSArray *methods = [class.methods methods];
-	assertThatInteger([methods count], equalToInteger(1));
-	assertThat([[methods objectAtIndex:0] methodSelector], is(@"method"));
+	XCTAssertEqual(methods.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[methods objectAtIndex:0] methodSelector], @"method");
 }
 
 - (void)testParseObjectsFromString_shouldRegisterProperties {
@@ -283,8 +283,8 @@
 	// verify
 	GBClassData *class = [[store classes] anyObject];
 	NSArray *methods = [class.methods methods];
-	assertThatInteger([methods count], equalToInteger(1));
-	assertThat([[methods objectAtIndex:0] methodSelector], is(@"name"));
+	XCTAssertEqual(methods.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[methods objectAtIndex:0] methodSelector], @"name");
 }
 
 #pragma mark Class declaration components parsing testing
@@ -298,8 +298,8 @@
 	// verify
 	GBClassData *class = [[store classes] anyObject];
 	NSArray *methods = [class.methods methods];
-	assertThatInteger([methods count], equalToInteger(1));
-	assertThat([[methods objectAtIndex:0] methodSelector], is(@"method"));
+	XCTAssertEqual(methods.count, (NSUInteger)1);
+	XCTAssertEqualObjects([[methods objectAtIndex:0] methodSelector], @"method");
 }
 
 #pragma mark Merging testing
@@ -312,12 +312,12 @@
 	[parser parseObjectsFromString:@"@interface MyClass -(void)method1; @end" sourceFile:@"filename1.h" toStore:store];
 	[parser parseObjectsFromString:@"@interface MyClass -(void)method2; @end" sourceFile:@"filename2.h" toStore:store];
 	// verify - simple testing here, details within GBModelBaseTesting!
-	assertThatInteger([[store classes] count], equalToInteger(1));
+	XCTAssertEqual([store classes].count, (NSUInteger)1);
 	GBClassData *class = [[store classes] anyObject];
 	NSArray *methods = [class.methods methods];
-	assertThatInteger([methods count], equalToInteger(2));
-	assertThat([[methods objectAtIndex:0] methodSelector], is(@"method1"));
-	assertThat([[methods objectAtIndex:1] methodSelector], is(@"method2"));
+	XCTAssertEqual(methods.count, (NSUInteger)2);
+	XCTAssertEqualObjects([[methods objectAtIndex:0] methodSelector], @"method1");
+	XCTAssertEqualObjects([[methods objectAtIndex:1] methodSelector], @"method2");
 }
 
 - (void)testParseObjectsFromString_shouldMergeClassDeclarations {
@@ -328,12 +328,12 @@
 	[parser parseObjectsFromString:@"@implementation MyClass -(void)method1{} @end" sourceFile:@"filename1.m" toStore:store];
 	[parser parseObjectsFromString:@"@implementation MyClass -(void)method2{} @end" sourceFile:@"filename2.m" toStore:store];
 	// verify - simple testing here, details within GBModelBaseTesting!
-	assertThatInteger([[store classes] count], equalToInteger(1));
+	XCTAssertEqual([store classes].count, (NSUInteger)1);
 	GBClassData *class = [[store classes] anyObject];
 	NSArray *methods = [class.methods methods];
-	assertThatInteger([methods count], equalToInteger(2));
-	assertThat([[methods objectAtIndex:0] methodSelector], is(@"method1"));
-	assertThat([[methods objectAtIndex:1] methodSelector], is(@"method2"));
+	XCTAssertEqual(methods.count, (NSUInteger)2);
+	XCTAssertEqualObjects([[methods objectAtIndex:0] methodSelector], @"method1");
+	XCTAssertEqualObjects([[methods objectAtIndex:1] methodSelector], @"method2");
 }
 
 - (void)testParseObjectsFromString_shouldMergeClassDefinitionAndDeclaration {
@@ -344,12 +344,12 @@
 	[parser parseObjectsFromString:@"@interface MyClass -(void)method1; @end" sourceFile:@"filename.h" toStore:store];
 	[parser parseObjectsFromString:@"@implementation MyClass -(void)method2{} @end" sourceFile:@"filename.m" toStore:store];
 	// verify - simple testing here, details within GBModelBaseTesting!
-	assertThatInteger([[store classes] count], equalToInteger(1));
+	XCTAssertEqual([store classes].count, (NSUInteger)1);
 	GBClassData *class = [[store classes] anyObject];
 	NSArray *methods = [class.methods methods];
-	assertThatInteger([methods count], equalToInteger(2));
-	assertThat([[methods objectAtIndex:0] methodSelector], is(@"method1"));
-	assertThat([[methods objectAtIndex:1] methodSelector], is(@"method2"));
+	XCTAssertEqual(methods.count, (NSUInteger)2);
+	XCTAssertEqualObjects([[methods objectAtIndex:0] methodSelector], @"method1");
+	XCTAssertEqualObjects([[methods objectAtIndex:1] methodSelector], @"method2");
 }
 
 #pragma mark Complex parsing testing
@@ -361,10 +361,10 @@
 	// execute
 	[parser parseObjectsFromString:[GBRealLifeDataProvider headerWithClassCategoryAndProtocol] sourceFile:@"filename.h" toStore:store];
 	// verify - we're not going into details here, just checking that top-level objects were properly parsed!
-	assertThatInteger([[store classes] count], equalToInteger(1));
+	XCTAssertEqual([store classes].count, (NSUInteger)1);
 	GBClassData *class = [[store classes] anyObject];
-	assertThat(class.nameOfClass, is(@"GBCalculator"));
-	assertThat(class.nameOfSuperclass, is(@"NSObject"));
+	XCTAssertEqualObjects(class.nameOfClass, @"GBCalculator");
+	XCTAssertEqualObjects(class.nameOfSuperclass, @"NSObject");
 }
 
 - (void)testParseObjectsFromString_shouldRegisterClassFromRealLifeCodeInput {
@@ -374,10 +374,10 @@
 	// execute
 	[parser parseObjectsFromString:[GBRealLifeDataProvider codeWithClassAndCategory] sourceFile:@"filename.m" toStore:store];
 	// verify - we're not going into details here, just checking that top-level objects were properly parsed!
-	assertThatInteger([[store classes] count], equalToInteger(1));
+	XCTAssertEqual([store classes].count, (NSUInteger)1);
 	GBClassData *class = [[store classes] anyObject];
-	assertThat(class.nameOfClass, is(@"GBCalculator"));
-	assertThatInteger([class.methods.methods count], equalToInteger(1));
+	XCTAssertEqualObjects(class.nameOfClass, @"GBCalculator");
+	XCTAssertEqual(class.methods.methods.count, (NSUInteger)1);
 }
 
 @end
