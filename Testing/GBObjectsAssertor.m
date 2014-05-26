@@ -22,11 +22,11 @@
 		[arguments addObject:arg];
 	}
 	va_end(args);
-	
+
 	assertThatInteger([[ivar ivarTypes] count], equalToInteger([arguments count] - 1));
 	for (NSUInteger i=0; i<[arguments count] - 1; i++)
 		assertThat([ivar.ivarTypes objectAtIndex:i], is([arguments objectAtIndex:i]));
-	
+
 	assertThat(ivar.nameOfIvar, is([arguments lastObject]));
 }
 
@@ -55,23 +55,23 @@
 	// Note that we flatten all the arguments to make assertion methods simpler; nice trick but we do need to
 	// use custom macros instead of hamcrest to get more meaningful description in case of failure :(
 	GHAssertEquals(method.methodType, type, @"Method %@ type doesn't match!", method);
-	
+
 	NSMutableArray *arguments = [NSMutableArray arrayWithObject:first];
 	NSString *arg;
 	while ((arg = va_arg(args, NSString*))) {
 		[arguments addObject:arg];
 	}
-	
+
 	NSUInteger i=0;
 
 	for (NSString *attribute in method.methodAttributes) {
 		GHAssertEqualObjects(attribute, [arguments objectAtIndex:i++], @"Property %@ attribute doesn't match at flat idx %ld!", method, i-1);
 	}
-	
+
 	for (NSString *type in method.methodResultTypes) {
 		GHAssertEqualObjects(type, [arguments objectAtIndex:i++], @"Method %@ result doesn't match at flat idx %ld!", method, i-1);
 	}
-	
+
 	for (GBMethodArgument *argument in method.methodArguments) {
 		GHAssertEqualObjects(argument.argumentName, [arguments objectAtIndex:i++], @"Method %@ argument name doesn't match at flat idx %ld!", method, i-1);
 		if (argument.argumentTypes) {
@@ -89,7 +89,7 @@
 			}
 		}
 	}
-	
+
 	GHAssertEquals(i, [arguments count], @"Flattened method %@ has %ld components, expected %ld!", method, i, [arguments count]);
 }
 
@@ -99,37 +99,37 @@
 	va_list args;
 	va_start(args,first);
 	while (YES) {
-		NSNumber *style = [NSNumber numberWithUnsignedInt:va_arg(args, NSUInteger)];
+		NSNumber *style = [NSNumber numberWithUnsignedInt:va_arg(args, unsigned int)];
 		NSString *href = va_arg(args, NSString *);
 		if (!href) [NSException raise:@"Href not given for value %@ at index %ld!", value, [arguments count]];
-		
+
 		NSMutableDictionary *data = [NSMutableDictionary dictionaryWithCapacity:4];
 		[data setObject:value forKey:@"value"];
 		[data setObject:style forKey:@"style"];
 		[data setObject:href forKey:@"href"];
 		if ([style unsignedIntValue] == 1) [data setObject:[NSNumber numberWithBool:YES] forKey:@"emphasized"];
 		[arguments addObject:data];
-		
+
 		value = va_arg(args, NSString *);
 		if (!value) break;
 	}
 	va_end(args);
-	
+
 	assertThatInteger([components count], equalToInteger([arguments count]));
 	for (NSUInteger i=0; i<[components count]; i++) {
 		NSDictionary *actual = [components objectAtIndex:i];
 		NSDictionary *expected = [arguments objectAtIndex:i];
-		
+
 		assertThat([actual objectForKey:@"value"], is([expected objectForKey:@"value"]));
 		assertThat([actual objectForKey:@"emphasized"], is([expected objectForKey:@"emphasized"]));
-		
+
 		NSNumber *expectedStyle = [expected objectForKey:@"style"];
 		NSNumber *actualStyle = [actual objectForKey:@"style"];
 		if ([expectedStyle unsignedIntValue] != 0)
 			assertThat(actualStyle, is(expectedStyle));
 		else
 			assertThat(actualStyle, is(nil));
-		
+
 		NSString *expectedHref = [expected objectForKey:@"href"];
 		NSString *actualHref = [actual objectForKey:@"href"];
 		if ((NSNull *)expectedHref != GBNULL)
@@ -141,7 +141,17 @@
 
 #pragma mark Comment assertion methods
 
-- (void)assertCommentComponents:(GBCommentComponentsList *)components matchesValues:(NSString *)first values:(va_list)args {
+- (void)assertCommentComponents:(GBCommentComponentsList *)components matchesValues:(NSArray *)expected {
+	assertThatInteger([components.components count], equalToInteger([expected count]));
+	for (NSUInteger i=0; i<[components.components count]; i++) {
+		NSString *expectedValue = [expected objectAtIndex:i];
+		NSString *actualValue = [[components.components objectAtIndex:i] stringValue];
+		assertThat(actualValue, is(expectedValue));
+	}
+}
+
+
+- (void)assertCommentComponents:(GBCommentComponentsList *)components matchesValues:(NSString *)first values:(va_list)args DEPRECATED_ATTRIBUTE {
 	NSMutableArray *expected = [NSMutableArray array];
 	if (first) {
 		[expected addObject:first];
@@ -150,12 +160,7 @@
 			[expected addObject:value];
 		}
 	}
-	assertThatInteger([components.components count], equalToInteger([expected count]));
-	for (NSUInteger i=0; i<[components.components count]; i++) {
-		NSString *expectedValue = [expected objectAtIndex:i];
-		NSString *actualValue = [[components.components objectAtIndex:i] stringValue];
-		assertThat(actualValue, is(expectedValue));
-	}
+	[self assertCommentComponents:components matchesValues:expected];
 }
 
 - (void)assertCommentComponents:(GBCommentComponentsList *)components matchesStringValues:(NSString *)first, ... {
@@ -199,23 +204,13 @@
 	for (NSUInteger i=0; i<[arguments count]; i++) {
 		GBCommentArgument *argument = [arguments objectAtIndex:i];
 		NSDictionary *data = [expected objectAtIndex:i];
-		
-		NSString *expectedName = [data objectForKey:@"name"];		
+
+		NSString *expectedName = [data objectForKey:@"name"];
 		assertThat(argument.argumentName, is(expectedName));
 
-		NSMutableArray *expectedComps = [data objectForKey:@"comps"];
+		NSArray *expectedComps = [data objectForKey:@"comps"];
 		if ([expectedComps count] > 0) {
-			NSString *firstExpectedComp = [expectedComps firstObject];
-			[expectedComps removeObjectAtIndex:0];
-			char *argList = NULL;
-			if ([expectedComps count] > 0) {
-				argList = (char *)malloc(sizeof(char) * [expectedComps count]);
-				[expectedComps getObjects:(id *)argList];				
-			}
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wincompatible-pointer-types"
-			[self assertCommentComponents:argument.argumentDescription matchesValues:firstExpectedComp values:argList];
-#pragma clang diagnostic pop
+			[self assertCommentComponents:argument.argumentDescription matchesValues:expectedComps];
 		}
 	}
 }

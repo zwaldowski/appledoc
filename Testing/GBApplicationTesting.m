@@ -11,6 +11,16 @@
 #import "GBApplicationSettingsProvider.h"
 #import "GBAppledocApplication.h"
 
+#pragma mark - Private declaration, FIXME
+
+@interface DDGetoptLongParser ()
+
+- (NSString *)optionToKey:(NSString *)option;
+
+@end
+
+#pragma mark -
+
 @interface GBAppledocApplication (UnitTestingAPI)
 - (NSString *)standardizeCurrentDirectoryForPath:(NSString *)path;
 @end
@@ -579,16 +589,18 @@
 	va_end(args);
 	
 	// setup the application and inject settings to it.
-	GBAppledocApplication *application = [[[GBAppledocApplication alloc] init] autorelease];
+	GBAppledocApplication *application = [[GBAppledocApplication alloc] init];
 	GBApplicationSettingsProvider *result = [GBApplicationSettingsProvider provider];
 	[application setValue:result forKey:@"settings"];
+
+	DDGetoptLongParser *testParser = [[DDGetoptLongParser alloc] initWithTarget:application];
 	
 	// send all KVC messages for all options
 	for (NSUInteger i=0; i<[arguments count]; i++) {
 		NSString *arg = [arguments objectAtIndex:i];
 		if ([arg hasPrefix:@"--"]) {
 			// get the key corresponding to the argument
-			NSString *key = [DDGetoptLongParser keyFromOption:arg];
+			NSString *key = [testParser optionToKey:arg];
             
             // When passed --docset-xml-filename, +[DDGetoptLongParser keyFromOption:] will
             // return docsetXmlFilename but we need instead of docsetXMLFilename.

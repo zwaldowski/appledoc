@@ -160,7 +160,6 @@
 		73AF4ECF13093B5A001152DB /* GBCommentComponentsListTesting.m in Sources */ = {isa = PBXBuildFile; fileRef = 73AF4ECE13093B5A001152DB /* GBCommentComponentsListTesting.m */; };
 		73C4C8611377DFF70024FA77 /* GBExitCodes.m in Sources */ = {isa = PBXBuildFile; fileRef = 73C4C8601377DFF70024FA77 /* GBExitCodes.m */; };
 		73CF8131122D3824005B7E26 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 73CF8130122D3824005B7E26 /* RegexKitLite.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		73CF8132122D3824005B7E26 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 73CF8130122D3824005B7E26 /* RegexKitLite.m */; };
 		73D2524612A2ED610024F9F9 /* GBOutputGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D2524512A2ED610024F9F9 /* GBOutputGenerator.m */; };
 		73D54C6211F8CE6D00CCDDB0 /* appledoc.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D54C6111F8CE6D00CCDDB0 /* appledoc.m */; };
 		73D54CA911F8D27F00CCDDB0 /* GBLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D54CA811F8D27F00CCDDB0 /* GBLog.m */; };
@@ -179,9 +178,7 @@
 		73F568BF12A22A7900A72BB2 /* DDASLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 73F568B812A22A7900A72BB2 /* DDASLLogger.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		73F568C012A22A7900A72BB2 /* DDASLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 73F568B812A22A7900A72BB2 /* DDASLLogger.m */; };
 		73F568C112A22A7900A72BB2 /* DDFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 73F568BA12A22A7900A72BB2 /* DDFileLogger.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		73F568C212A22A7900A72BB2 /* DDFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 73F568BA12A22A7900A72BB2 /* DDFileLogger.m */; };
 		73F568C312A22A7900A72BB2 /* DDLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 73F568BC12A22A7900A72BB2 /* DDLog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		73F568C412A22A7900A72BB2 /* DDLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 73F568BC12A22A7900A72BB2 /* DDLog.m */; };
 		73F568C512A22A7900A72BB2 /* DDTTYLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 73F568BE12A22A7900A72BB2 /* DDTTYLogger.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		73F568C612A22A7900A72BB2 /* DDTTYLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 73F568BE12A22A7900A72BB2 /* DDTTYLogger.m */; };
 		73F568D312A22CFF00A72BB2 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73F568D212A22CFF00A72BB2 /* CoreServices.framework */; };
@@ -235,6 +232,15 @@
 		DB83BDFB1933AA7F007B86DE /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = DB83BDF11933AA7F007B86DE /* mztools.c */; };
 		DB83BDFC1933AA7F007B86DE /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = DB83BDF31933AA7F007B86DE /* unzip.c */; };
 		DB83BDFD1933AA7F007B86DE /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = DB83BDF51933AA7F007B86DE /* zip.c */; };
+		DB83BDFE1933C895007B86DE /* dd_getopt_long-fbsd.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83BDDB193398EA007B86DE /* dd_getopt_long-fbsd.m */; };
+		DB83BDFF1933C895007B86DE /* DDCliApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83BDDD193398EA007B86DE /* DDCliApplication.m */; };
+		DB83BE001933C895007B86DE /* DDCliParseException.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83BDDF193398EA007B86DE /* DDCliParseException.m */; };
+		DB83BE011933C895007B86DE /* DDCliUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83BDE1193398EA007B86DE /* DDCliUtil.m */; };
+		DB83BE021933C895007B86DE /* DDGetoptLongParser.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83BDE4193398EA007B86DE /* DDGetoptLongParser.m */; };
+		DB83BE031933C8AB007B86DE /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = DB83BDEB1933AA7F007B86DE /* ioapi.c */; };
+		DB83BE041933C8AB007B86DE /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = DB83BDF11933AA7F007B86DE /* mztools.c */; };
+		DB83BE051933C8AB007B86DE /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = DB83BDF31933AA7F007B86DE /* unzip.c */; };
+		DB83BE061933C8AB007B86DE /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = DB83BDF51933AA7F007B86DE /* zip.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1334,6 +1340,7 @@
 				733EA140122BDEC10060CBDE /* GBClassDataTesting.m in Sources */,
 				733EA144122BDEC80060CBDE /* GBCommentTesting.m in Sources */,
 				733EA145122BDEC90060CBDE /* GBIvarDataTesting.m in Sources */,
+				DB83BDFF1933C895007B86DE /* DDCliApplication.m in Sources */,
 				7382CA82130479F7006C5966 /* GBTemplateFilesHandler.m in Sources */,
 				733EA146122BDEC90060CBDE /* GBIvarsProviderTesting.m in Sources */,
 				733EA147122BDEC90060CBDE /* GBMethodDataTesting.m in Sources */,
@@ -1347,6 +1354,7 @@
 				7317CC1012B113BF009DAA15 /* GBGenerator.m in Sources */,
 				733EA14D122BDECD0060CBDE /* GBObjectiveCParser-IvarsParsingTesting.m in Sources */,
 				733EA14E122BDECE0060CBDE /* GBObjectiveCParser-MethodsParsingTesting.m in Sources */,
+				DB83BE021933C895007B86DE /* DDGetoptLongParser.m in Sources */,
 				7317CC1512B113ED009DAA15 /* GBDocSetOutputGenerator.m in Sources */,
 				7317CC1312B113E4009DAA15 /* GBHTMLOutputGenerator.m in Sources */,
 				7317CC1712B11424009DAA15 /* NSError+GBError.m in Sources */,
@@ -1357,8 +1365,10 @@
 				733EA153122BDED10060CBDE /* GBProtocolDataTesting.m in Sources */,
 				7317CC1612B113F8009DAA15 /* GBTask.m in Sources */,
 				733EA154122BDED20060CBDE /* GBRealLifeDataProvider.m in Sources */,
+				DB83BE061933C8AB007B86DE /* zip.c in Sources */,
 				733EA155122BDED20060CBDE /* GBStoreTesting.m in Sources */,
 				733EA156122BDED30060CBDE /* GBTestObjectsRegistry.m in Sources */,
+				DB83BE051933C8AB007B86DE /* unzip.c in Sources */,
 				733EA157122BDED30060CBDE /* GBTokenizerTesting.m in Sources */,
 				733EA17A122BE1650060CBDE /* GBCategoryData.m in Sources */,
 				733EA17B122BE1660060CBDE /* GBClassData.m in Sources */,
@@ -1384,7 +1394,6 @@
 				733EA18E122BE1810060CBDE /* GBParser.m in Sources */,
 				733EA18F122BE1810060CBDE /* GBTokenizer.m in Sources */,
 				733EA190122BE1820060CBDE /* PKToken+GBToken.m in Sources */,
-				73CF8132122D3824005B7E26 /* RegexKitLite.m in Sources */,
 				73F2CA74123E4161009B406B /* GBCommentsProcessor.m in Sources */,
 				73F2CA75123E4161009B406B /* GBProcessor.m in Sources */,
 				7307B311124A1929007EC6B8 /* GBObjectiveCParser-SectionsParsingTesting.m in Sources */,
@@ -1407,6 +1416,7 @@
 				7359B154129A5A0700F67AD1 /* GRMustacheDirectoryTemplateLoader.m in Sources */,
 				7359B156129A5A0700F67AD1 /* GRMustacheElement.m in Sources */,
 				7359B158129A5A0700F67AD1 /* GRMustacheError.m in Sources */,
+				DB83BE041933C8AB007B86DE /* mztools.c in Sources */,
 				7359B15A129A5A0700F67AD1 /* GRMustacheLambda.m in Sources */,
 				7359B15C129A5A0700F67AD1 /* GRMustacheSectionElement.m in Sources */,
 				7359B15E129A5A0700F67AD1 /* GRMustacheTemplate.m in Sources */,
@@ -1418,9 +1428,9 @@
 				7359B16A129A5A0700F67AD1 /* GRMustacheVariableElement.m in Sources */,
 				7359B16C129A5A0700F67AD1 /* GRMustacheVersion.m in Sources */,
 				73F568C012A22A7900A72BB2 /* DDASLLogger.m in Sources */,
-				73F568C212A22A7900A72BB2 /* DDFileLogger.m in Sources */,
 				735259D713793ED7003F0D09 /* GBExitCodes.m in Sources */,
-				73F568C412A22A7900A72BB2 /* DDLog.m in Sources */,
+				DB83BDFE1933C895007B86DE /* dd_getopt_long-fbsd.m in Sources */,
+				DB83BE011933C895007B86DE /* DDCliUtil.m in Sources */,
 				73F568C612A22A7900A72BB2 /* DDTTYLogger.m in Sources */,
 				739C0C4712AC258B00F0130B /* GBProcessor-UndocumentedObjectsTesting.m in Sources */,
 				739C0C4912AC284E00F0130B /* GBProcessor-CategoriesMergingTesting.m in Sources */,
@@ -1431,6 +1441,7 @@
 				73AF4EC913093570001152DB /* GBCommentComponent.m in Sources */,
 				73AF4ECD130938F3001152DB /* GBCommentComponentsList.m in Sources */,
 				73AF4ECF13093B5A001152DB /* GBCommentComponentsListTesting.m in Sources */,
+				DB83BE031933C8AB007B86DE /* ioapi.c in Sources */,
 				73FAC0FA130BCB6F00F22475 /* GBCommentArgument.m in Sources */,
 				73E1B7D4130BE72100E3D710 /* GBCommentsProcessor-RegistrationsTesting.m in Sources */,
 				73E1B7D6130BE7C000E3D710 /* GBCommentsProcessor-PreprocessingTesting.m in Sources */,
@@ -1440,6 +1451,7 @@
 				B4D1FFE215FF5F05009736E2 /* DDZipWriter.m in Sources */,
 				B4D1FFE415FF5F05009736E2 /* DDEmbeddedDataReader.m in Sources */,
 				B4D1FFE615FF5F05009736E2 /* DDXcodeProjectFile.m in Sources */,
+				DB83BE001933C895007B86DE /* DDCliParseException.m in Sources */,
 				7D11DEC417BA61CA0027DC2D /* GBEnumConstantData.m in Sources */,
 				7D11DEC617BA622B0027DC2D /* GBTypedefEnumData.m in Sources */,
 				7D11DEC717BA62420027DC2D /* GBEnumConstantProvider.m in Sources */,
@@ -1549,7 +1561,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1569,7 +1580,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Libraries\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-licucore",
 					"-sectcreate",
@@ -1585,7 +1595,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_OBJC_ARC = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1602,7 +1611,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Libraries\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-licucore",
 					"-sectcreate",
@@ -1617,6 +1625,7 @@
 		1DEB927908733DD40010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -1634,6 +1643,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-licucore";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -1644,6 +1654,7 @@
 		1DEB927A08733DD40010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -1659,6 +1670,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = "-licucore";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = macosx;
@@ -1678,7 +1690,6 @@
 					"\"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/A/Frameworks\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = AppledocTests_prefix.pch;
@@ -1693,7 +1704,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Libraries\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -1718,7 +1728,6 @@
 					"\"$(SRCROOT)/Libraries\"",
 					"\"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/A/Frameworks\"",
 				);
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				HEADER_SEARCH_PATHS = (
@@ -1732,7 +1741,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Libraries\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -1741,7 +1749,6 @@
 					"-licucore",
 				);
 				PRODUCT_NAME = AppledocTests;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
