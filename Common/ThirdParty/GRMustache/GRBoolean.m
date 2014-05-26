@@ -22,39 +22,22 @@
 
 #import "GRBoolean.h"
 
-
-static GRYes *yes = nil;
-
 @implementation GRYes
 
 + (GRYes *)yes {
-    if (yes == nil) {
+	static dispatch_once_t onceToken;
+	static GRYes *yes = nil;
+	dispatch_once(&onceToken, ^{
 		yes = [[super allocWithZone:NULL] init];
-	}
+	});
 	return yes;
 }
 
 + (id)allocWithZone:(NSZone *)zone {
-    return [[self yes] retain];
+    return [self yes];
 }
 
 - (id)copyWithZone:(NSZone *)zone {
-    return self;
-}
-
-- (id)retain {
-    return self;
-}
-
-- (NSUInteger)retainCount {
-    return NSUIntegerMax;  //denotes an object that cannot be released
-}
-
-- (oneway void)release {
-    //do nothing
-}
-
-- (id)autorelease {
     return self;
 }
 
@@ -72,38 +55,24 @@ static GRYes *yes = nil;
 
 @end
 
-static GRNo *no = nil;
+
 
 @implementation GRNo
 
 + (GRNo *)no {
-    if (no == nil) {
+	static dispatch_once_t onceToken;
+	static GRNo *no = nil;
+	dispatch_once(&onceToken, ^{
 		no = [[super allocWithZone:NULL] init];
-	}
+	});
 	return no;
 }
 
 + (id)allocWithZone:(NSZone *)zone {
-    return [[self no] retain];
+    return [self no];
 }
 
 - (id)copyWithZone:(NSZone *)zone {
-    return self;
-}
-
-- (id)retain {
-    return self;
-}
-
-- (NSUInteger)retainCount {
-    return NSUIntegerMax;  //denotes an object that cannot be released
-}
-
-- (oneway void)release  {
-    //do nothing
-}
-
-- (id)autorelease {
     return self;
 }
 

@@ -24,7 +24,7 @@
 
 
 @interface GRMustacheTextElement()
-@property (nonatomic, retain) NSString *text;
+@property (nonatomic, strong) NSString *text;
 - (id)initWithString:(NSString *)theText;
 @end
 
@@ -33,7 +33,7 @@
 @synthesize text;
 
 + (id)textElementWithString:(NSString *)text {
-	return [[[self alloc] initWithString:text] autorelease];
+	return [[self alloc] initWithString:text];
 }
 
 - (id)initWithString:(NSString *)theText {
@@ -47,10 +47,6 @@
 	return text;
 }
 
-- (void)dealloc {
-	[text release];
-	[super dealloc];
-}
 @end
 
 

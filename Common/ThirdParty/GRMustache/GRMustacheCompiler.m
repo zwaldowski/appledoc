@@ -29,8 +29,8 @@
 #import "GRMustacheError.h"
 
 @interface GRMustacheCompiler()
-@property (nonatomic, retain) NSError *error;
-@property (nonatomic, retain) GRMustacheToken *currentSectionOpeningToken;
+@property (nonatomic, strong) NSError *error;
+@property (nonatomic, strong) GRMustacheToken *currentSectionOpeningToken;
 - (NSError *)parseErrorAtLine:(NSInteger)line description:(NSString *)description;
 @end
 
@@ -62,16 +62,7 @@
 		return nil;
 	}
 	
-	[currentElements retain];
-	[elementsStack release];
-	[sectionOpeningTokenStack release];
-	return [currentElements autorelease];
-}
-
-- (void)dealloc {
-	[error release];
-	[currentSectionOpeningToken release];
-	[super dealloc];
+	return currentElements;
 }
 
 #pragma mark GRMustacheTokenConsumer

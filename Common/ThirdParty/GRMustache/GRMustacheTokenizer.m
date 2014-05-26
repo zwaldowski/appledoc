@@ -25,8 +25,8 @@
 
 
 @interface GRMustacheTokenizer()
-@property (nonatomic, retain) NSString *otag;
-@property (nonatomic, retain) NSString *ctag;
+@property (nonatomic, strong) NSString *otag;
+@property (nonatomic, strong) NSString *ctag;
 - (BOOL)shouldContinueParsingAfterReadingToken:(GRMustacheToken *)token;
 - (void)didStart;
 - (void)didFinish;
@@ -40,16 +40,10 @@
 
 - (id)init {
 	if ((self = [super init])) {
-		otag = [@"{{" retain];
-		ctag = [@"}}" retain];
+		otag = @"{{";
+		ctag = @"}}";
 	}
 	return self;
-}
-
-- (void)dealloc {
-	[otag release];
-	[ctag release];
-	[super dealloc];
 }
 
 - (void)parseTemplateString:(NSString *)templateString forTokenConsumer:(id<GRMustacheTokenConsumer>)theTokenConsumer {
@@ -194,7 +188,7 @@
 				}
 				break;
 				
-			case '=':
+			case '=': {
 				if ([tag characterAtIndex:tag.length-1] != '=') {
 					[self didFinishWithParseErrorAtLine:line description:@"Invalid set delimiter tag"];
 					return;
@@ -227,6 +221,7 @@
 				}
 				break;
 				
+			}
 			case '{':
 				tag = [[tag substringFromIndex:1] stringByTrimmingCharactersInSet:whitespaceCharacterSet];
 				if (tag.length == 0) {

@@ -30,13 +30,13 @@
 
 
 @interface GRMustacheTemplate()
-@property (nonatomic, retain) GRMustacheTemplateLoader *templateLoader;
-@property (nonatomic, retain) NSString *templateString;
-@property (nonatomic, retain) NSString *otag;
-@property (nonatomic, retain) NSString *ctag;
+@property (nonatomic, strong) GRMustacheTemplateLoader *templateLoader;
+@property (nonatomic, strong) NSString *templateString;
+@property (nonatomic, strong) NSString *otag;
+@property (nonatomic, strong) NSString *ctag;
 @property (nonatomic) NSInteger p;
 @property (nonatomic) NSInteger curline;
-@property (nonatomic, retain) NSMutableArray *elems;
+@property (nonatomic, strong) NSMutableArray *elems;
 - (id)initWithString:(NSString *)templateString templateId:(id)templateId templateLoader:(GRMustacheTemplateLoader *)templateLoader;
 @end
 
@@ -108,16 +108,6 @@
 			error:outError];
 }
 
-- (void)dealloc {
-	[templateId release];
-	[templateLoader release];
-	[templateString release];
-	[otag release];
-	[ctag release];
-	[elems release];
-	[super dealloc];
-}
-
 - (NSString *)render {
 	return [self renderObject:nil];
 }
@@ -136,7 +126,7 @@
 
 
 + (id)templateWithString:(NSString *)templateString templateId:(id)templateId templateLoader:(GRMustacheTemplateLoader *)templateLoader {
-	return [[[self alloc] initWithString:templateString templateId:templateId templateLoader:templateLoader] autorelease];
+	return [[self alloc] initWithString:templateString templateId:templateId templateLoader:templateLoader];
 }
 
 - (id)initWithString:(NSString *)theTemplateString templateId:(id)theTemplateId templateLoader:(GRMustacheTemplateLoader *)theTemplateLoader {
@@ -165,8 +155,6 @@
 							   templateLoader:templateLoader
 								   templateId:templateId
 										error:outError];
-	[compiler release];
-	[tokenProducer release];
 
 	if (elements == nil) {
 		return NO;

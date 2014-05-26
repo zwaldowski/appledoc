@@ -32,7 +32,7 @@
 @implementation GRMustacheLambdaBlockWrapper
 
 + (id)lambdaWithBlock:(GRMustacheLambdaBlock)block {
-	return [[[self alloc] initWithBlock:block] autorelease];
+	return [[self alloc] initWithBlock:block];
 }
 
 - (id)initWithBlock:(GRMustacheLambdaBlock)theBlock {
@@ -52,11 +52,6 @@
 
 - (NSString *)description {
 	return @"<GRMustacheLambda>";
-}
-
-- (void)dealloc {
-	[block release];
-	[super dealloc];
 }
 
 @end

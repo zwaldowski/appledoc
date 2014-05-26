@@ -28,10 +28,10 @@
 
 
 @interface GRMustacheSectionElement()
-@property (nonatomic, retain) NSString *name;
-@property (nonatomic, retain) NSString *templateString;
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *templateString;
 @property (nonatomic) BOOL inverted;
-@property (nonatomic, retain) NSArray *elems;
+@property (nonatomic, strong) NSArray *elems;
 - (id)initWithName:(NSString *)name string:(NSString *)templateString inverted:(BOOL)inverted elements:(NSArray *)elems;
 @end
 
@@ -43,7 +43,7 @@
 @synthesize elems;
 
 + (id)sectionElementWithName:(NSString *)name string:(NSString *)templateString inverted:(BOOL)inverted elements:(NSArray *)elems {
-	return [[[self alloc] initWithName:name string:templateString inverted:inverted elements:elems] autorelease];
+	return [[self alloc] initWithName:name string:templateString inverted:inverted elements:elems];
 }
 
 - (id)initWithName:(NSString *)theName string:(NSString *)theTemplateString inverted:(BOOL)theInverted elements:(NSArray *)theElems {
@@ -81,7 +81,7 @@
 		case GRMustacheObjectKindEnumerable:
 			if (inverted) {
 				BOOL empty = YES;
-				for (id object in value) {
+				for (__unused id object in value) {
 					empty = NO;
 					break;
 				}
@@ -128,13 +128,5 @@
 	
 	return buffer;
 }
-
-- (void)dealloc {
-	[name release];
-	[templateString release];
-	[elems release];
-	[super dealloc];
-}
-
 
 @end

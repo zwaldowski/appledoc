@@ -42,27 +42,27 @@ NSString* const GRMustacheDefaultExtension = @"mustache";
 }
 
 + (id)templateLoaderWithBaseURL:(NSURL *)url {
-	return [[[GRMustacheDirectoryTemplateLoader alloc] initWithURL:url extension:nil encoding:NSUTF8StringEncoding] autorelease];
+	return [[GRMustacheDirectoryTemplateLoader alloc] initWithURL:url extension:nil encoding:NSUTF8StringEncoding];
 }
 
 + (id)templateLoaderWithBaseURL:(NSURL *)url extension:(NSString *)ext {
-	return [[[GRMustacheDirectoryTemplateLoader alloc] initWithURL:url extension:ext encoding:NSUTF8StringEncoding] autorelease];
+	return [[GRMustacheDirectoryTemplateLoader alloc] initWithURL:url extension:ext encoding:NSUTF8StringEncoding];
 }
 
 + (id)templateLoaderWithBaseURL:(NSURL *)url extension:(NSString *)ext encoding:(NSStringEncoding)encoding {
-	return [[[GRMustacheDirectoryTemplateLoader alloc] initWithURL:url extension:ext encoding:encoding] autorelease];
+	return [[GRMustacheDirectoryTemplateLoader alloc] initWithURL:url extension:ext encoding:encoding];
 }
 
 + (id)templateLoaderWithBundle:(NSBundle *)bundle {
-	return [[[GRMustacheBundleTemplateLoader alloc] initWithBundle:bundle extension:nil encoding:NSUTF8StringEncoding] autorelease];
+	return [[GRMustacheBundleTemplateLoader alloc] initWithBundle:bundle extension:nil encoding:NSUTF8StringEncoding];
 }
 
 + (id)templateLoaderWithBundle:(NSBundle *)bundle extension:(NSString *)ext {
-	return [[[GRMustacheBundleTemplateLoader alloc] initWithBundle:bundle extension:ext encoding:NSUTF8StringEncoding] autorelease];
+	return [[GRMustacheBundleTemplateLoader alloc] initWithBundle:bundle extension:ext encoding:NSUTF8StringEncoding];
 }
 
 + (id)templateLoaderWithBundle:(NSBundle *)bundle extension:(NSString *)ext encoding:(NSStringEncoding)encoding {
-	return [[[GRMustacheBundleTemplateLoader alloc] initWithBundle:bundle extension:ext encoding:encoding] autorelease];
+	return [[GRMustacheBundleTemplateLoader alloc] initWithBundle:bundle extension:ext encoding:encoding];
 }
 
 - (id)initWithExtension:(NSString *)theExtension encoding:(NSStringEncoding)theEncoding {
@@ -70,9 +70,9 @@ NSString* const GRMustacheDefaultExtension = @"mustache";
 		if (theExtension == nil) {
 			theExtension = GRMustacheDefaultExtension;
 		}
-		extension = [theExtension retain];
+		extension = theExtension;
 		encoding = theEncoding;
-		templatesById = [[NSMutableDictionary dictionaryWithCapacity:4] retain];
+		templatesById = [NSMutableDictionary dictionaryWithCapacity:4];
 	}
 	return self;
 }
@@ -154,12 +154,6 @@ NSString* const GRMustacheDefaultExtension = @"mustache";
 - (NSString *)templateStringForTemplateId:(id)templateId error:(NSError **)outError {
 	NSAssert(NO, @"abstract method");
 	return nil;
-}
-
-- (void)dealloc {
-	[extension release];
-	[templatesById release];
-	[super dealloc];
 }
 
 @end

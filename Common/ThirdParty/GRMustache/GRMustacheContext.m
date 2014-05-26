@@ -63,12 +63,12 @@ static NSInteger BOOLPropertyType = NSNotFound;
 	static NSMutableDictionary *classes = nil;
 	
 	if (classes == nil) {
-		classes = [[NSMutableDictionary dictionaryWithCapacity:12] retain];
+		classes = [NSMutableDictionary dictionaryWithCapacity:12];
 	}
 	
 	NSMutableDictionary *propertyNames = [classes objectForKey:NSStringFromClass(class)];
 	if (propertyNames == nil) {
-		propertyNames = [[NSMutableDictionary dictionaryWithCapacity:4] retain];
+		propertyNames = [NSMutableDictionary dictionaryWithCapacity:4];
 		[classes setObject:propertyNames forKey:NSStringFromClass(class)];
 	}
 	
@@ -90,8 +90,8 @@ static NSInteger BOOLPropertyType = NSNotFound;
 
 
 @interface GRMustacheContext()
-@property (nonatomic, retain) id object;
-@property (nonatomic, retain) GRMustacheContext *parent;
+@property (nonatomic, strong) id object;
+@property (nonatomic, strong) GRMustacheContext *parent;
 - (id)initWithObject:(id)object parent:(GRMustacheContext *)parent;
 - (BOOL)shouldConsiderObjectValue:(id)value forKey:(NSString *)key asBoolean:(BOOL *)outBool;
 - (id)valueForKeyComponent:(NSString *)key foundInContext:(GRMustacheContext **)outContext;
@@ -107,13 +107,13 @@ static NSInteger BOOLPropertyType = NSNotFound;
 }
 
 + (id)contextWithObject:(id)object parent:(GRMustacheContext *)parent {
-	return [[[self alloc] initWithObject:object parent:parent] autorelease];
+	return [[self alloc] initWithObject:object parent:parent];
 }
 
 - (id)initWithObject:(id)theObject parent:(GRMustacheContext *)theParent {
 	if ((self = [self init])) {
-		object = [theObject retain];
-		parent = [theParent retain];
+		object = theObject;
+		parent = theParent;
 	}
 	return self;
 }
@@ -161,12 +161,6 @@ static NSInteger BOOLPropertyType = NSNotFound;
 	return context.object;
 }
 
-- (void)dealloc {
-	[object release];
-	[parent release];
-	[super dealloc];
-}
-
 - (id)valueForKeyComponent:(NSString *)key foundInContext:(GRMustacheContext **)outContext {
 	id value = nil;
 	@try {
@@ -206,7 +200,7 @@ static NSInteger BOOLPropertyType = NSNotFound;
 
 - (BOOL)shouldConsiderObjectValue:(id)value forKey:(NSString *)key asBoolean:(BOOL *)outBool {
 	// C99 bool type
-	if (CFBooleanGetTypeID() == CFGetTypeID(value)) {
+	if (CFBooleanGetTypeID() == CFGetTypeID((__bridge CFTypeRef)value)) {
 		if (outBool) {
 			*outBool = CFBooleanGetValue((CFBooleanRef)value);
 		}

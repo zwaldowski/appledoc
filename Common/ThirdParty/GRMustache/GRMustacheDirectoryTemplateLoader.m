@@ -27,7 +27,7 @@
 
 - (id)initWithURL:(NSURL *)theURL extension:(NSString *)ext encoding:(NSStringEncoding)encoding {
 	if ((self = [super initWithExtension:ext encoding:encoding])) {
-		url = [theURL retain];
+		url = theURL;
 	}
 	return self;
 }
@@ -57,11 +57,6 @@
 	}
 	[self setTemplate:template forTemplateId:templateURL];
 	return template;
-}
-
-- (void)dealloc {
-	[url release];
-	[super dealloc];
 }
 
 @end

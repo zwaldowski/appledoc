@@ -42,7 +42,7 @@ typedef enum {
 	NSRange range;
 }
 @property (nonatomic, readonly) GRMustacheTokenType type;
-@property (nonatomic, readonly, retain) NSString *content;
+@property (nonatomic, readonly, strong) NSString *content;
 @property (nonatomic, readonly) NSUInteger line;
 @property (nonatomic, readonly) NSRange range;
 + (id)tokenWithType:(GRMustacheTokenType)type content:(NSString *)content line:(NSUInteger)line range:(NSRange)range;

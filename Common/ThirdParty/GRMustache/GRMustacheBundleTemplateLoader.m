@@ -30,18 +30,13 @@
 		if (theBundle == nil) {
 			theBundle = [NSBundle mainBundle];
 		}
-		bundle = [theBundle retain];
+		bundle = theBundle;
 	}
 	return self;
 }
 
 - (id)templateIdForTemplateNamed:(NSString *)name relativeToTemplateId:(id)baseTemplateId {
 	return [bundle URLForResource:name withExtension:self.extension];
-}
-
-- (void)dealloc {
-	[bundle release];
-	[super dealloc];
 }
 
 @end

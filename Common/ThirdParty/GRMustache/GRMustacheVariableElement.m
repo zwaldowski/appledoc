@@ -22,10 +22,10 @@
 
 #import "GRMustache.h"
 #import "GRMustacheVariableElement_private.h"
-
+#import "GRMustacheContext_private.h"
 
 @interface GRMustacheVariableElement()
-@property (nonatomic, retain) NSString *name;
+@property (nonatomic, strong) NSString *name;
 @property (nonatomic) BOOL raw;
 - (id)initWithName:(NSString *)name raw:(BOOL)raw;
 - (NSString *)htmlEscape:(NSString *)string;
@@ -37,7 +37,7 @@
 @synthesize raw;
 
 + (id)variableElementWithName:(NSString *)name raw:(BOOL)raw {
-	return [[[self alloc] initWithName:name raw:raw] autorelease];
+	return [[self alloc] initWithName:name raw:raw];
 }
 
 - (id)initWithName:(NSString *)theName raw:(BOOL)theRaw {
@@ -69,11 +69,6 @@
 		}
 	}
 	return @"";
-}
-
-- (void)dealloc {
-	[name release];
-	[super dealloc];
 }
 
 @end

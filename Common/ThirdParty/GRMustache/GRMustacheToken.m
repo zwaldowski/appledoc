@@ -24,7 +24,7 @@
 
 
 @interface GRMustacheToken()
-@property (nonatomic, retain) NSString *content;
+@property (nonatomic, strong) NSString *content;
 - (id)initWithType:(GRMustacheTokenType)type content:(NSString *)content line:(NSUInteger)line range:(NSRange)range;
 @end
 
@@ -35,22 +35,17 @@
 @synthesize range;
 
 + (id)tokenWithType:(GRMustacheTokenType)type content:(NSString *)content line:(NSUInteger)line range:(NSRange)range {
-	return [[[self alloc] initWithType:type content:content line:line range:range] autorelease];
+	return [[self alloc] initWithType:type content:content line:line range:range];
 }
 
 - (id)initWithType:(GRMustacheTokenType)theType content:(NSString *)theContent line:(NSUInteger)theLine range:(NSRange)theRange {
 	if ((self = [self init])) {
 		type = theType;
-		content = [theContent retain];
+		content = theContent;
 		line = theLine;
 		range = theRange;
 	}
 	return self;
-}
-
-- (void)dealloc {
-	[content release];
-	[super dealloc];
 }
 
 @end
