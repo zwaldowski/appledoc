@@ -1,0 +1,3 @@
+[submodule "ddcli"]
+	path = Common/ThirdParty/ddcli
+	url = https://github.com/zwaldowski/ddcli.git

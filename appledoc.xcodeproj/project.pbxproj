@@ -15,10 +15,7 @@
 		7317CC0C12B10E3F009DAA15 /* GBApplicationTesting.m in Sources */ = {isa = PBXBuildFile; fileRef = 7317CC0B12B10E3F009DAA15 /* GBApplicationTesting.m */; };
 		7317CC0D12B113A3009DAA15 /* GBAdoptedProtocolsProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 73FC729811FD925B00AAD0B9 /* GBAdoptedProtocolsProvider.m */; };
 		7317CC0E12B113A5009DAA15 /* GBAppledocApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D54D2811F8D59200CCDDB0 /* GBAppledocApplication.m */; };
-		7317CC0F12B113AE009DAA15 /* DDCliApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D54D1611F8D53E00CCDDB0 /* DDCliApplication.m */; };
 		7317CC1012B113BF009DAA15 /* GBGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 73AA9F721253BF4000074152 /* GBGenerator.m */; };
-		7317CC1112B113CC009DAA15 /* DDCliParseException.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D54D1811F8D53E00CCDDB0 /* DDCliParseException.m */; };
-		7317CC1212B113CF009DAA15 /* DDGetoptLongParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D54D1D11F8D53E00CCDDB0 /* DDGetoptLongParser.m */; };
 		7317CC1312B113E4009DAA15 /* GBHTMLOutputGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 73473D3012A38B730011336C /* GBHTMLOutputGenerator.m */; };
 		7317CC1412B113EB009DAA15 /* GBOutputGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D2524512A2ED610024F9F9 /* GBOutputGenerator.m */; };
 		7317CC1512B113ED009DAA15 /* GBDocSetOutputGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 731872C412A3B75C0035509F /* GBDocSetOutputGenerator.m */; };
@@ -87,7 +84,6 @@
 		733EA18E122BE1810060CBDE /* GBParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 73FC6DB411FCCCC600AAD0B9 /* GBParser.m */; };
 		733EA18F122BE1810060CBDE /* GBTokenizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 73FC702711FCEB5300AAD0B9 /* GBTokenizer.m */; };
 		733EA190122BE1820060CBDE /* PKToken+GBToken.m in Sources */ = {isa = PBXBuildFile; fileRef = 73FC701111FCEA7200AAD0B9 /* PKToken+GBToken.m */; };
-		733EA194122BE1A30060CBDE /* DDCliUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D54D1A11F8D53E00CCDDB0 /* DDCliUtil.m */; };
 		733EA1AE122BE1B30060CBDE /* libParseKitLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 73FC6FA911FCE93400AAD0B9 /* libParseKitLib.a */; };
 		7340F02811FCC63100E712A4 /* NSFileManager+GBFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 7340F02511FCC63100E712A4 /* NSFileManager+GBFileManager.m */; };
 		7340F02911FCC63100E712A4 /* NSObject+GBObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 7340F02711FCC63100E712A4 /* NSObject+GBObject.m */; };
@@ -168,10 +164,6 @@
 		73D2524612A2ED610024F9F9 /* GBOutputGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D2524512A2ED610024F9F9 /* GBOutputGenerator.m */; };
 		73D54C6211F8CE6D00CCDDB0 /* appledoc.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D54C6111F8CE6D00CCDDB0 /* appledoc.m */; };
 		73D54CA911F8D27F00CCDDB0 /* GBLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D54CA811F8D27F00CCDDB0 /* GBLog.m */; };
-		73D54D1E11F8D53E00CCDDB0 /* DDCliApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D54D1611F8D53E00CCDDB0 /* DDCliApplication.m */; };
-		73D54D1F11F8D53E00CCDDB0 /* DDCliParseException.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D54D1811F8D53E00CCDDB0 /* DDCliParseException.m */; };
-		73D54D2011F8D53E00CCDDB0 /* DDCliUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D54D1A11F8D53E00CCDDB0 /* DDCliUtil.m */; };
-		73D54D2111F8D53E00CCDDB0 /* DDGetoptLongParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D54D1D11F8D53E00CCDDB0 /* DDGetoptLongParser.m */; };
 		73D54D2911F8D59200CCDDB0 /* GBAppledocApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D54D2811F8D59200CCDDB0 /* GBAppledocApplication.m */; };
 		73D708881267226900355DB6 /* GBApplicationSettingsProviderTesting.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D708871267226900355DB6 /* GBApplicationSettingsProviderTesting.m */; };
 		73E0CF46131047E700FAFEC0 /* GBCommentsProcessor-MarkdownTesting.m in Sources */ = {isa = PBXBuildFile; fileRef = 73E0CF45131047E700FAFEC0 /* GBCommentsProcessor-MarkdownTesting.m */; };
@@ -242,6 +234,11 @@
 		D818BACE15203AA700B26451 /* GHUnit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 733EA0F1122BDC5B0060CBDE /* GHUnit.framework */; };
 		D818BACF15203AA700B26451 /* OCMock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 73FC6EDF11FCE01E00AAD0B9 /* OCMock.framework */; };
 		D818BAD015203AA700B26451 /* OCHamcrest.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 73FC6E1E11FCD5E200AAD0B9 /* OCHamcrest.framework */; };
+		DB83BDE5193398EA007B86DE /* dd_getopt_long-fbsd.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83BDDB193398EA007B86DE /* dd_getopt_long-fbsd.m */; };
+		DB83BDE6193398EA007B86DE /* DDCliApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83BDDD193398EA007B86DE /* DDCliApplication.m */; };
+		DB83BDE7193398EA007B86DE /* DDCliParseException.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83BDDF193398EA007B86DE /* DDCliParseException.m */; };
+		DB83BDE8193398EA007B86DE /* DDCliUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83BDE1193398EA007B86DE /* DDCliUtil.m */; };
+		DB83BDE9193398EA007B86DE /* DDGetoptLongParser.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83BDE4193398EA007B86DE /* DDGetoptLongParser.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -406,15 +403,6 @@
 		73D54C6911F8CEEF00CCDDB0 /* appledoc_prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = appledoc_prefix.pch; sourceTree = "<group>"; };
 		73D54CA711F8D27F00CCDDB0 /* GBLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GBLog.h; sourceTree = "<group>"; };
 		73D54CA811F8D27F00CCDDB0 /* GBLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GBLog.m; sourceTree = "<group>"; };
-		73D54D1511F8D53E00CCDDB0 /* DDCliApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDCliApplication.h; sourceTree = "<group>"; };
-		73D54D1611F8D53E00CCDDB0 /* DDCliApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDCliApplication.m; sourceTree = "<group>"; };
-		73D54D1711F8D53E00CCDDB0 /* DDCliParseException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDCliParseException.h; sourceTree = "<group>"; };
-		73D54D1811F8D53E00CCDDB0 /* DDCliParseException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDCliParseException.m; sourceTree = "<group>"; };
-		73D54D1911F8D53E00CCDDB0 /* DDCliUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDCliUtil.h; sourceTree = "<group>"; };
-		73D54D1A11F8D53E00CCDDB0 /* DDCliUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDCliUtil.m; sourceTree = "<group>"; };
-		73D54D1B11F8D53E00CCDDB0 /* DDCommandLineInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDCommandLineInterface.h; sourceTree = "<group>"; };
-		73D54D1C11F8D53E00CCDDB0 /* DDGetoptLongParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDGetoptLongParser.h; sourceTree = "<group>"; };
-		73D54D1D11F8D53E00CCDDB0 /* DDGetoptLongParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDGetoptLongParser.m; sourceTree = "<group>"; };
 		73D54D2711F8D59200CCDDB0 /* GBAppledocApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GBAppledocApplication.h; sourceTree = "<group>"; };
 		73D54D2811F8D59200CCDDB0 /* GBAppledocApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = GBAppledocApplication.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		73D708871267226900355DB6 /* GBApplicationSettingsProviderTesting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = GBApplicationSettingsProviderTesting.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -567,6 +555,16 @@
 		D4B844EE17A122650012C1DC /* GBEnumConstantData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GBEnumConstantData.m; sourceTree = "<group>"; };
 		D4B844F017A122A40012C1DC /* GBEnumConstantProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GBEnumConstantProvider.h; sourceTree = "<group>"; };
 		D4B844F117A122A50012C1DC /* GBEnumConstantProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GBEnumConstantProvider.m; sourceTree = "<group>"; };
+		DB83BDDB193398EA007B86DE /* dd_getopt_long-fbsd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "dd_getopt_long-fbsd.m"; sourceTree = "<group>"; };
+		DB83BDDC193398EA007B86DE /* DDCliApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDCliApplication.h; sourceTree = "<group>"; };
+		DB83BDDD193398EA007B86DE /* DDCliApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDCliApplication.m; sourceTree = "<group>"; };
+		DB83BDDE193398EA007B86DE /* DDCliParseException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDCliParseException.h; sourceTree = "<group>"; };
+		DB83BDDF193398EA007B86DE /* DDCliParseException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDCliParseException.m; sourceTree = "<group>"; };
+		DB83BDE0193398EA007B86DE /* DDCliUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDCliUtil.h; sourceTree = "<group>"; };
+		DB83BDE1193398EA007B86DE /* DDCliUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDCliUtil.m; sourceTree = "<group>"; };
+		DB83BDE2193398EA007B86DE /* DDCommandLineInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDCommandLineInterface.h; sourceTree = "<group>"; };
+		DB83BDE3193398EA007B86DE /* DDGetoptLongParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDGetoptLongParser.h; sourceTree = "<group>"; };
+		DB83BDE4193398EA007B86DE /* DDGetoptLongParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDGetoptLongParser.m; sourceTree = "<group>"; };
 		F59056EC16C1C6DC00391620 /* publish */ = {isa = PBXFileReference; lastKnownFileType = folder; path = publish; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -855,7 +853,7 @@
 			isa = PBXGroup;
 			children = (
 				73D54C9611F8D21000CCDDB0 /* CocoaLumberjack */,
-				73D54CD511F8D43D00CCDDB0 /* DDCli */,
+				DB83BDDA193398EA007B86DE /* ddcli */,
 				B4D1FFBE15FF5F05009736E2 /* DDMinizip */,
 				B4D1FFD015FF5F05009736E2 /* DDUtils */,
 				733EA47C122CE8C40060CBDE /* RegexKitLite */,
@@ -878,22 +876,6 @@
 				73F568BE12A22A7900A72BB2 /* DDTTYLogger.m */,
 			);
 			path = CocoaLumberjack;
-			sourceTree = "<group>";
-		};
-		73D54CD511F8D43D00CCDDB0 /* DDCli */ = {
-			isa = PBXGroup;
-			children = (
-				73D54D1511F8D53E00CCDDB0 /* DDCliApplication.h */,
-				73D54D1611F8D53E00CCDDB0 /* DDCliApplication.m */,
-				73D54D1711F8D53E00CCDDB0 /* DDCliParseException.h */,
-				73D54D1811F8D53E00CCDDB0 /* DDCliParseException.m */,
-				73D54D1911F8D53E00CCDDB0 /* DDCliUtil.h */,
-				73D54D1A11F8D53E00CCDDB0 /* DDCliUtil.m */,
-				73D54D1B11F8D53E00CCDDB0 /* DDCommandLineInterface.h */,
-				73D54D1C11F8D53E00CCDDB0 /* DDGetoptLongParser.h */,
-				73D54D1D11F8D53E00CCDDB0 /* DDGetoptLongParser.m */,
-			);
-			path = DDCli;
 			sourceTree = "<group>";
 		};
 		73D54D1411F8D4FF00CCDDB0 /* Application */ = {
@@ -1202,6 +1184,24 @@
 			path = DDUtils;
 			sourceTree = "<group>";
 		};
+		DB83BDDA193398EA007B86DE /* ddcli */ = {
+			isa = PBXGroup;
+			children = (
+				DB83BDDB193398EA007B86DE /* dd_getopt_long-fbsd.m */,
+				DB83BDDC193398EA007B86DE /* DDCliApplication.h */,
+				DB83BDDD193398EA007B86DE /* DDCliApplication.m */,
+				DB83BDDE193398EA007B86DE /* DDCliParseException.h */,
+				DB83BDDF193398EA007B86DE /* DDCliParseException.m */,
+				DB83BDE0193398EA007B86DE /* DDCliUtil.h */,
+				DB83BDE1193398EA007B86DE /* DDCliUtil.m */,
+				DB83BDE2193398EA007B86DE /* DDCommandLineInterface.h */,
+				DB83BDE3193398EA007B86DE /* DDGetoptLongParser.h */,
+				DB83BDE4193398EA007B86DE /* DDGetoptLongParser.m */,
+			);
+			name = ddcli;
+			path = ddcli/lib;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1347,15 +1347,12 @@
 				733EA14A122BDECC0060CBDE /* GBObjectiveCParser-AdoptedProtocolsParsingTesting.m in Sources */,
 				7317CC1412B113EB009DAA15 /* GBOutputGenerator.m in Sources */,
 				733EA14B122BDECC0060CBDE /* GBObjectiveCParser-CategoryParsingTesting.m in Sources */,
-				7317CC1112B113CC009DAA15 /* DDCliParseException.m in Sources */,
 				733EA14C122BDECD0060CBDE /* GBObjectiveCParser-ClassParsingTesting.m in Sources */,
 				7317CC1012B113BF009DAA15 /* GBGenerator.m in Sources */,
-				7317CC1212B113CF009DAA15 /* DDGetoptLongParser.m in Sources */,
 				733EA14D122BDECD0060CBDE /* GBObjectiveCParser-IvarsParsingTesting.m in Sources */,
 				733EA14E122BDECE0060CBDE /* GBObjectiveCParser-MethodsParsingTesting.m in Sources */,
 				7317CC1512B113ED009DAA15 /* GBDocSetOutputGenerator.m in Sources */,
 				7317CC1312B113E4009DAA15 /* GBHTMLOutputGenerator.m in Sources */,
-				7317CC0F12B113AE009DAA15 /* DDCliApplication.m in Sources */,
 				7317CC1712B11424009DAA15 /* NSError+GBError.m in Sources */,
 				733EA14F122BDECE0060CBDE /* GBObjectiveCParser-ProtocolParsingTesting.m in Sources */,
 				733EA150122BDECF0060CBDE /* GBObjectsAssertor.m in Sources */,
@@ -1391,7 +1388,6 @@
 				733EA18E122BE1810060CBDE /* GBParser.m in Sources */,
 				733EA18F122BE1810060CBDE /* GBTokenizer.m in Sources */,
 				733EA190122BE1820060CBDE /* PKToken+GBToken.m in Sources */,
-				733EA194122BE1A30060CBDE /* DDCliUtil.m in Sources */,
 				73CF8132122D3824005B7E26 /* RegexKitLite.m in Sources */,
 				73F2CA74123E4161009B406B /* GBCommentsProcessor.m in Sources */,
 				73F2CA75123E4161009B406B /* GBProcessor.m in Sources */,
@@ -1464,10 +1460,6 @@
 			files = (
 				73D54C6211F8CE6D00CCDDB0 /* appledoc.m in Sources */,
 				73D54CA911F8D27F00CCDDB0 /* GBLog.m in Sources */,
-				73D54D1E11F8D53E00CCDDB0 /* DDCliApplication.m in Sources */,
-				73D54D1F11F8D53E00CCDDB0 /* DDCliParseException.m in Sources */,
-				73D54D2011F8D53E00CCDDB0 /* DDCliUtil.m in Sources */,
-				73D54D2111F8D53E00CCDDB0 /* DDGetoptLongParser.m in Sources */,
 				73D54D2911F8D59200CCDDB0 /* GBAppledocApplication.m in Sources */,
 				731E7CE811F9962D00AAF15D /* NSException+GBException.m in Sources */,
 				7340F02811FCC63100E712A4 /* NSFileManager+GBFileManager.m in Sources */,
@@ -1476,6 +1468,7 @@
 				73FC6DDC11FCCE6B00AAD0B9 /* GBObjectiveCParser.m in Sources */,
 				73FC6E1011FCD54400AAD0B9 /* GBStore.m in Sources */,
 				73FC6E8811FCD93A00AAD0B9 /* GBClassData.m in Sources */,
+				DB83BDE9193398EA007B86DE /* DDGetoptLongParser.m in Sources */,
 				73FC701311FCEA7200AAD0B9 /* PKToken+GBToken.m in Sources */,
 				73FC702911FCEB5300AAD0B9 /* GBTokenizer.m in Sources */,
 				73FC729911FD925B00AAD0B9 /* GBAdoptedProtocolsProvider.m in Sources */,
@@ -1497,6 +1490,7 @@
 				7307B31B124A1C2E007EC6B8 /* GBMethodSectionData.m in Sources */,
 				736B2BF7124BCBB6009145B1 /* GBSourceInfo.m in Sources */,
 				73AA9F731253BF4000074152 /* GBGenerator.m in Sources */,
+				DB83BDE5193398EA007B86DE /* dd_getopt_long-fbsd.m in Sources */,
 				739AD5801255C3E600B642C3 /* GBApplicationStringsProvider.m in Sources */,
 				739AD6301255D8CB00B642C3 /* GBHTMLTemplateVariablesProvider.m in Sources */,
 				736A2760125845000078F4FE /* GBApplicationSettingsProvider.m in Sources */,
@@ -1515,7 +1509,9 @@
 				7359B15D129A5A0700F67AD1 /* GRMustacheTemplate.m in Sources */,
 				7359B15F129A5A0700F67AD1 /* GRMustacheTemplateLoader.m in Sources */,
 				7359B161129A5A0700F67AD1 /* GRMustacheTextElement.m in Sources */,
+				DB83BDE7193398EA007B86DE /* DDCliParseException.m in Sources */,
 				7359B163129A5A0700F67AD1 /* GRMustacheToken.m in Sources */,
+				DB83BDE8193398EA007B86DE /* DDCliUtil.m in Sources */,
 				7359B165129A5A0700F67AD1 /* GRMustacheTokenizer.m in Sources */,
 				7359B167129A5A0700F67AD1 /* GRMustacheURLTemplateLoader.m in Sources */,
 				7359B169129A5A0700F67AD1 /* GRMustacheVariableElement.m in Sources */,
@@ -1530,6 +1526,7 @@
 				731872C512A3B75C0035509F /* GBDocSetOutputGenerator.m in Sources */,
 				73397A2812A5070700EDC035 /* GBTask.m in Sources */,
 				732E6CBD12DF02B7009DD6E0 /* NSArray+GBArray.m in Sources */,
+				DB83BDE6193398EA007B86DE /* DDCliApplication.m in Sources */,
 				7335F72B12E58DCC0094F72E /* GBDocSetInstallGenerator.m in Sources */,
 				7335F72E12E58E160094F72E /* GBDocSetPublishGenerator.m in Sources */,
 				735B23811304024600704844 /* GBDocumentData.m in Sources */,
