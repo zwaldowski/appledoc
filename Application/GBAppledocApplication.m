@@ -153,11 +153,11 @@ static char *const kGBArgNoWarnOnMissingMethodArgument = "no-warn-missing-arg";
 - (void)injectSettingsFromSettingsFile:(NSString *)path parser:(DDGetoptLongParser *)parser usingBlock:(BOOL (^)(NSString *option, id *value, BOOL *stop))block;
 - (BOOL)validateTemplatesPath:(NSString *)path error:(NSError **)error;
 
-@property (readwrite, retain) GBApplicationSettingsProvider *settings;
-@property (retain) NSMutableArray *additionalInputPaths;
-@property (retain) NSMutableArray *ignoredInputPaths;
-@property (assign) NSString *logformat;
-@property (assign) NSString *verbose;
+@property (readwrite, strong) GBApplicationSettingsProvider *settings;
+@property (strong) NSMutableArray *additionalInputPaths;
+@property (strong) NSMutableArray *ignoredInputPaths;
+@property (strong) NSString *logformat;
+@property (strong) NSString *verbose;
 @property (assign) BOOL templatesFound;
 @property (assign) BOOL printSettings;
 @property (assign) BOOL version;
@@ -385,7 +385,6 @@ static char *const kGBArgNoWarnOnMissingMethodArgument = "no-warn-missing-arg";
 	[[GBConsoleLogger sharedInstance] setLogFormatter:formatter];
 	[DDLog addLogger:[GBConsoleLogger sharedInstance]];
 	[GBLog setLogLevelFromVerbose:self.verbose];
-	[formatter release];
 }
 
 - (void)deleteContentsOfOutputPath {
@@ -700,8 +699,8 @@ static char *const kGBArgNoWarnOnMissingMethodArgument = "no-warn-missing-arg";
 				// If option is input path, add it to additional paths. We'll append these to any path found from command line. Note that we must properly handle . paths and paths not starting with / or ~; we assume these are relative paths so we prefix them with the path of the settings file!
 				if (!strcmp(option.UTF8String, kGBArgInputPath)) {
 					for (NSString *inputPath in *value) {
-						inputPath = [self combineBasePath:plistPath withRelativePath:inputPath];
-						[self.additionalInputPaths addObject:inputPath];
+						NSString *combined = [self combineBasePath:plistPath withRelativePath:inputPath];
+						[self.additionalInputPaths addObject:combined];
 					}
 					return NO;
 				} else if (!strcmp(option.UTF8String, kGBArgTemplatesPath)) {

@@ -15,9 +15,9 @@
 @interface GBCrossRefData : NSObject
 
 @property (assign) NSRange range;
-@property (retain) NSString *address;
-@property (retain) NSString *description;
-@property (retain) NSString *markdown;
+@property (strong) NSString *address;
+@property (strong) NSString *description;
+@property (strong) NSString *markdown;
 
 @property (assign, readonly) BOOL isValid;
 
@@ -28,13 +28,7 @@
 + (instancetype) crossRefData {
     GBCrossRefData *result = [[self alloc] init];
     result.range = NSMakeRange(NSNotFound, 0);
-    return [result autorelease];
-}
-
-- (void) dealloc {
-    [self.address release];
-    [self.description release];
-    [self.markdown release];
+    return result;
 }
 
 - (BOOL) isInsideCrossRef:(GBCrossRefData *) outer {
@@ -122,16 +116,16 @@ typedef NSUInteger GBProcessingFlag;
 - (NSString *)stringByConvertingLinesToBlockquoteFromString:(NSString *)string class:(NSString *)className;
 - (NSString *)stringByCombiningTrimmedLines:(NSArray *)lines;
 
-@property (retain) id currentContext;
-@property (retain) id currentObject;
-@property (retain) GBComment *currentComment;
-@property (retain) GBStore *store;
-@property (retain) GBApplicationSettingsProvider *settings;
+@property (strong) id currentContext;
+@property (strong) id currentObject;
+@property (strong) GBComment *currentComment;
+@property (strong) GBStore *store;
+@property (strong) GBApplicationSettingsProvider *settings;
 @property (readonly) GBCommentComponentsProvider *components;
 
-@property (retain) NSMutableDictionary *reservedShortDescriptionData;
-@property (retain) GBSourceInfo *currentSourceInfo;
-@property (retain) id lastReferencedObject;
+@property (strong) NSMutableDictionary *reservedShortDescriptionData;
+@property (strong) GBSourceInfo *currentSourceInfo;
+@property (strong) id lastReferencedObject;
 
 @end
 
@@ -142,7 +136,7 @@ typedef NSUInteger GBProcessingFlag;
 #pragma mark Initialization & disposal
 
 + (id)processorWithSettingsProvider:(id)settingsProvider {
-	return [[[self alloc] initWithSettingsProvider:settingsProvider] autorelease];
+	return [[self alloc] initWithSettingsProvider:settingsProvider];
 }
 
 - (id)initWithSettingsProvider:(id)settingsProvider {

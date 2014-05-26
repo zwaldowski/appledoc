@@ -28,7 +28,7 @@
     GBLogDebug(@"Initializing methods provider for %@...", parent);
     self = [super init];
     if (self) {
-        _parent = [parent retain];
+        _parent = parent;
         _sections = [[NSMutableArray alloc] init];
         _methods = [[NSMutableArray alloc] init];
         _classMethods = [[NSMutableArray alloc] init];
@@ -45,7 +45,7 @@
 
 - (GBMethodSectionData *)registerSectionWithName:(NSString *)name {
 	GBLogDebug(@"%@: Registering section %@...", _parent, name ? name : @"default");
-	GBMethodSectionData *section = [[[GBMethodSectionData alloc] init] autorelease];
+	GBMethodSectionData *section = [[GBMethodSectionData alloc] init];
 	section.sectionName = name;
 	_registeringSection = section;
 	[_sections addObject:section];

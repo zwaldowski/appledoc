@@ -100,7 +100,7 @@ NSString *NSStringFromGBPublishedFeedFormats(GBPublishedFeedFormats formats) {
 }
 
 + (id)provider {
-	return [[[self alloc] init] autorelease];
+	return [[self alloc] init];
 }
 
 - (id)init {
