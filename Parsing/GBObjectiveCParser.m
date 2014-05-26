@@ -7,7 +7,7 @@
 //
 
 #import "RegexKitLite.h"
-#import "ParseKit.h"
+#import <ParseKit/ParseKit.h>
 #import "PKToken+GBToken.h"
 #import "GBTokenizer.h"
 #import "GBStore.h"
