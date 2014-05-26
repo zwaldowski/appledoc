@@ -19,114 +19,131 @@
 #import "DDEmbeddedDataReader.h"
 #import "DDZipReader.h"
 
+#define DECL_PARAM(name, long, short) \
+static const DDGetoptOption name = { long, short, DDGetoptRequiredArgument }
+#define DECL_X_PARAM(name, long) \
+static const DDGetoptOption name = { long, 0, DDGetoptRequiredArgument }
+#define DECL_FLAG(name, long, short) \
+static const DDGetoptOption name = { long, short, DDGetoptNoArgument }
+#define DECL_X_FLAG(name, long) \
+static const DDGetoptOption name = { long, 0, DDGetoptNoArgument }
 
-static char *const kGBArgInputPath = "input";
-static char *const kGBArgOutputPath = "output";
-static char *const kGBArgTemplatesPath = "templates";
-static char *const kGBArgDocSetInstallPath = "docset-install-path";
-static char *const kGBArgXcrunPath = "xcrun-path";
-static char *const kGBArgIndexDescPath = "index-desc";
-static char *const kGBArgIncludePath = "include";
-static char *const kGBArgIgnorePath = "ignore";
-static char *const kGBArgExcludeOutputPath = "exclude-output";
+DECL_X_PARAM(GBArgInputPath, 	"input");
+DECL_PARAM(GBArgOutputPath,		"output",		'o');
+DECL_PARAM(GBArgTemplatesPath,	"templates",	't');
+DECL_PARAM(GBArgIgnorePath,		"ignore",		'i');
 
-static char *const kGBArgProjectName = "project-name";
-static char *const kGBArgProjectVersion = "project-version";
-static char *const kGBArgProjectCompany = "project-company";
-static char *const kGBArgCompanyIdentifier = "company-id";
+DECL_PARAM(GBArgExcludeOutputPath,		"exclude-output",	'x');
+DECL_PARAM(GBArgIncludePath,				"include",			's');
+DECL_X_PARAM(GBArgIndexDescPath,			"index-desc");
+DECL_X_PARAM(GBArgDocSetInstallPath,		"docset-install-path");
+DECL_X_PARAM(GBArgXcrunPath,				"xcrun-path");
 
-static char *const kGBArgCleanOutput = "clean-output";
-static char *const kGBArgCreateHTML = "create-html";
-static char *const kGBArgCreateDocSet = "create-docset";
-static char *const kGBArgFinalizeDocSet = "finalize-docset";
-static char *const kGBArgInstallDocSet = "install-docset";
-static char *const kGBArgPublishDocSet = "publish-docset";
-static char *const kGBArgHTMLAnchorFormat = "html-anchors";
-static char *const kGBArgKeepIntermediateFiles = "keep-intermediate-files";
-static char *const kGBArgExitCodeThreshold = "exit-threshold";
+DECL_PARAM(GBArgProjectName,				"project-name",		'p');
+DECL_PARAM(GBArgProjectVersion,			"project-version",	'v');
+DECL_PARAM(GBArgProjectCompany,			"project-company",	'c');
+DECL_X_PARAM(GBArgCompanyIdentifier,		"company-id");
 
-static char *const kGBArgRepeatFirstParagraph = "repeat-first-par";
-static char *const kGBArgPreprocessHeaderDoc = "preprocess-headerdoc";
-static char *const kGBArgPrintInformationBlockTitles = "print-information-block-titles";
-static char *const kGBArgUseSingleStar = "use-single-star";
-static char *const kGBArgKeepUndocumentedObjects = "keep-undocumented-objects";
-static char *const kGBArgKeepUndocumentedMembers = "keep-undocumented-members";
-static char *const kGBArgFindUndocumentedMembersDocumentation = "search-undocumented-doc";
-static char *const kGBArgMergeCategoriesToClasses = "merge-categories";
-static char *const kGBArgMergeCategoryComment = "merge-category-comment";
-static char *const kGBArgKeepMergedCategoriesSections = "keep-merged-sections";
-static char *const kGBArgPrefixMergedCategoriesSectionsWithCategoryName = "prefix-merged-sections";
-static char *const kGBArgUseCodeOrder = "use-code-order";
+DECL_X_PARAM(GBArgDocSetBundleIdentifier,		"docset-bundle-id");
+DECL_X_PARAM(GBArgDocSetBundleName,				"docset-bundle-name");
+DECL_X_PARAM(GBArgDocSetCertificateIssuer,		"docset-cert-issuer");
+DECL_X_PARAM(GBArgDocSetCertificateSigner,		"docset-cert-signer");
+DECL_X_PARAM(GBArgDocSetDescription,				"docset-desc");
+DECL_X_PARAM(GBArgDocSetFallbackURL,				"docset-fallback-url");
+DECL_X_PARAM(GBArgDocSetFeedName,				"docset-feed-name");
+DECL_X_PARAM(GBArgDocSetFeedURL,					"docset-feed-url");
+DECL_X_PARAM(GBArgDocSetFeedFormats,				"docset-feed-formats");
+DECL_X_PARAM(GBArgDocSetPackageURL,				"docset-package-url");
+DECL_X_PARAM(GBArgDocSetMinimumXcodeVersion,	"docset-min-xcode-version");
+DECL_X_PARAM(GBArgDocSetPlatformFamily,			"docset-platform-family");
+DECL_X_PARAM(GBArgDocSetPublisherIdentifier,	"docset-publisher-id");
+DECL_X_PARAM(GBArgDocSetPublisherName,			"docset-publisher-name");
+DECL_X_PARAM(GBArgDocSetCopyrightMessage,		"docset-copyright");
+DECL_X_PARAM(GBArgDashPlatformFamily,			"dash-platform-family");
 
-static char *const kGBArgExplicitCrossRef = "explicit-crossref";
-static char *const kGBArgCrossRefFormat = "crossref-format";
+DECL_X_PARAM(GBArgDocSetBundleFilename,			"docset-bundle-filename");
+DECL_X_PARAM(GBArgDocSetAtomFilename,			"docset-atom-filename");
+DECL_X_PARAM(GBArgDocSetXMLFilename,				"docset-xml-filename");
+DECL_X_PARAM(GBArgDocSetPackageFilename,			"docset-package-filename");
 
-static char *const kGBArgWarnOnMissingOutputPath = "warn-missing-output-path";
-static char *const kGBArgWarnOnMissingCompanyIdentifier = "warn-missing-company-id";
-static char *const kGBArgWarnOnUndocumentedObject = "warn-undocumented-object";
-static char *const kGBArgWarnOnUndocumentedMember = "warn-undocumented-member";
-static char *const kGBArgWarnOnEmptyDescription = "warn-empty-description";
-static char *const kGBArgWarnOnUnknownDirective = "warn-unknown-directive";
-static char *const kGBArgWarnOnInvalidCrossReference = "warn-invalid-crossref";
-static char *const kGBArgWarnOnMissingMethodArgument = "warn-missing-arg";
+DECL_X_FLAG(GBArgCleanOutput,		"clean-output");
+DECL_FLAG(GBArgCreateHTML,			"create-html",		'h');
+DECL_FLAG(GBArgCreateDocSet,			"create-docset",	'd');
+DECL_X_FLAG(GBArgFinalizeDocSet,		"finalize-docset");
+DECL_FLAG(GBArgInstallDocSet,		"install-docset",	'n');
+DECL_FLAG(GBArgPublishDocSet,		"publish-docset",	'u');
+DECL_X_PARAM(GBArgHTMLAnchorFormat, "html-anchors");
+DECL_X_FLAG(GBArgNoCreateHTML,		"no-create-html");
+DECL_X_FLAG(GBArgNoCreateDocSet,		"no-create-docset");
+DECL_X_FLAG(GBArgNoInstallDocSet,	"no-install-docset");
+DECL_X_FLAG(GBArgNoPublishDocSet,	"no-publish-docset");
 
-static char *const kGBArgDocSetBundleIdentifier = "docset-bundle-id";
-static char *const kGBArgDocSetBundleName = "docset-bundle-name";
-static char *const kGBArgDocSetDescription = "docset-desc";
-static char *const kGBArgDocSetCopyrightMessage = "docset-copyright";
-static char *const kGBArgDocSetFeedName = "docset-feed-name";
-static char *const kGBArgDocSetFeedURL = "docset-feed-url";
-static char *const kGBArgDocSetFeedFormats = "docset-feed-formats";
-static char *const kGBArgDocSetPackageURL = "docset-package-url";
-static char *const kGBArgDocSetFallbackURL = "docset-fallback-url";
-static char *const kGBArgDocSetPublisherIdentifier = "docset-publisher-id";
-static char *const kGBArgDocSetPublisherName = "docset-publisher-name";
-static char *const kGBArgDocSetMinimumXcodeVersion = "docset-min-xcode-version";
-static char *const kGBArgDashPlatformFamily = "dash-platform-family";
-static char *const kGBArgDocSetPlatformFamily = "docset-platform-family";
-static char *const kGBArgDocSetCertificateIssuer = "docset-cert-issuer";
-static char *const kGBArgDocSetCertificateSigner = "docset-cert-signer";
+DECL_X_PARAM(GBArgCrossRefFormat,		"crossref-format");
+DECL_X_FLAG(GBArgExplicitCrossRef,		"explicit-crossref");
+DECL_X_FLAG(GBArgNoExplicitCrossRef,		"no-explicit-crossref");
 
-static char *const kGBArgDocSetBundleFilename = "docset-bundle-filename";
-static char *const kGBArgDocSetAtomFilename = "docset-atom-filename";
-static char *const kGBArgDocSetXMLFilename = "docset-xml-filename";
-static char *const kGBArgDocSetPackageFilename = "docset-package-filename";
+DECL_X_FLAG(GBArgKeepIntermediateFiles,				"keep-intermediate-files");
+DECL_X_FLAG(GBArgKeepUndocumentedObjects,			"keep-undocumented-objects");
+DECL_X_FLAG(GBArgKeepUndocumentedMembers,			"keep-undocumented-members");
+DECL_X_FLAG(GBArgFindUndocumentedMembers,			"search-undocumented-doc");
+DECL_X_FLAG(GBArgRepeatFirstParagraph,				"repeat-first-par");
+DECL_X_FLAG(GBArgPreprocessHeaderDoc,				"preprocess-headerdoc");
+DECL_X_FLAG(GBArgPrintInformationBlockTitles,		"print-information-block-titles");
+DECL_X_FLAG(GBArgNoPrintInformationBlockTitles,		"no-print-information-block-titles");
+DECL_X_FLAG(GBArgUseSingleStar,						"use-single-star");
+DECL_X_FLAG(GBArgMergeCategoriesToClasses,			"merge-categories");
+DECL_X_FLAG(GBArgMergeCategoryComment,				"merge-category-comment");
+DECL_X_FLAG(GBArgKeepMergedCategoriesSections,		"keep-merged-sections");
+DECL_X_FLAG(GBArgPrefixMergedCategoriesSections,	"prefix-merged-sections");
+DECL_X_FLAG(GBArgUseCodeOrder,						"use-code-order");
+DECL_X_PARAM(GBArgExitCodeThreshold,					"exit-threshold");
+DECL_X_FLAG(GBArgNoKeepIntermediateFiles,			"no-keep-intermediate-files");
+DECL_X_FLAG(GBArgNoKeepUndocumentedObjects,			"no-keep-undocumented-objects");
+DECL_X_FLAG(GBArgNoKeepUndocumentedMembers,			"no-keep-undocumented-members");
+DECL_X_FLAG(GBArgNoFindUndocumentedMembers,			"no-search-undocumented-doc");
+DECL_X_FLAG(GBArgNoRepeatFirstParagraph,				"no-repeat-first-par");
+DECL_X_FLAG(GBArgNoMergeCategoriesToClasses,		"no-merge-categories");
+DECL_X_FLAG(GBArgNoMergeCategoryComment,				"no-merge-category-comment");
+DECL_X_FLAG(GBArgNoKeepMergedCategoriesSections,	"no-keep-merged-sections");
+DECL_X_FLAG(GBArgNoPrefixMergedCategoriesSections,	"no-prefix-merged-sections");
+DECL_X_FLAG(GBArgNoUseCodeOrder,						"no-use-code-order");
 
-static char *const kGBArgLogFormat = "logformat";
-static char *const kGBArgVerbose = "verbose";
-static char *const kGBArgPrintSettings = "print-settings";
-static char *const kGBArgVersion = "version";
-static char *const kGBArgHelp = "help";
+DECL_X_FLAG(GBArgWarnOnMissingOutputPath,			"warn-missing-output-path");
+DECL_X_FLAG(GBArgWarnOnMissingCompanyIdentifier,	"warn-missing-company-id");
+DECL_X_FLAG(GBArgWarnOnUndocumentedObject,			"warn-undocumented-object");
+DECL_X_FLAG(GBArgWarnOnUndocumentedMember,			"warn-undocumented-member");
+DECL_X_FLAG(GBArgWarnOnEmptyDescription,			"warn-empty-description");
+DECL_X_FLAG(GBArgWarnOnUnknownDirective,			"warn-unknown-directive");
+DECL_X_FLAG(GBArgWarnOnInvalidCrossReference,		"warn-invalid-crossref");
+DECL_X_FLAG(GBArgWarnOnMissingMethodArgument,		"warn-missing-arg");
+DECL_X_FLAG(GBArgNoWarnOnMissingOutputPath,			"no-warn-missing-output-path");
+DECL_X_FLAG(GBArgNoWarnOnMissingCompanyIdentifier,	"no-warn-missing-company-id");
+DECL_X_FLAG(GBArgNoWarnOnUndocumentedObject,		"no-warn-undocumented-object");
+DECL_X_FLAG(GBArgNoWarnOnUndocumentedMember,		"no-warn-undocumented-member");
+DECL_X_FLAG(GBArgNoWarnOnEmptyDescription,			"no-warn-empty-description");
+DECL_X_FLAG(GBArgNoWarnOnUnknownDirective,			"no-warn-unknown-directive");
+DECL_X_FLAG(GBArgNoWarnOnInvalidCrossReference,		"no-warn-invalid-crossref");
+DECL_X_FLAG(GBArgNoWarnOnMissingMethodArgument,		"no-warn-missing-arg");
 
+DECL_X_PARAM(GBArgLogFormat,		"logformat");
+DECL_X_PARAM(GBArgVerbose,		"verbose");
+DECL_X_FLAG(GBArgPrintSettings,	"print-settings");
+DECL_X_FLAG(GBArgVersion,		"version");
+DECL_X_FLAG(GBArgHelp,			"help");
 
-static char *const kGBArgNoCreateHTML = "no-create-html";
-static char *const kGBArgNoCreateDocSet = "no-create-docset";
-static char *const kGBArgNoInstallDocSet = "no-install-docset";
-static char *const kGBArgNoPublishDocSet = "no-publish-docset";
+#pragma mark -
 
-static char *const kGBArgNoExplicitCrossRef = "no-explicit-crossref";
+static inline BOOL GBStringIsLongOption(NSString *string, DDGetoptOption opt) {
+	return (strcmp(string.UTF8String, opt.longOption) == 0);
+}
 
-static char *const kGBArgNoPrintInformationBlockTitles = "no-print-information-block-titles";
+static inline BOOL GBStringIsShortOption(NSString *string, DDGetoptOption opt) {
+	return [string isEqual:[NSString stringWithFormat:@"%c", (char)opt.shortOption]];
+}
 
-static char *const kGBArgNoKeepIntermediateFiles = "no-keep-intermediate-files";
-static char *const kGBArgNoKeepUndocumentedObjects = "no-keep-undocumented-objects";
-static char *const kGBArgNoKeepUndocumentedMembers = "no-keep-undocumented-members";
-static char *const kGBArgNoFindUndocumentedMembersDocumentation = "no-search-undocumented-doc";
-static char *const kGBArgNoRepeatFirstParagraph = "no-repeat-first-par";
-static char *const kGBArgNoMergeCategoriesToClasses = "no-merge-categories";
-static char *const kGBArgNoMergeCategoryComment = "no-merge-category-comment";
-static char *const kGBArgNoKeepMergedCategoriesSections = "no-keep-merged-sections";
-static char *const kGBArgNoPrefixMergedCategoriesSectionsWithCategoryName = "no-prefix-merged-sections";
-static char *const kGBArgNoUseCodeOrder = "no-use-code-order";
-
-static char *const kGBArgNoWarnOnMissingOutputPath = "no-warn-missing-output-path";
-static char *const kGBArgNoWarnOnMissingCompanyIdentifier = "no-warn-missing-company-id";
-static char *const kGBArgNoWarnOnUndocumentedObject = "no-warn-undocumented-object";
-static char *const kGBArgNoWarnOnUndocumentedMember = "no-warn-undocumented-member";
-static char *const kGBArgNoWarnOnEmptyDescription = "no-warn-empty-description";
-static char *const kGBArgNoWarnOnUnknownDirective = "no-warn-unknown-directive";
-static char *const kGBArgNoWarnOnInvalidCrossReference = "no-warn-invalid-crossref";
-static char *const kGBArgNoWarnOnMissingMethodArgument = "no-warn-missing-arg";
+static inline NSString *GBOptionFlag(DDGetoptOption opt) {
+	return [NSString stringWithFormat:@"--%s", opt.longOption];
+}
 
 #pragma mark - Private declaration, FIXME
 
@@ -269,107 +286,59 @@ static char *const kGBArgNoWarnOnMissingMethodArgument = "no-warn-missing-arg";
 
 - (void)application:(DDCliApplication *)app willParseOptions:(DDGetoptLongParser *)optionParser {
 	DDGetoptOption options[] = {
-		{ kGBArgOutputPath,													'o',	DDGetoptRequiredArgument },
-		{ kGBArgTemplatesPath,												't',	DDGetoptRequiredArgument },
-		{ kGBArgIgnorePath,													'i',	DDGetoptRequiredArgument },
-		{ kGBArgExcludeOutputPath,											'x',	DDGetoptRequiredArgument },
-		{ kGBArgIncludePath,												's',	DDGetoptRequiredArgument },
-		{ kGBArgIndexDescPath,												0,		DDGetoptRequiredArgument },
-		{ kGBArgDocSetInstallPath,											0,		DDGetoptRequiredArgument },
-		{ kGBArgXcrunPath,                                                  0,		DDGetoptRequiredArgument },
-		
-		{ kGBArgProjectName,												'p',	DDGetoptRequiredArgument },
-		{ kGBArgProjectVersion,												'v',	DDGetoptRequiredArgument },
-		{ kGBArgProjectCompany,												'c',	DDGetoptRequiredArgument },
-		{ kGBArgCompanyIdentifier,											0,		DDGetoptRequiredArgument },
-		
-		{ kGBArgDocSetBundleIdentifier,										0,		DDGetoptRequiredArgument },
-		{ kGBArgDocSetBundleName,											0,		DDGetoptRequiredArgument },
-		{ kGBArgDocSetCertificateIssuer,									0,		DDGetoptRequiredArgument },
-		{ kGBArgDocSetCertificateSigner,									0,		DDGetoptRequiredArgument },
-		{ kGBArgDocSetDescription,											0,		DDGetoptRequiredArgument },
-		{ kGBArgDocSetFallbackURL,											0,		DDGetoptRequiredArgument },
-		{ kGBArgDocSetFeedName,												0,		DDGetoptRequiredArgument },
-		{ kGBArgDocSetFeedURL,												0,		DDGetoptRequiredArgument },
-        { kGBArgDocSetFeedFormats,                                          0,      DDGetoptRequiredArgument },
-		{ kGBArgDocSetPackageURL,											0,		DDGetoptRequiredArgument },
-		{ kGBArgDocSetMinimumXcodeVersion,									0,		DDGetoptRequiredArgument },
-		{ kGBArgDocSetPlatformFamily,										0,		DDGetoptRequiredArgument },
-		{ kGBArgDocSetPublisherIdentifier,									0,		DDGetoptRequiredArgument },
-		{ kGBArgDocSetPublisherName,										0,		DDGetoptRequiredArgument },
-		{ kGBArgDocSetCopyrightMessage,										0,		DDGetoptRequiredArgument },
-		{ kGBArgDashPlatformFamily,											0,		DDGetoptRequiredArgument },
-		
-		{ kGBArgDocSetBundleFilename,										0,		DDGetoptRequiredArgument },
-		{ kGBArgDocSetAtomFilename,											0,		DDGetoptRequiredArgument },
-        { kGBArgDocSetXMLFilename,                                          0,      DDGetoptRequiredArgument },
-		{ kGBArgDocSetPackageFilename,										0,		DDGetoptRequiredArgument },
-		
-		{ kGBArgCleanOutput,												0,		DDGetoptNoArgument },
-		{ kGBArgCreateHTML,													'h',	DDGetoptNoArgument },
-		{ kGBArgCreateDocSet,												'd',	DDGetoptNoArgument },
-		{ kGBArgFinalizeDocSet,												0,	DDGetoptNoArgument },
-		{ kGBArgInstallDocSet,												'n',	DDGetoptNoArgument },
-		{ kGBArgPublishDocSet,												'u',	DDGetoptNoArgument },
-        { kGBArgHTMLAnchorFormat,                                           0,      DDGetoptRequiredArgument },
-		{ kGBArgNoCreateHTML,										0,		DDGetoptNoArgument },
-		{ kGBArgNoCreateDocSet,										0,		DDGetoptNoArgument },
-		{ kGBArgNoInstallDocSet,										0,		DDGetoptNoArgument },
-		{ kGBArgNoPublishDocSet,										0,		DDGetoptNoArgument },
-		
-		{ kGBArgCrossRefFormat,												0,		DDGetoptRequiredArgument },
-		{ kGBArgExplicitCrossRef,											0,		DDGetoptNoArgument },
-		{ kGBArgNoExplicitCrossRef,									0,		DDGetoptNoArgument },
-		
-		{ kGBArgKeepIntermediateFiles,										0,		DDGetoptNoArgument },
-		{ kGBArgKeepUndocumentedObjects,									0,		DDGetoptNoArgument },
-		{ kGBArgKeepUndocumentedMembers,									0,		DDGetoptNoArgument },
-		{ kGBArgFindUndocumentedMembersDocumentation,						0,		DDGetoptNoArgument },
-		{ kGBArgRepeatFirstParagraph,										0,		DDGetoptNoArgument },
-		{ kGBArgPreprocessHeaderDoc,										0,		DDGetoptNoArgument },
-		{ kGBArgPrintInformationBlockTitles,								0,		DDGetoptNoArgument },
-		{ kGBArgNoPrintInformationBlockTitles,						0,		DDGetoptNoArgument },
-		{ kGBArgUseSingleStar,												0,		DDGetoptNoArgument },
-		{ kGBArgMergeCategoriesToClasses,									0,		DDGetoptNoArgument },
-		{ kGBArgMergeCategoryComment,										0,		DDGetoptNoArgument },
-		{ kGBArgKeepMergedCategoriesSections,								0,		DDGetoptNoArgument },
-		{ kGBArgPrefixMergedCategoriesSectionsWithCategoryName,				0,		DDGetoptNoArgument },
-    	{ kGBArgUseCodeOrder,                                               0,		DDGetoptNoArgument },
-		{ kGBArgExitCodeThreshold,											0,		DDGetoptRequiredArgument },
-		{ kGBArgNoKeepIntermediateFiles,								0,		DDGetoptNoArgument },
-		{ kGBArgNoKeepUndocumentedObjects,							0,		DDGetoptNoArgument },
-		{ kGBArgNoKeepUndocumentedMembers,							0,		DDGetoptNoArgument },
-		{ kGBArgNoFindUndocumentedMembersDocumentation,				0,		DDGetoptNoArgument },
-		{ kGBArgNoRepeatFirstParagraph,								0,		DDGetoptNoArgument },
-		{ kGBArgNoMergeCategoriesToClasses,							0,		DDGetoptNoArgument },
-		{ kGBArgNoMergeCategoryComment,								0,		DDGetoptNoArgument },
-		{ kGBArgNoKeepMergedCategoriesSections,						0,		DDGetoptNoArgument },
-		{ kGBArgNoPrefixMergedCategoriesSectionsWithCategoryName,	0,		DDGetoptNoArgument },
-        { kGBArgNoUseCodeOrder,	                                    0,		DDGetoptNoArgument },
+		GBArgOutputPath, GBArgTemplatesPath, GBArgIgnorePath,
 
-		{ kGBArgWarnOnMissingOutputPath,									0,		DDGetoptNoArgument },
-		{ kGBArgWarnOnMissingCompanyIdentifier,								0,		DDGetoptNoArgument },
-		{ kGBArgWarnOnUndocumentedObject,									0,		DDGetoptNoArgument },
-		{ kGBArgWarnOnUndocumentedMember,									0,		DDGetoptNoArgument },
-		{ kGBArgWarnOnEmptyDescription,										0,		DDGetoptNoArgument },
-		{ kGBArgWarnOnUnknownDirective,										0,		DDGetoptNoArgument },
-		{ kGBArgWarnOnInvalidCrossReference,								0,		DDGetoptNoArgument },
-		{ kGBArgWarnOnMissingMethodArgument,								0,		DDGetoptNoArgument },
-		{ kGBArgNoWarnOnMissingOutputPath,							0,		DDGetoptNoArgument },
-		{ kGBArgNoWarnOnMissingCompanyIdentifier,					0,		DDGetoptNoArgument },
-		{ kGBArgNoWarnOnUndocumentedObject,							0,		DDGetoptNoArgument },
-		{ kGBArgNoWarnOnUndocumentedMember,							0,		DDGetoptNoArgument },
-		{ kGBArgNoWarnOnEmptyDescription,							0,		DDGetoptNoArgument },
-		{ kGBArgNoWarnOnUnknownDirective,							0,		DDGetoptNoArgument },
-		{ kGBArgNoWarnOnInvalidCrossReference,						0,		DDGetoptNoArgument },
-		{ kGBArgNoWarnOnMissingMethodArgument,						0,		DDGetoptNoArgument },
+		GBArgExcludeOutputPath, GBArgIncludePath, GBArgIndexDescPath,
+		GBArgDocSetInstallPath, GBArgXcrunPath,
 
-		{ kGBArgLogFormat,													0,		DDGetoptRequiredArgument },
-		{ kGBArgVerbose,													0,		DDGetoptRequiredArgument },
-		{ kGBArgPrintSettings,												0,		DDGetoptNoArgument },
-		{ kGBArgVersion,													0,		DDGetoptNoArgument },
-		{ kGBArgHelp,														0,		DDGetoptNoArgument },
-		{ nil,																0,		0 },
+		GBArgProjectName, GBArgProjectVersion, GBArgProjectCompany,
+		GBArgCompanyIdentifier,
+		
+		GBArgDocSetBundleIdentifier, GBArgDocSetBundleName,
+		GBArgDocSetCertificateIssuer, GBArgDocSetCertificateSigner,
+		GBArgDocSetDescription, GBArgDocSetFallbackURL, GBArgDocSetFeedName,
+		GBArgDocSetFeedURL, GBArgDocSetFeedFormats, GBArgDocSetPackageURL,
+		GBArgDocSetMinimumXcodeVersion, GBArgDocSetPlatformFamily,
+		GBArgDocSetPublisherIdentifier, GBArgDocSetPublisherName,
+		GBArgDocSetCopyrightMessage, GBArgDashPlatformFamily,
+		
+		GBArgDocSetBundleFilename, GBArgDocSetAtomFilename,
+		GBArgDocSetXMLFilename, GBArgDocSetPackageFilename,
+		
+		GBArgCleanOutput, GBArgCreateHTML, GBArgCreateDocSet,
+		GBArgFinalizeDocSet, GBArgInstallDocSet, GBArgPublishDocSet,
+		GBArgHTMLAnchorFormat, GBArgNoCreateHTML, GBArgNoCreateDocSet,
+		GBArgNoInstallDocSet, GBArgNoPublishDocSet,
+
+		GBArgCrossRefFormat, GBArgExplicitCrossRef, GBArgNoExplicitCrossRef,
+
+		GBArgKeepIntermediateFiles, GBArgKeepUndocumentedObjects,
+		GBArgKeepUndocumentedMembers, GBArgFindUndocumentedMembers,
+		GBArgRepeatFirstParagraph, GBArgPreprocessHeaderDoc,
+		GBArgPrintInformationBlockTitles, GBArgNoPrintInformationBlockTitles,
+		GBArgUseSingleStar, GBArgMergeCategoriesToClasses,
+		GBArgMergeCategoryComment, GBArgKeepMergedCategoriesSections,
+		GBArgPrefixMergedCategoriesSections, GBArgUseCodeOrder,
+		GBArgExitCodeThreshold,  GBArgNoKeepIntermediateFiles,
+		GBArgNoKeepUndocumentedObjects, GBArgNoKeepUndocumentedMembers,
+		GBArgNoFindUndocumentedMembers,
+		GBArgNoRepeatFirstParagraph, GBArgNoMergeCategoriesToClasses,
+		GBArgNoMergeCategoryComment, GBArgNoKeepMergedCategoriesSections,
+		GBArgNoPrefixMergedCategoriesSections, GBArgNoUseCodeOrder,
+
+		GBArgWarnOnMissingOutputPath, GBArgWarnOnMissingCompanyIdentifier,
+		GBArgWarnOnUndocumentedObject, GBArgWarnOnUndocumentedMember,
+		GBArgWarnOnEmptyDescription, GBArgWarnOnUnknownDirective,
+		GBArgWarnOnInvalidCrossReference, GBArgWarnOnMissingMethodArgument,
+		GBArgNoWarnOnMissingOutputPath, GBArgNoWarnOnMissingCompanyIdentifier,
+		GBArgNoWarnOnUndocumentedObject, GBArgNoWarnOnUndocumentedMember,
+		GBArgNoWarnOnEmptyDescription, GBArgNoWarnOnUnknownDirective,
+		GBArgNoWarnOnInvalidCrossReference, GBArgNoWarnOnMissingMethodArgument,
+
+		GBArgLogFormat, GBArgVerbose, GBArgPrintSettings, GBArgVersion,
+		GBArgHelp,
+
+		DDGetoptOptionNull
 	};
 	NSArray *arguments = [[NSProcessInfo processInfo] arguments];
     [self injectXcodeSettingsFromArguments:arguments];
@@ -419,7 +388,7 @@ static char *const kGBArgNoWarnOnMissingMethodArgument = "no-warn-missing-arg";
     
     if ([[NSScanner scannerWithString:self.verbose] scanInt:NULL] == false)
     {
-        [NSException raise:@"--%@ argument or global setting must be numeric!", kGBArgVerbose];
+        [NSException raise:@"%@ argument or global setting must be numeric!", GBOptionFlag(GBArgVerbose)];
     }
 	
 	// Validate we have at least one argument specifying the path to the files to handle. Also validate all given paths are valid.
@@ -431,15 +400,15 @@ static char *const kGBArgNoWarnOnMissingMethodArgument = "no-warn-missing-arg";
 	}
 	
 	// Now validate we have all required settings specified.
-	if ([self.settings.projectName length] == 0) [NSException raise:@"--%@ argument or global setting is required!", kGBArgProjectName];
-	if ([self.settings.projectCompany length] == 0) [NSException raise:@"--%@ argument or global setting is required!", kGBArgProjectCompany];
+	if ([self.settings.projectName length] == 0) [NSException raise:@"%@ argument or global setting is required!", GBOptionFlag(GBArgProjectName)];
+	if ([self.settings.projectCompany length] == 0) [NSException raise:@"%@ argument or global setting is required!", GBOptionFlag(GBArgProjectCompany)];
 	
 	// If output path is not given, revert to current path, but do warn the user.
 	if ([self.settings.outputPath length] == 0) {
 		self.settings.cleanupOutputPathBeforeRunning = NO;
 		self.settings.outputPath = [self.fileManager currentDirectoryPath];
 		if (self.settings.warnOnMissingOutputPathArgument) {
-			ddprintf(@"WARN: --%@ argument or global setting not given, will output to current dir '%@'!\n", kGBArgOutputPath, self.settings.outputPath);
+			ddprintf(@"WARN: %@ argument or global setting not given, will output to current dir '%@'!\n", GBOptionFlag(GBArgOutputPath), self.settings.outputPath);
 		}
 	}
 	
@@ -450,7 +419,7 @@ static char *const kGBArgNoWarnOnMissingMethodArgument = "no-warn-missing-arg";
 		value = [value lowercaseString];
 		self.settings.companyIdentifier = value;
 		if (self.settings.warnOnMissingCompanyIdentifier) {
-			ddprintf(@"WARN: --%@ argument or global setting not given, but creating DocSet is enabled, will use '%@'!\n", kGBArgCompanyIdentifier, self.settings.companyIdentifier);
+			ddprintf(@"WARN: %@ argument or global setting not given, but creating DocSet is enabled, will use '%@'!\n", GBOptionFlag(GBArgCompanyIdentifier), self.settings.companyIdentifier);
 		}
 	}
 	
@@ -458,7 +427,7 @@ static char *const kGBArgNoWarnOnMissingMethodArgument = "no-warn-missing-arg";
 	[self.settings.includePaths enumerateObjectsUsingBlock:^(NSString *userPath, BOOL *stop) {
 		NSString *path = [userPath stringByStandardizingPath];
 		if (![self.fileManager fileExistsAtPath:path]) {
-			ddprintf(@"WARN: --%@ path '%@' doesn't exist, ignoring!\n", kGBArgIncludePath, userPath);
+			ddprintf(@"WARN: %@ path '%@' doesn't exist, ignoring!\n", GBOptionFlag(GBArgIncludePath), userPath);
 		}
 	}];
 	
@@ -467,14 +436,14 @@ static char *const kGBArgNoWarnOnMissingMethodArgument = "no-warn-missing-arg";
 		BOOL isDir;
 		NSString *path = [self.settings.indexDescriptionPath stringByStandardizingPath];
 		if (![self.fileManager fileExistsAtPath:path isDirectory:&isDir])
-			ddprintf(@"WARN: --%@ path '%@' doesn't exist, ignoring!\n", kGBArgIndexDescPath, self.settings.indexDescriptionPath);
+			ddprintf(@"WARN: %@ path '%@' doesn't exist, ignoring!\n", GBOptionFlag(GBArgIndexDescPath), self.settings.indexDescriptionPath);
 		else if (isDir)
-			ddprintf(@"WARN: --%@ path '%@' is a directory, file is required, ignoring!\n", kGBArgIndexDescPath, self.settings.indexDescriptionPath);
+			ddprintf(@"WARN: %@ path '%@' is a directory, file is required, ignoring!\n", GBOptionFlag(GBArgIndexDescPath), self.settings.indexDescriptionPath);
 	}
 	
 	// If we're using backwards compatibility mode, warn about potential incompatibility with Markdown!
 	if (self.settings.useSingleStarForBold) {
-		ddprintf(@"WARN: --%@ may cause incompatibility with Markdown (* unordered lists etc.)", kGBArgUseSingleStar);
+		ddprintf(@"WARN: %@ may cause incompatibility with Markdown (* unordered lists etc.)", GBOptionFlag(GBArgUseSingleStar));
 	}
 }
 
@@ -600,7 +569,7 @@ static char *const kGBArgNoWarnOnMissingMethodArgument = "no-warn-missing-arg";
 	[arguments enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSString *option, NSUInteger idx, BOOL *stop) {
 		NSString *opt = [option copy];
 		while ([opt hasPrefix:@"-"]) opt = [opt substringFromIndex:1];
-		if ([opt isEqualToString:@"t"] || !strcmp(opt.UTF8String, kGBArgTemplatesPath)) {
+		if (GBStringIsShortOption(option, GBArgTemplatesPath) || GBStringIsLongOption(option, GBArgTemplatesPath)) {
 			NSError *error = nil;
 			if (![self validateTemplatesPath:path error:&error]) [NSException raiseWithError:error format:@"Path '%@' from %@ is not valid!", path, option];
 			[self overrideSettingsWithGlobalSettingsFromPath:path parser:parser];
@@ -682,7 +651,7 @@ static char *const kGBArgNoWarnOnMissingMethodArgument = "no-warn-missing-arg";
 
 			// In the first pass, we need to handle --templates option. We need to handle these before any other option from the project settings to prevent global settings overriding project settings! Note how we prevent handling of every option except --templates; we leave that option through to get it set to application settings (that's all the KVC setter does).
 			[self injectSettingsFromSettingsFile:filename parser:parser usingBlock:^BOOL(NSString *option, id *value, BOOL *stop) {
-				if (!strcmp(option.UTF8String, kGBArgTemplatesPath)) {
+				if (GBStringIsLongOption(option, GBArgTemplatesPath)) {
 					NSError *error = nil;
 					NSString *templatesPath = [self combineBasePath:plistPath withRelativePath:*value];
 					if (![self validateTemplatesPath:templatesPath error:&error]) [NSException raiseWithError:error format:@"Path '%@' from --%@ option in project settings '%@' is not valid!", *value, option, filename];
@@ -697,13 +666,13 @@ static char *const kGBArgNoWarnOnMissingMethodArgument = "no-warn-missing-arg";
 			// In the second pass, we handle all options. Note that we handle --input option manually; there is no KVC setter for it as it's not regular command line option (we get all input paths directly through command line arguments, not via command line switches). Also note that --templates is still allows but it's only going to be passed to application settings this time without being handled.
 			[self injectSettingsFromSettingsFile:filename parser:parser usingBlock:^BOOL(NSString *option, id *value, BOOL *stop) {
 				// If option is input path, add it to additional paths. We'll append these to any path found from command line. Note that we must properly handle . paths and paths not starting with / or ~; we assume these are relative paths so we prefix them with the path of the settings file!
-				if (!strcmp(option.UTF8String, kGBArgInputPath)) {
+				if (GBStringIsLongOption(option, GBArgInputPath)) {
 					for (NSString *inputPath in *value) {
 						NSString *combined = [self combineBasePath:plistPath withRelativePath:inputPath];
 						[self.additionalInputPaths addObject:combined];
 					}
 					return NO;
-				} else if (!strcmp(option.UTF8String, kGBArgTemplatesPath)) {
+				} else if (GBStringIsLongOption(option, GBArgTemplatesPath)) {
 					return NO;
 				}
 				return YES;
@@ -717,11 +686,11 @@ static char *const kGBArgNoWarnOnMissingMethodArgument = "no-warn-missing-arg";
 	NSString *userPath = [path stringByAppendingPathComponent:@"GlobalSettings.plist"];
 	NSString *filename = [userPath stringByStandardizingPath];
 	[self injectSettingsFromSettingsFile:filename parser:parser usingBlock:^(NSString *option, id *value, BOOL *stop) {
-		if (!strcmp(option.UTF8String, kGBArgTemplatesPath)) {
+		if (GBStringIsLongOption(option, GBArgTemplatesPath)) {
 			ddprintf(@"WARN: Found unsupported --%@ option in global settings file '%@'!\n", option, userPath);
 			return NO;
 		}
-		if (!strcmp(option.UTF8String, kGBArgInputPath)) {
+		if (GBStringIsLongOption(option, GBArgInputPath)) {
 			ddprintf(@"WARN: Found unsupported --%@ option in global settings '%@'!\n", option, userPath);
 			return NO;
 		}
@@ -938,86 +907,92 @@ static char *const kGBArgNoWarnOnMissingMethodArgument = "no-warn-missing-arg";
 @implementation GBAppledocApplication (UsagePrintout)
 
 - (void)printSettingsAndArguments:(NSArray *)arguments {
-#define PRINT_BOOL(v) (v ? @"YES" : @"NO")
+	#define printOpt(key, value) ddprintf(@"--%s = %@\n", key.longOption, value)
+	#define printBool(v) (v ? @"YES" : @"NO")
+
 	// This is useful for debugging to see exact set of setting values that are going to be used for this session. Note that this is coupling command line switches to actual settings. Here it's just the opposite than DDCli callbacks.
 	ddprintf(@"Running for files in locations:\n");
 	for (NSString *path in arguments) ddprintf(@"- %@\n", path);
 	ddprintf(@"\n");
-	
+
 	ddprintf(@"Settings used for this run:\n");
-	ddprintf(@"--%@ = %@\n", kGBArgProjectName, self.settings.projectName);
-	ddprintf(@"--%@ = %@\n", kGBArgProjectVersion, self.settings.projectVersion);
-	ddprintf(@"--%@ = %@\n", kGBArgProjectCompany, self.settings.projectCompany);
-	ddprintf(@"--%@ = %@\n", kGBArgCompanyIdentifier, self.settings.companyIdentifier);
+	printOpt(GBArgProjectName, self.settings.projectName);
+	printOpt(GBArgProjectVersion, self.settings.projectVersion);
+	printOpt(GBArgProjectCompany, self.settings.projectCompany);
+	printOpt(GBArgCompanyIdentifier, self.settings.companyIdentifier);
 	ddprintf(@"\n");
 	
-	ddprintf(@"--%@ = %@\n", kGBArgTemplatesPath, self.settings.templatesPath);
-	ddprintf(@"--%@ = %@\n", kGBArgOutputPath, self.settings.outputPath);
-	ddprintf(@"--%@ = %@\n", kGBArgIndexDescPath, self.settings.indexDescriptionPath);
-	for (NSString *path in self.settings.includePaths) ddprintf(@"--%@ = %@\n", kGBArgIncludePath, path);
-	for (NSString *path in self.settings.ignoredPaths) ddprintf(@"--%@ = %@\n", kGBArgIgnorePath, path);
-	for (NSString *path in self.settings.excludeOutputPaths) ddprintf(@"--%@ = %@\n", kGBArgExcludeOutputPath, path);
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetInstallPath, self.settings.docsetInstallPath);
-	ddprintf(@"--%@ = %@\n", kGBArgXcrunPath, self.settings.xcrunPath);
+	printOpt(GBArgTemplatesPath, self.settings.templatesPath);
+	printOpt(GBArgOutputPath, self.settings.outputPath);
+	printOpt(GBArgIndexDescPath, self.settings.indexDescriptionPath);
+	for (NSString *path in self.settings.includePaths) printOpt(GBArgIncludePath, path);
+	for (NSString *path in self.settings.ignoredPaths) printOpt(GBArgIgnorePath, path);
+	for (NSString *path in self.settings.excludeOutputPaths) printOpt(GBArgExcludeOutputPath, path);
+	printOpt(GBArgDocSetInstallPath, self.settings.docsetInstallPath);
+	printOpt(GBArgXcrunPath, self.settings.xcrunPath);
 	ddprintf(@"\n");
 	
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetBundleIdentifier, self.settings.docsetBundleIdentifier);
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetBundleName, self.settings.docsetBundleName);
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetDescription, self.settings.docsetDescription);
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetCopyrightMessage, self.settings.docsetCopyrightMessage);
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetFeedName, self.settings.docsetFeedName);
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetFeedURL, self.settings.docsetFeedURL);
-    ddprintf(@"--%@ = %@\n", kGBArgDocSetFeedFormats, NSStringFromGBPublishedFeedFormats(self.settings.docsetFeedFormats));
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetPackageURL, self.settings.docsetPackageURL);
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetFallbackURL, self.settings.docsetFallbackURL);
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetPublisherIdentifier, self.settings.docsetPublisherIdentifier);
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetPublisherName, self.settings.docsetPublisherName);
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetMinimumXcodeVersion, self.settings.docsetMinimumXcodeVersion);
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetPlatformFamily, self.settings.docsetPlatformFamily);
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetCertificateIssuer, self.settings.docsetCertificateIssuer);
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetCertificateSigner, self.settings.docsetCertificateSigner);
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetBundleFilename, self.settings.docsetBundleFilename);
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetAtomFilename, self.settings.docsetAtomFilename);
-    ddprintf(@"--%@ = %@\n", kGBArgDocSetXMLFilename, self.settings.docsetXMLFilename);
-	ddprintf(@"--%@ = %@\n", kGBArgDocSetPackageFilename, self.settings.docsetPackageFilename);
+	printOpt(GBArgDocSetBundleIdentifier, self.settings.docsetBundleIdentifier);
+	printOpt(GBArgDocSetBundleName, self.settings.docsetBundleName);
+	printOpt(GBArgDocSetDescription, self.settings.docsetDescription);
+	printOpt(GBArgDocSetCopyrightMessage, self.settings.docsetCopyrightMessage);
+	printOpt(GBArgDocSetFeedName, self.settings.docsetFeedName);
+	printOpt(GBArgDocSetFeedURL, self.settings.docsetFeedURL);
+	printOpt(GBArgDocSetFeedFormats, NSStringFromGBPublishedFeedFormats(self.settings.docsetFeedFormats));
+	printOpt(GBArgDocSetPackageURL, self.settings.docsetPackageURL);
+	printOpt(GBArgDocSetFallbackURL, self.settings.docsetFallbackURL);
+	printOpt(GBArgDocSetPublisherIdentifier, self.settings.docsetPublisherIdentifier);
+	printOpt(GBArgDocSetPublisherName, self.settings.docsetPublisherName);
+	printOpt(GBArgDocSetMinimumXcodeVersion, self.settings.docsetMinimumXcodeVersion);
+	printOpt(GBArgDocSetPlatformFamily, self.settings.docsetPlatformFamily);
+	printOpt(GBArgDocSetCertificateIssuer, self.settings.docsetCertificateIssuer);
+	printOpt(GBArgDocSetCertificateSigner, self.settings.docsetCertificateSigner);
+
+	printOpt(GBArgDocSetBundleFilename, self.settings.docsetBundleFilename);
+	printOpt(GBArgDocSetAtomFilename, self.settings.docsetAtomFilename);
+	printOpt(GBArgDocSetXMLFilename, self.settings.docsetXMLFilename);
+	printOpt(GBArgDocSetPackageFilename, self.settings.docsetPackageFilename);
 	ddprintf(@"\n");
 	
-	ddprintf(@"--%@ = %@\n", kGBArgCleanOutput, PRINT_BOOL(self.settings.cleanupOutputPathBeforeRunning));
-	ddprintf(@"--%@ = %@\n", kGBArgCreateHTML, PRINT_BOOL(self.settings.createHTML));
-	ddprintf(@"--%@ = %@\n", kGBArgCreateDocSet, PRINT_BOOL(self.settings.createDocSet));
-	ddprintf(@"--%@ = %@\n", kGBArgInstallDocSet, PRINT_BOOL(self.settings.installDocSet));
-	ddprintf(@"--%@ = %@\n", kGBArgPublishDocSet, PRINT_BOOL(self.settings.publishDocSet));
-    ddprintf(@"--%@ = %@\n", kGBArgHTMLAnchorFormat, NSStringFromGBHTMLAnchorFormat(self.settings.htmlAnchorFormat));
-	ddprintf(@"--%@ = %@\n", kGBArgKeepIntermediateFiles, PRINT_BOOL(self.settings.keepIntermediateFiles));
-	ddprintf(@"--%@ = %@\n", kGBArgKeepUndocumentedObjects, PRINT_BOOL(self.settings.keepUndocumentedObjects));
-	ddprintf(@"--%@ = %@\n", kGBArgKeepUndocumentedMembers, PRINT_BOOL(self.settings.keepUndocumentedMembers));
-	ddprintf(@"--%@ = %@\n", kGBArgFindUndocumentedMembersDocumentation, PRINT_BOOL(self.settings.findUndocumentedMembersDocumentation));
-	ddprintf(@"--%@ = %@\n", kGBArgRepeatFirstParagraph, PRINT_BOOL(self.settings.repeatFirstParagraphForMemberDescription));
-	ddprintf(@"--%@ = %@\n", kGBArgPreprocessHeaderDoc, PRINT_BOOL(self.settings.preprocessHeaderDoc));
-	ddprintf(@"--%@ = %@\n", kGBArgPrintInformationBlockTitles, PRINT_BOOL(self.settings.printInformationBlockTitles));
-	ddprintf(@"--%@ = %@\n", kGBArgUseSingleStar, PRINT_BOOL(self.settings.useSingleStarForBold));
-	ddprintf(@"--%@ = %@\n", kGBArgMergeCategoriesToClasses, PRINT_BOOL(self.settings.mergeCategoriesToClasses));
-	ddprintf(@"--%@ = %@\n", kGBArgMergeCategoryComment, PRINT_BOOL(self.settings.mergeCategoryCommentToClass));
-	ddprintf(@"--%@ = %@\n", kGBArgKeepMergedCategoriesSections, PRINT_BOOL(self.settings.keepMergedCategoriesSections));
-	ddprintf(@"--%@ = %@\n", kGBArgPrefixMergedCategoriesSectionsWithCategoryName, PRINT_BOOL(self.settings.prefixMergedCategoriesSectionsWithCategoryName));
-	ddprintf(@"--%@ = %@\n", kGBArgCrossRefFormat, self.settings.commentComponents.crossReferenceMarkersTemplate);
-	ddprintf(@"--%@ = %@\n", kGBArgUseCodeOrder, self.settings.useCodeOrder);
-	ddprintf(@"--%@ = %ld\n", kGBArgExitCodeThreshold, self.settings.exitCodeThreshold);
+	printOpt(GBArgCleanOutput, printBool(self.settings.cleanupOutputPathBeforeRunning));
+	printOpt(GBArgCreateHTML, printBool(self.settings.createHTML));
+	printOpt(GBArgCreateDocSet, printBool(self.settings.createDocSet));
+	printOpt(GBArgInstallDocSet, printBool(self.settings.installDocSet));
+	printOpt(GBArgPublishDocSet, printBool(self.settings.publishDocSet));
+	printOpt(GBArgHTMLAnchorFormat, NSStringFromGBHTMLAnchorFormat(self.settings.htmlAnchorFormat));
+	printOpt(GBArgKeepIntermediateFiles, printBool(self.settings.keepIntermediateFiles));
+	printOpt(GBArgKeepUndocumentedObjects, printBool(self.settings.keepUndocumentedObjects));
+	printOpt(GBArgKeepUndocumentedMembers, printBool(self.settings.keepUndocumentedMembers));
+	printOpt(GBArgFindUndocumentedMembers, printBool(self.settings.findUndocumentedMembersDocumentation));
+	printOpt(GBArgRepeatFirstParagraph, printBool(self.settings.repeatFirstParagraphForMemberDescription));
+	printOpt(GBArgPreprocessHeaderDoc, printBool(self.settings.preprocessHeaderDoc));
+	printOpt(GBArgPrintInformationBlockTitles, printBool(self.settings.printInformationBlockTitles));
+	printOpt(GBArgUseSingleStar, printBool(self.settings.useSingleStarForBold));
+	printOpt(GBArgMergeCategoriesToClasses, printBool(self.settings.mergeCategoriesToClasses));
+	printOpt(GBArgMergeCategoryComment, printBool(self.settings.mergeCategoryCommentToClass));
+	printOpt(GBArgKeepMergedCategoriesSections, printBool(self.settings.keepMergedCategoriesSections));
+	printOpt(GBArgPrefixMergedCategoriesSections, printBool(self.settings.prefixMergedCategoriesSectionsWithCategoryName));
+	printOpt(GBArgCrossRefFormat, self.settings.commentComponents.crossReferenceMarkersTemplate);
+	printOpt(GBArgUseCodeOrder, printBool(self.settings.useCodeOrder));
+	printOpt(GBArgExitCodeThreshold, @(self.settings.exitCodeThreshold));
+	ddprintf(@"\n");
+
+	printOpt(GBArgWarnOnMissingOutputPath, printBool(self.settings.warnOnMissingOutputPathArgument));
+	printOpt(GBArgWarnOnMissingCompanyIdentifier, printBool(self.settings.warnOnMissingCompanyIdentifier));
+	printOpt(GBArgWarnOnUndocumentedObject, printBool(self.settings.warnOnUndocumentedObject));
+	printOpt(GBArgWarnOnUndocumentedMember, printBool(self.settings.warnOnUndocumentedMember));
+	printOpt(GBArgWarnOnEmptyDescription, printBool(self.settings.warnOnEmptyDescription));
+	printOpt(GBArgWarnOnUnknownDirective, printBool(self.settings.warnOnUnknownDirective));
+	printOpt(GBArgWarnOnInvalidCrossReference, printBool(self.settings.warnOnInvalidCrossReference));
+	printOpt(GBArgWarnOnMissingMethodArgument, printBool(self.settings.warnOnMissingMethodArgument));
 	ddprintf(@"\n");
 	
-	ddprintf(@"--%@ = %@\n", kGBArgWarnOnMissingOutputPath, PRINT_BOOL(self.settings.warnOnMissingOutputPathArgument));
-	ddprintf(@"--%@ = %@\n", kGBArgWarnOnMissingCompanyIdentifier, PRINT_BOOL(self.settings.warnOnMissingCompanyIdentifier));
-	ddprintf(@"--%@ = %@\n", kGBArgWarnOnUndocumentedObject, PRINT_BOOL(self.settings.warnOnUndocumentedObject));
-	ddprintf(@"--%@ = %@\n", kGBArgWarnOnUndocumentedMember, PRINT_BOOL(self.settings.warnOnUndocumentedMember));
-	ddprintf(@"--%@ = %@\n", kGBArgWarnOnEmptyDescription, PRINT_BOOL(self.settings.warnOnEmptyDescription));
-	ddprintf(@"--%@ = %@\n", kGBArgWarnOnUnknownDirective, PRINT_BOOL(self.settings.warnOnUnknownDirective));
-	ddprintf(@"--%@ = %@\n", kGBArgWarnOnInvalidCrossReference, PRINT_BOOL(self.settings.warnOnInvalidCrossReference));
-	ddprintf(@"--%@ = %@\n", kGBArgWarnOnMissingMethodArgument, PRINT_BOOL(self.settings.warnOnMissingMethodArgument));
+	printOpt(GBArgLogFormat, self.logformat);
+	printOpt(GBArgVerbose, self.verbose);
 	ddprintf(@"\n");
-	
-	ddprintf(@"--%@ = %@\n", kGBArgLogFormat, self.logformat);
-	ddprintf(@"--%@ = %@\n", kGBArgVerbose, self.verbose);
-	ddprintf(@"\n");
+
+	#undef printOpt
+	#undef printBool
 }
 
 - (void)printVersion {
@@ -1029,87 +1004,94 @@ static char *const kGBArgNoWarnOnMissingMethodArgument = "no-warn-missing-arg";
 }
 
 - (void)printHelp {
+	void(^printOptUsage)(DDGetoptOption, NSString *, NSString *) = ^(DDGetoptOption opt, NSString *argument, NSString *description){
+		NSString *aShort = opt.shortOption ? [NSString stringWithFormat:@"%c,", (char)opt.shortOption] : @"   ";
+		NSString *aLong = opt.longOption ? [NSString stringWithUTF8String:opt.longOption] : @"";
+		while([aLong length] + [argument length] < 32) argument = [argument stringByAppendingString:@" "];
+		ddprintf(@"  %@ --%@ %@ %@\n", aShort, aLong, argument, description);
+	};
 #define PRINT_USAGE(short,long,arg,desc) [self printHelpForShortOption:short longOption:long argument:arg description:desc]
+
 	NSString *name = [self.settings.stringTemplates.appledocData objectForKey:@"tool"];
 	ddprintf(@"Usage: %@ [OPTIONS] <paths to source dirs or files>\n", name);
 	ddprintf(@"\n");
 	ddprintf(@"PATHS\n");
-	PRINT_USAGE('o', kGBArgOutputPath, @"<path>", @"Output path");
-	PRINT_USAGE('t', kGBArgTemplatesPath, @"<path>", @"Template files path");
-	PRINT_USAGE(0,   kGBArgDocSetInstallPath, @"<path>", @"DocSet installation path");
-	PRINT_USAGE('s', kGBArgIncludePath, @"<path>", @"Include static doc(s) at path");
-	PRINT_USAGE('i', kGBArgIgnorePath, @"<path>", @"Ignore given path");
-	PRINT_USAGE('x', kGBArgExcludeOutputPath, @"<path>", @"Exclude given path from output");
-	PRINT_USAGE(0,   kGBArgIndexDescPath, @"<path>", @"File including main index description");
+	printOptUsage(GBArgOutputPath, @"<path>", @"Output path");
+	printOptUsage(GBArgTemplatesPath, @"<path>", @"Template files path");
+	printOptUsage(GBArgDocSetInstallPath, @"<path>", @"DocSet installation path");
+	printOptUsage(GBArgIncludePath, @"<path>", @"Include static doc(s) at path");
+	printOptUsage(GBArgIgnorePath, @"<path>", @"Ignore given path");
+	printOptUsage(GBArgExcludeOutputPath, @"<path>", @"Exclude given path from output");
+	printOptUsage(GBArgIndexDescPath, @"<path>", @"File including main index description");
 	ddprintf(@"\n");
 	ddprintf(@"PROJECT INFO\n");
-	PRINT_USAGE('p', kGBArgProjectName, @"<string>", @"Project name");
-	PRINT_USAGE('v', kGBArgProjectVersion, @"<string>", @"Project version");
-	PRINT_USAGE('c', kGBArgProjectCompany, @"<string>", @"Project company");
-	PRINT_USAGE(0,   kGBArgCompanyIdentifier, @"<string>", @"Company UTI (i.e. reverse DNS name)");
+	printOptUsage(GBArgProjectName, @"<string>", @"Project name");
+	printOptUsage(GBArgProjectVersion, @"<string>", @"Project version");
+	printOptUsage(GBArgProjectCompany, @"<string>", @"Project company");
+	printOptUsage(GBArgCompanyIdentifier, @"<string>", @"Company UTI (i.e. reverse DNS name)");
 	ddprintf(@"\n");
 	ddprintf(@"OUTPUT GENERATION\n");
-	PRINT_USAGE('h', kGBArgCreateHTML, @"", @"[b] Create HTML");
-	PRINT_USAGE('d', kGBArgCreateDocSet, @"", @"[b] Create documentation set");
-	PRINT_USAGE('n', kGBArgInstallDocSet, @"", @"[b] Install documentation set to Xcode");
-	PRINT_USAGE('u', kGBArgPublishDocSet, @"", @"[b] Prepare DocSet for publishing");
-    PRINT_USAGE(0,   kGBArgHTMLAnchorFormat, @"<string>", @"[*] The html anchor format to use in DocSet HTML.");
-	PRINT_USAGE(0,   kGBArgCleanOutput, @"", @"[b] Remove contents of output path before starting !!CAUTION!!");
+	printOptUsage(GBArgCreateHTML, @"", @"[b] Create HTML");
+	printOptUsage(GBArgCreateDocSet, @"", @"[b] Create documentation set");
+	printOptUsage(GBArgInstallDocSet, @"", @"[b] Install documentation set to Xcode");
+	printOptUsage(GBArgPublishDocSet, @"", @"[b] Prepare DocSet for publishing");
+	printOptUsage(GBArgHTMLAnchorFormat, @"<string>", @"[*] The html anchor format to use in DocSet HTML.");
+	printOptUsage(GBArgCleanOutput, @"", @"[b] Remove contents of output path before starting !!CAUTION!!");
 	ddprintf(@"\n");
 	ddprintf(@"OPTIONS\n");
-	PRINT_USAGE(0,   kGBArgKeepIntermediateFiles, @"", @"[b] Keep intermediate files in output path");
-	PRINT_USAGE(0,   kGBArgKeepUndocumentedObjects, @"", @"[b] Keep undocumented objects");
-	PRINT_USAGE(0,   kGBArgKeepUndocumentedMembers, @"", @"[b] Keep undocumented members");
-	PRINT_USAGE(0,   kGBArgFindUndocumentedMembersDocumentation, @"", @"[b] Search undocumented members documentation");
-	PRINT_USAGE(0,   kGBArgRepeatFirstParagraph, @"", @"[b] Repeat first paragraph in member documentation");
-	PRINT_USAGE(0,   kGBArgPreprocessHeaderDoc, @"", @"[b] Preprocess header doc comments - 10.7 only!");
-	PRINT_USAGE(0,   kGBArgPrintInformationBlockTitles, @"", @"[b] Print title of information blocks. \"Note:\", \"Warning:\", etc.");
-	PRINT_USAGE(0,   kGBArgUseSingleStar, @"", @"[b] Use single star for bold marker");
-	PRINT_USAGE(0,   kGBArgMergeCategoriesToClasses, @"", @"[b] Merge categories to classes");
-	PRINT_USAGE(0,   kGBArgMergeCategoryComment, @"", @"[b] Merge category comment to class");
-	PRINT_USAGE(0,   kGBArgKeepMergedCategoriesSections, @"", @"[b] Keep merged categories sections");
-	PRINT_USAGE(0,   kGBArgPrefixMergedCategoriesSectionsWithCategoryName, @"", @"[b] Prefix merged sections with category name");
-    PRINT_USAGE(0,   kGBArgExplicitCrossRef, @"", @"[b] Shortcut for explicit default cross ref template");
-    PRINT_USAGE(0,   kGBArgUseCodeOrder, @"", @"[b] Order sections by the order specified in the input files");
-    PRINT_USAGE(0,   kGBArgCrossRefFormat, @"<string>", @"Cross reference template regex");
-    PRINT_USAGE(0,   kGBArgExitCodeThreshold, @"<number>", @"Exit code threshold below which 0 is returned");
+	printOptUsage(GBArgKeepIntermediateFiles, @"", @"[b] Keep intermediate files in output path");
+	printOptUsage(GBArgKeepUndocumentedObjects, @"", @"[b] Keep undocumented objects");
+	printOptUsage(GBArgKeepUndocumentedMembers, @"", @"[b] Keep undocumented members");
+	printOptUsage(GBArgFindUndocumentedMembers, @"", @"[b] Search undocumented members documentation");
+	printOptUsage(GBArgRepeatFirstParagraph, @"", @"[b] Repeat first paragraph in member documentation");
+	printOptUsage(GBArgPreprocessHeaderDoc, @"", @"[b] Preprocess header doc comments - 10.7 only!");
+	printOptUsage(GBArgPrintInformationBlockTitles, @"", @"[b] Print title of information blocks. \"Note:\", \"Warning:\", etc.");
+	printOptUsage(GBArgUseSingleStar, @"", @"[b] Use single star for bold marker");
+	printOptUsage(GBArgMergeCategoriesToClasses, @"", @"[b] Merge categories to classes");
+	printOptUsage(GBArgMergeCategoryComment, @"", @"[b] Merge category comment to class");
+	printOptUsage(GBArgKeepMergedCategoriesSections, @"", @"[b] Keep merged categories sections");
+	printOptUsage(GBArgPrefixMergedCategoriesSections, @"", @"[b] Prefix merged sections with category name");
+	printOptUsage(GBArgExplicitCrossRef, @"", @"[b] Shortcut for explicit default cross ref template");
+	printOptUsage(GBArgUseCodeOrder, @"", @"[b] Order sections by the order specified in the input files");
+	printOptUsage(GBArgCrossRefFormat, @"<string>", @"Cross reference template regex");
+	printOptUsage(GBArgExitCodeThreshold, @"<number>", @"Exit code threshold below which 0 is returned");
 	ddprintf(@"\n");
 	ddprintf(@"WARNINGS\n");
-	PRINT_USAGE(0,   kGBArgWarnOnMissingOutputPath, @"", @"[b] Warn if output path is not given");
-	PRINT_USAGE(0,   kGBArgWarnOnMissingCompanyIdentifier, @"", @"[b] Warn if company ID is not given");
-	PRINT_USAGE(0,   kGBArgWarnOnUndocumentedObject, @"", @"[b] Warn on undocumented object");
-	PRINT_USAGE(0,   kGBArgWarnOnUndocumentedMember, @"", @"[b] Warn on undocumented member");
-	PRINT_USAGE(0,   kGBArgWarnOnEmptyDescription, @"", @"[b] Warn on empty description block");
-	PRINT_USAGE(0,   kGBArgWarnOnUnknownDirective, @"", @"[b] Warn on unknown directive or format");
-	PRINT_USAGE(0,   kGBArgWarnOnInvalidCrossReference, @"", @"[b] Warn on invalid cross reference");
-	PRINT_USAGE(0,   kGBArgWarnOnMissingMethodArgument, @"", @"[b] Warn on missing method argument documentation");
+	printOptUsage(GBArgWarnOnMissingOutputPath, @"", @"[b] Warn if output path is not given");
+	printOptUsage(GBArgWarnOnMissingCompanyIdentifier, @"", @"[b] Warn if company ID is not given");
+	printOptUsage(GBArgWarnOnUndocumentedObject, @"", @"[b] Warn on undocumented object");
+	printOptUsage(GBArgWarnOnUndocumentedMember, @"", @"[b] Warn on undocumented member");
+	printOptUsage(GBArgWarnOnEmptyDescription, @"", @"[b] Warn on empty description block");
+	printOptUsage(GBArgWarnOnUnknownDirective, @"", @"[b] Warn on unknown directive or format");
+	printOptUsage(GBArgWarnOnInvalidCrossReference, @"", @"[b] Warn on invalid cross reference");
+	printOptUsage(GBArgWarnOnMissingMethodArgument, @"", @"[b] Warn on missing method argument documentation");
 	ddprintf(@"\n");
 	ddprintf(@"DOCUMENTATION SET INFO\n");
-	PRINT_USAGE(0,   kGBArgDocSetBundleIdentifier, @"<string>", @"[*] DocSet bundle identifier");
-	PRINT_USAGE(0,   kGBArgDocSetBundleName, @"<string>", @"[*] DocSet bundle name");
-	PRINT_USAGE(0,   kGBArgDocSetDescription, @"<string>", @"[*] DocSet description");
-	PRINT_USAGE(0,   kGBArgDocSetCopyrightMessage, @"<string>", @"[*] DocSet copyright message");
-	PRINT_USAGE(0,   kGBArgDocSetFeedName, @"<string>", @"[*] DocSet feed name");
-	PRINT_USAGE(0,   kGBArgDocSetFeedURL, @"<string>", @"[*] DocSet feed URL");
-    PRINT_USAGE(0,   kGBArgDocSetFeedFormats, @"<values>", @"DocSet feed formats. Separated by a comma [atom,xml]");
-	PRINT_USAGE(0,   kGBArgDocSetPackageURL, @"<string>", @"[*] DocSet package (.xar) URL");
-	PRINT_USAGE(0,   kGBArgDocSetFallbackURL, @"<string>", @"[*] DocSet fallback URL");
-	PRINT_USAGE(0,   kGBArgDocSetPublisherIdentifier, @"<string>", @"[*] DocSet publisher identifier");
-	PRINT_USAGE(0,   kGBArgDocSetPublisherName, @"<string>", @"[*] DocSet publisher name");
-	PRINT_USAGE(0,   kGBArgDocSetMinimumXcodeVersion, @"<string>", @"[*] DocSet min. Xcode version");
-	PRINT_USAGE(0,   kGBArgDocSetPlatformFamily, @"<string>", @"[*] DocSet platform familiy");
-	PRINT_USAGE(0,   kGBArgDocSetCertificateIssuer, @"<string>", @"[*] DocSet certificate issuer");
-	PRINT_USAGE(0,   kGBArgDocSetCertificateSigner, @"<string>", @"[*] DocSet certificate signer");
-	PRINT_USAGE(0,   kGBArgDocSetBundleFilename, @"<string>", @"[*] DocSet bundle filename");
-	PRINT_USAGE(0,   kGBArgDocSetAtomFilename, @"<string>", @"[*] DocSet atom feed filename");
-    PRINT_USAGE(0,   kGBArgDocSetXMLFilename, @"<string>", @"[*] DocSet xml feed filename");
-	PRINT_USAGE(0,   kGBArgDocSetPackageFilename, @"<string>", @"[*] DocSet package (.xar,.tgz) filename. Leave off the extension. This will be added depending on the generated package.");
+	printOptUsage(GBArgDocSetBundleIdentifier, @"<string>", @"[*] DocSet bundle identifier");
+	printOptUsage(GBArgDocSetBundleName, @"<string>", @"[*] DocSet bundle name");
+	printOptUsage(GBArgDocSetDescription, @"<string>", @"[*] DocSet description");
+	printOptUsage(GBArgDocSetCopyrightMessage, @"<string>", @"[*] DocSet copyright message");
+	printOptUsage(GBArgDocSetFeedName, @"<string>", @"[*] DocSet feed name");
+	printOptUsage(GBArgDocSetFeedURL, @"<string>", @"[*] DocSet feed URL");
+	printOptUsage(GBArgDocSetFeedFormats, @"<values>", @"DocSet feed formats. Separated by a comma [atom,xml]");
+	printOptUsage(GBArgDocSetPackageURL, @"<string>", @"[*] DocSet package (.xar) URL");
+	printOptUsage(GBArgDocSetFallbackURL, @"<string>", @"[*] DocSet fallback URL");
+	printOptUsage(GBArgDocSetPublisherIdentifier, @"<string>", @"[*] DocSet publisher identifier");
+	printOptUsage(GBArgDocSetPublisherName, @"<string>", @"[*] DocSet publisher name");
+	printOptUsage(GBArgDocSetMinimumXcodeVersion, @"<string>", @"[*] DocSet min. Xcode version");
+	printOptUsage(GBArgDocSetPlatformFamily, @"<string>", @"[*] DocSet platform familiy");
+	printOptUsage(GBArgDocSetCertificateIssuer, @"<string>", @"[*] DocSet certificate issuer");
+	printOptUsage(GBArgDocSetCertificateSigner, @"<string>", @"[*] DocSet certificate signer");
+	printOptUsage(GBArgDocSetBundleFilename, @"<string>", @"[*] DocSet bundle filename");
+	printOptUsage(GBArgDocSetAtomFilename, @"<string>", @"[*] DocSet atom feed filename");
+	printOptUsage(GBArgDocSetXMLFilename, @"<string>", @"[*] DocSet xml feed filename");
+	printOptUsage(GBArgDocSetPackageFilename, @"<string>", @"[*] DocSet package (.xar,.tgz) filename. Leave off the extension. This will be added depending on the generated package.");
 	ddprintf(@"\n");
 	ddprintf(@"MISCELLANEOUS\n");
-	PRINT_USAGE(0,   kGBArgLogFormat, @"<number>", @"Log format [0-3]");
-	PRINT_USAGE(0,   kGBArgVerbose, @"<value>", @"Log verbosity level [0-6,xcode]");
-	PRINT_USAGE(0,   kGBArgVersion, @"", @"Display version and exit");
-	PRINT_USAGE(0,   kGBArgHelp, @"", @"Display this help and exit");
+	printOptUsage(GBArgLogFormat, @"<number>", @"Log format [0-3]");
+	printOptUsage(GBArgVerbose, @"<value>", @"Log verbosity level [0-6,xcode]");
+	printOptUsage(GBArgVersion, @"", @"Display version and exit");
+	printOptUsage(GBArgHelp, @"", @"Display this help and exit");
 	ddprintf(@"\n");
 	ddprintf(@"==================================================================\n");
 	ddprintf(@"[b] boolean parameter, uses no value, use --no- prefix to negate.\n");
