@@ -1,3 +1,6 @@
 [submodule "ddcli"]
 	path = Common/ThirdParty/ddcli
 	url = https://github.com/zwaldowski/ddcli.git
+[submodule "DDMinizip"]
+	path = Common/ThirdParty/DDMinizip
+	url = https://github.com/zwaldowski/DDMinizip
