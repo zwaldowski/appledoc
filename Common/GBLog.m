@@ -130,39 +130,33 @@ static NSString *GBLogLevel(DDLogMessage *msg) {
 	return @"UNKNOWN";
 }
 
-#define GBLogFile(msg) [msg fileName]
-#define GBLogFileExt(msg) [msg fileNameExt]
-#define GBLogMessage(msg) msg->logMsg
-#define GBLogMethod(msg) [msg methodName]
-#define GBLogLine(msg) msg->lineNumber
-
 @implementation GBLogFormat0Formatter
 - (NSString *)formatLogMessage:(DDLogMessage *)m {
-	return [NSString stringWithFormat:@"%@", GBLogMessage(m)];
+	return [NSString stringWithFormat:@"%@", m->logMsg];
 }
 @end
 
 @implementation GBLogFormat1Formatter
 - (NSString *)formatLogMessage:(DDLogMessage *)m {
-	return [NSString stringWithFormat:@"%@ | %@", GBLogLevel(m), GBLogMessage(m)];
+	return [NSString stringWithFormat:@"%@ | %@", GBLogLevel(m), m->logMsg];
 }
 @end
 
 @implementation GBLogFormat2Formatter
 - (NSString *)formatLogMessage:(DDLogMessage *)m {
-	return [NSString stringWithFormat:@"%@ | %@ > %@", GBLogLevel(m), GBLogMethod(m), GBLogMessage(m)];
+	return [NSString stringWithFormat:@"%@ | %s > %@", GBLogLevel(m), m->function, m->logMsg];
 }
 @end
 
 @implementation GBLogFormat3Formatter
 - (NSString *)formatLogMessage:(DDLogMessage *)m {
-	return [NSString stringWithFormat:@"%@ | %@ ln %i > %@", GBLogLevel(m), GBLogFile(m), GBLogLine(m), GBLogMessage(m)];
+	return [NSString stringWithFormat:@"%@ | %s ln %i > %@", GBLogLevel(m), m->file, m->lineNumber, m->logMsg];
 }
 @end
 
 @implementation GBLogFormatXcodeFormatter
 - (NSString *)formatLogMessage:(DDLogMessage *)m {
-	if (m->originalFilename) {
+	if (m->file) {
 		NSString *level = nil;
 		switch (m->logFlag) {
 			case LOG_FLAG_FATAL:	level = @"fatal"; break;
@@ -174,8 +168,8 @@ static NSString *GBLogLevel(DDLogMessage *msg) {
 			case LOG_FLAG_DEBUG:	level = @"debug"; break;
 			default:				level = @"unknown"; break;
 		}
-		return [NSString stringWithFormat:@"%@:%lu: %@: %@", m->originalFilename, m->originalLine, level, GBLogMessage(m)];
+		return [NSString stringWithFormat:@"%s:%d: %@: %@", m->file, m->lineNumber, level, m->logMsg];
 	}
-	return GBLogMessage(m);
+	return m->logMsg;
 }
 @end

@@ -17,11 +17,13 @@
 #undef LOG_FLAG_WARN 
 #undef LOG_FLAG_INFO
 #undef LOG_FLAG_VERBOSE
+#undef LOG_FLAG_DEBUG
 
 #undef LOG_LEVEL_ERROR
 #undef LOG_LEVEL_WARN
 #undef LOG_LEVEL_INFO
 #undef LOG_LEVEL_VERBOSE
+#undef LOG_LEVEL_DEBUG
 
 #undef LOG_ERROR
 #undef LOG_WARN
@@ -32,11 +34,6 @@
 #undef DDLogWarn
 #undef DDLogInfo
 #undef DDLogVerbose
-
-#undef DDLogCError
-#undef DDLogCWarn
-#undef DDLogCInfo
-#undef DDLogCVerbose
 
 #undef SYNC_LOG_OBJC_MAYBE
 
@@ -62,21 +59,26 @@ void GBLogUpdateResult(int result);
 #define LOG_LEVEL_VERBOSE	(LOG_FLAG_VERBOSE | LOG_LEVEL_INFO)		// 0...0111111
 #define LOG_LEVEL_DEBUG		(LOG_FLAG_DEBUG   | LOG_LEVEL_VERBOSE)	// 0...1111111
 
-#define  SYNC_LOG_OBJC_MAYBE(lvl, flg, frmt, ...) LOG_MAYBE(YES, lvl, flg, __PRETTY_FUNCTION__, frmt, ##__VA_ARGS__)
+#define  SYNC_LOG_OBJC_MAYBE(lvl, flg, frmt, ...) LOG_MAYBE(YES, lvl, flg, 0, frmt, ##__VA_ARGS__)
 
 #define GBLogFatal(frmt, ...)	{ GBLogUpdateResult(GBEXIT_LOG_FATAL); SYNC_LOG_OBJC_MAYBE(kGBLogLevel, LOG_FLAG_FATAL, frmt, ##__VA_ARGS__); }
 #define GBLogError(frmt, ...)	{ GBLogUpdateResult(GBEXIT_LOG_ERROR); SYNC_LOG_OBJC_MAYBE(kGBLogLevel, LOG_FLAG_ERROR, frmt, ##__VA_ARGS__); }
-#define GBLogWarn(frmt, ...)	{ GBLogUpdateResult(GBEXIT_LOG_WARNING); SYNC_LOG_OBJC_MAYBE(kGBLogLevel, LOG_FLAG_WARN, frmt, ##__VA_ARGS__); }
-#define GBLogNormal(frmt, ...)	SYNC_LOG_OBJC_MAYBE(kGBLogLevel, LOG_FLAG_NORMAL, frmt, ##__VA_ARGS__)
-#define GBLogInfo(frmt, ...)	SYNC_LOG_OBJC_MAYBE(kGBLogLevel, LOG_FLAG_INFO, frmt, ##__VA_ARGS__)
-#define GBLogVerbose(frmt, ...)	SYNC_LOG_OBJC_MAYBE(kGBLogLevel, LOG_FLAG_VERBOSE, frmt, ##__VA_ARGS__)
-#define GBLogDebug(frmt, ...)	SYNC_LOG_OBJC_MAYBE(kGBLogLevel, LOG_FLAG_DEBUG, frmt, ##__VA_ARGS__)
-#define GBLogIsEnabled(level)	((kGBLogLevel & level) > 0)
+#define GBLogWarn(frmt, ...)	    { GBLogUpdateResult(GBEXIT_LOG_WARNING); SYNC_LOG_OBJC_MAYBE(kGBLogLevel, LOG_FLAG_WARN, frmt, ##__VA_ARGS__); }
+#define GBLogNormal(frmt, ...)	LOG_MAYBE(NO, kGBLogLevel, LOG_FLAG_NORMAL, 0, frmt, ##__VA_ARGS__)
+#define GBLogInfo(frmt, ...)	    LOG_MAYBE(NO, kGBLogLevel, LOG_FLAG_INFO, 0, frmt, ##__VA_ARGS__)
+#define GBLogVerbose(frmt, ...)	LOG_MAYBE(NO, kGBLogLevel, LOG_FLAG_VERBOSE, 0, frmt, ##__VA_ARGS__)
+#define GBLogDebug(frmt, ...)	LOG_MAYBE(NO, kGBLogLevel, LOG_FLAG_DEBUG, 0, frmt, ##__VA_ARGS__)
 
 // Macros that store given file/line info. Mostly used for better Xcode integration!
-#define GBLogXError(source,frmt,...) { [DDLog storeFilename:[source fullpath] line:[source lineNumber]]; GBLogError(frmt, ##__VA_ARGS__); }
-#define GBLogXWarn(source,frmt,...) { [DDLog storeFilename:[source fullpath] line:[source lineNumber]]; GBLogWarn(frmt, ##__VA_ARGS__); }
-#define GBLogXInfo(source,frmt,...) { [DDLog storeFilename:[source fullpath] line:[source lineNumber]]; GBLogInfo(frmt, ##__VA_ARGS__); }
+#define LOG_MAYBE_MACRO_X(lvl, flg, source, frmt, ...)              \
+  do { if(lvl & flg) [DDLog log:NO level:lvl flag:flg context:0     \
+    file:[[source fullpath] UTF8String] function:__PRETTY_FUNCTION__             \
+    line:(int)[source lineNumber] tag:nil format:(frmt), ##__VA_ARGS__]; \
+  } while(0)
+
+#define GBLogXError(source,frmt,...) LOG_MAYBE_MACRO_X(kGBLogLevel, LOG_FLAG_ERROR, source, frmt, ##__VA_ARGS__)
+#define GBLogXWarn(source,frmt,...) LOG_MAYBE_MACRO_X(kGBLogLevel, LOG_FLAG_WARN, source, frmt, ##__VA_ARGS__)
+#define GBLogXInfo(source,frmt,...) LOG_MAYBE_MACRO_X(kGBLogLevel, LOG_FLAG_INFO, source, frmt, ##__VA_ARGS__)
 
 // Helper macros for logging exceptions. Note that we don't use formatting here as it would make the output unreadable
 // in higher level log formats. The information is already verbose enough!

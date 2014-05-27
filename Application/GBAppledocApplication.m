@@ -280,7 +280,7 @@ static inline NSString *GBOptionFlag(DDGetoptOption opt) {
 	}
 	
 	int result = (kGBLogBasedResult >= self.settings.exitCodeThreshold) ? kGBLogBasedResult : 0;
-	GBLogDebug(@"Exiting with result %d (reported result was %ld)...", result, kGBLogBasedResult);
+	GBLogDebug(@"Exiting with result %d (reported result was %d)...", result, kGBLogBasedResult);
 	return result;
 }
 

@@ -7,3 +7,6 @@
 [submodule "ParseKit"]
 	path = Vendor/ParseKit
 	url = https://github.com/zwaldowski/parsekit.git
+[submodule "CocoaLumberjack"]
+	path = Vendor/CocoaLumberjack
+	url = https://github.com/zwaldowski/CocoaLumberjack.git

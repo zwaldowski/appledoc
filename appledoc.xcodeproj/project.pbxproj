@@ -281,10 +281,6 @@
 		DB83C2C41933DD54007B86DE /* GBSourceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83C1DC1933D708007B86DE /* GBSourceInfo.m */; };
 		DB83C2C51933DD54007B86DE /* GBStore.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83C1DE1933D708007B86DE /* GBStore.m */; };
 		DB83C2C61933DD54007B86DE /* GBTypedefEnumData.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83C1E01933D708007B86DE /* GBTypedefEnumData.m */; };
-		DB83C2C71933DD6D007B86DE /* DDASLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83BEE41933D1E7007B86DE /* DDASLLogger.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		DB83C2C81933DD6D007B86DE /* DDFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83BEE61933D1E7007B86DE /* DDFileLogger.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		DB83C2C91933DD6D007B86DE /* DDLog.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83BEE81933D1E7007B86DE /* DDLog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		DB83C2CA1933DD6D007B86DE /* DDTTYLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83BEEA1933D1E7007B86DE /* DDTTYLogger.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DB83C2CB1933DD72007B86DE /* dd_getopt_long-fbsd.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83BEFC1933D1E7007B86DE /* dd_getopt_long-fbsd.m */; };
 		DB83C2CD1933DD72007B86DE /* DDCliParseException.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83BF001933D1E7007B86DE /* DDCliParseException.m */; };
 		DB83C2CE1933DD72007B86DE /* DDCliUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = DB83BF021933D1E7007B86DE /* DDCliUtil.m */; };
@@ -367,10 +363,6 @@
 		DB83C31C1933DDB7007B86DE /* GBOutputGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = DB83BE571933D1CA007B86DE /* GBOutputGenerator.h */; };
 		DB83C31D1933DDB7007B86DE /* GBTemplateFilesHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = DB83BE591933D1CA007B86DE /* GBTemplateFilesHandler.h */; };
 		DB83C31E1933DDB7007B86DE /* GBTemplateHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = DB83BE5B1933D1CA007B86DE /* GBTemplateHandler.h */; };
-		DB83C31F1933DDBA007B86DE /* DDASLLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = DB83BEE31933D1E7007B86DE /* DDASLLogger.h */; };
-		DB83C3201933DDBA007B86DE /* DDFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = DB83BEE51933D1E7007B86DE /* DDFileLogger.h */; };
-		DB83C3211933DDBA007B86DE /* DDLog.h in Headers */ = {isa = PBXBuildFile; fileRef = DB83BEE71933D1E7007B86DE /* DDLog.h */; };
-		DB83C3221933DDBA007B86DE /* DDTTYLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = DB83BEE91933D1E7007B86DE /* DDTTYLogger.h */; };
 		DB83C3231933DDBD007B86DE /* DDCliApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = DB83BEFD1933D1E7007B86DE /* DDCliApplication.h */; };
 		DB83C3241933DDBD007B86DE /* DDCliParseException.h in Headers */ = {isa = PBXBuildFile; fileRef = DB83BEFF1933D1E7007B86DE /* DDCliParseException.h */; };
 		DB83C3251933DDBD007B86DE /* DDCliUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = DB83BF011933D1E7007B86DE /* DDCliUtil.h */; };
@@ -428,6 +420,14 @@
 		DB83C35B1933DEFB007B86DE /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = DB83BF261933D1E7007B86DE /* unzip.c */; };
 		DB83C35C1933DEFB007B86DE /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = DB83BF281933D1E7007B86DE /* zip.c */; };
 		DB83C35D1933DF1C007B86DE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB83C2721933DBB5007B86DE /* Cocoa.framework */; };
+		DBA8DA49193425EE00E5F93C /* DDASLLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = DBA8D824193425ED00E5F93C /* DDASLLogger.h */; };
+		DBA8DA4A193425EE00E5F93C /* DDASLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = DBA8D825193425ED00E5F93C /* DDASLLogger.m */; };
+		DBA8DA4B193425EE00E5F93C /* DDFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = DBA8D826193425ED00E5F93C /* DDFileLogger.h */; };
+		DBA8DA4C193425EE00E5F93C /* DDFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = DBA8D827193425ED00E5F93C /* DDFileLogger.m */; };
+		DBA8DA4E193425EE00E5F93C /* DDLog.h in Headers */ = {isa = PBXBuildFile; fileRef = DBA8D829193425ED00E5F93C /* DDLog.h */; };
+		DBA8DA4F193425EE00E5F93C /* DDLog.m in Sources */ = {isa = PBXBuildFile; fileRef = DBA8D82A193425ED00E5F93C /* DDLog.m */; };
+		DBA8DA50193425EE00E5F93C /* DDTTYLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = DBA8D82B193425ED00E5F93C /* DDTTYLogger.h */; };
+		DBA8DA51193425EE00E5F93C /* DDTTYLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = DBA8D82C193425ED00E5F93C /* DDTTYLogger.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -697,14 +697,6 @@
 		DB83BE5A1933D1CA007B86DE /* GBTemplateFilesHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GBTemplateFilesHandler.m; sourceTree = "<group>"; };
 		DB83BE5B1933D1CA007B86DE /* GBTemplateHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GBTemplateHandler.h; sourceTree = "<group>"; };
 		DB83BE5C1933D1CA007B86DE /* GBTemplateHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GBTemplateHandler.m; sourceTree = "<group>"; };
-		DB83BEE31933D1E7007B86DE /* DDASLLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDASLLogger.h; sourceTree = "<group>"; };
-		DB83BEE41933D1E7007B86DE /* DDASLLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDASLLogger.m; sourceTree = "<group>"; };
-		DB83BEE51933D1E7007B86DE /* DDFileLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDFileLogger.h; sourceTree = "<group>"; };
-		DB83BEE61933D1E7007B86DE /* DDFileLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDFileLogger.m; sourceTree = "<group>"; };
-		DB83BEE71933D1E7007B86DE /* DDLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDLog.h; sourceTree = "<group>"; };
-		DB83BEE81933D1E7007B86DE /* DDLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDLog.m; sourceTree = "<group>"; };
-		DB83BEE91933D1E7007B86DE /* DDTTYLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDTTYLogger.h; sourceTree = "<group>"; };
-		DB83BEEA1933D1E7007B86DE /* DDTTYLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDTTYLogger.m; sourceTree = "<group>"; };
 		DB83BEFC1933D1E7007B86DE /* dd_getopt_long-fbsd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "dd_getopt_long-fbsd.m"; sourceTree = "<group>"; };
 		DB83BEFD1933D1E7007B86DE /* DDCliApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDCliApplication.h; sourceTree = "<group>"; };
 		DB83BEFE1933D1E7007B86DE /* DDCliApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDCliApplication.m; sourceTree = "<group>"; };
@@ -904,6 +896,14 @@
 		DB83C2961933DCC6007B86DE /* appledoc-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "appledoc-Info.plist"; sourceTree = SOURCE_ROOT; };
 		DB83C2971933DCC6007B86DE /* appledoc-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "appledoc-Prefix.pch"; sourceTree = SOURCE_ROOT; };
 		DB83C2981933DCC6007B86DE /* appledoc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = appledoc.m; sourceTree = SOURCE_ROOT; };
+		DBA8D824193425ED00E5F93C /* DDASLLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDASLLogger.h; sourceTree = "<group>"; };
+		DBA8D825193425ED00E5F93C /* DDASLLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDASLLogger.m; sourceTree = "<group>"; };
+		DBA8D826193425ED00E5F93C /* DDFileLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDFileLogger.h; sourceTree = "<group>"; };
+		DBA8D827193425ED00E5F93C /* DDFileLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDFileLogger.m; sourceTree = "<group>"; };
+		DBA8D829193425ED00E5F93C /* DDLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDLog.h; sourceTree = "<group>"; };
+		DBA8D82A193425ED00E5F93C /* DDLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDLog.m; sourceTree = "<group>"; };
+		DBA8D82B193425ED00E5F93C /* DDTTYLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDTTYLogger.h; sourceTree = "<group>"; };
+		DBA8D82C193425ED00E5F93C /* DDTTYLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDTTYLogger.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1184,7 +1184,6 @@
 		DB34809619340475001DE8C1 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
-				DB83BEE21933D1E7007B86DE /* CocoaLumberjack */,
 				DB83BF321933D1E7007B86DE /* DDUtils */,
 				DB83BF371933D1E8007B86DE /* GRMustache */,
 				DB83BF621933D1E8007B86DE /* Miscellaneous */,
@@ -1485,26 +1484,12 @@
 		DB83BEE11933D1E7007B86DE /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				DBA8D803193425ED00E5F93C /* CocoaLumberjack */,
 				DB83BEEB1933D1E7007B86DE /* ddcli */,
 				DB83BF111933D1E7007B86DE /* DDMinizip */,
 				DB347A6E1933F535001DE8C1 /* ParseKit */,
 			);
 			path = Vendor;
-			sourceTree = "<group>";
-		};
-		DB83BEE21933D1E7007B86DE /* CocoaLumberjack */ = {
-			isa = PBXGroup;
-			children = (
-				DB83BEE31933D1E7007B86DE /* DDASLLogger.h */,
-				DB83BEE41933D1E7007B86DE /* DDASLLogger.m */,
-				DB83BEE51933D1E7007B86DE /* DDFileLogger.h */,
-				DB83BEE61933D1E7007B86DE /* DDFileLogger.m */,
-				DB83BEE71933D1E7007B86DE /* DDLog.h */,
-				DB83BEE81933D1E7007B86DE /* DDLog.m */,
-				DB83BEE91933D1E7007B86DE /* DDTTYLogger.h */,
-				DB83BEEA1933D1E7007B86DE /* DDTTYLogger.m */,
-			);
-			path = CocoaLumberjack;
 			sourceTree = "<group>";
 		};
 		DB83BEEB1933D1E7007B86DE /* ddcli */ = {
@@ -1730,6 +1715,37 @@
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
+		DBA8D803193425ED00E5F93C /* CocoaLumberjack */ = {
+			isa = PBXGroup;
+			children = (
+				DBA8D81C193425ED00E5F93C /* Lumberjack */,
+			);
+			path = CocoaLumberjack;
+			sourceTree = "<group>";
+		};
+		DBA8D81C193425ED00E5F93C /* Lumberjack */ = {
+			isa = PBXGroup;
+			children = (
+				DBA8D81D193425ED00E5F93C /* CLI */,
+				DBA8D824193425ED00E5F93C /* DDASLLogger.h */,
+				DBA8D825193425ED00E5F93C /* DDASLLogger.m */,
+				DBA8D826193425ED00E5F93C /* DDFileLogger.h */,
+				DBA8D827193425ED00E5F93C /* DDFileLogger.m */,
+				DBA8D829193425ED00E5F93C /* DDLog.h */,
+				DBA8D82A193425ED00E5F93C /* DDLog.m */,
+				DBA8D82B193425ED00E5F93C /* DDTTYLogger.h */,
+				DBA8D82C193425ED00E5F93C /* DDTTYLogger.m */,
+			);
+			path = Lumberjack;
+			sourceTree = "<group>";
+		};
+		DBA8D81D193425ED00E5F93C /* CLI */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = CLI;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1775,6 +1791,7 @@
 				DB347E2F1933F539001DE8C1 /* NSArray_DeepMutableCopy.h in Headers */,
 				DB83C31A1933DDB7007B86DE /* GBHTMLOutputGenerator.h in Headers */,
 				DB83C2F91933DDAC007B86DE /* PKToken+GBToken.h in Headers */,
+				DBA8DA4E193425EE00E5F93C /* DDLog.h in Headers */,
 				DB347E131933F539001DE8C1 /* PKTokenAssembly.h in Headers */,
 				DB347E011933F538001DE8C1 /* PKPattern.h in Headers */,
 				DB83C3041933DDB2007B86DE /* GBDocumentData.h in Headers */,
@@ -1792,13 +1809,13 @@
 				DB347DE91933F538001DE8C1 /* PKCaseInsensitiveLiteral.h in Headers */,
 				DB83C30D1933DDB2007B86DE /* GBModelBase.h in Headers */,
 				DB347DF01933F538001DE8C1 /* PKDelimitedString.h in Headers */,
+				DBA8DA50193425EE00E5F93C /* DDTTYLogger.h in Headers */,
 				DB347E4E1933F53A001DE8C1 /* PKLiteralNode.h in Headers */,
 				DB83C2F61933DDAC007B86DE /* GBObjectiveCParser.h in Headers */,
 				DB83C3111933DDB2007B86DE /* GBSourceInfo.h in Headers */,
 				DB347E191933F539001DE8C1 /* PKTypes.h in Headers */,
 				DB347E081933F538001DE8C1 /* PKSParser.h in Headers */,
 				DB83C3501933DDD1007B86DE /* NSError+GBError.h in Headers */,
-				DB83C3221933DDBA007B86DE /* DDTTYLogger.h in Headers */,
 				DB83C3461933DDC9007B86DE /* GRMustacheTokenizer_private.h in Headers */,
 				DB347DFE1933F538001DE8C1 /* PKNumberState.h in Headers */,
 				DB83C31E1933DDB7007B86DE /* GBTemplateHandler.h in Headers */,
@@ -1838,7 +1855,6 @@
 				DB83C3131933DDB2007B86DE /* GBTypedefEnumData.h in Headers */,
 				DB347E231933F539001DE8C1 /* ICUTemplateMatcher.h in Headers */,
 				DB347E141933F539001DE8C1 /* PKTokenizer.h in Headers */,
-				DB83C31F1933DDBA007B86DE /* DDASLLogger.h in Headers */,
 				DB347DEF1933F538001DE8C1 /* PKCompositeParser.h in Headers */,
 				DB83C30B1933DDB2007B86DE /* GBMethodSectionData.h in Headers */,
 				DB83C31B1933DDB7007B86DE /* GBHTMLTemplateVariablesProvider.h in Headers */,
@@ -1867,10 +1883,12 @@
 				DB347DE61933F538001DE8C1 /* PKAny.h in Headers */,
 				DB83C3511933DDD1007B86DE /* NSException+GBException.h in Headers */,
 				DB347DFC1933F538001DE8C1 /* PKNegation.h in Headers */,
+				DBA8DA4B193425EE00E5F93C /* DDFileLogger.h in Headers */,
 				DB347DE81933F538001DE8C1 /* PKAST.h in Headers */,
 				DB83C2F41933DDA1007B86DE /* GBApplicationStringsProvider.h in Headers */,
 				DB347DFB1933F538001DE8C1 /* PKMultiLineCommentState.h in Headers */,
 				DB83C3381933DDC9007B86DE /* GRMustacheDirectoryTemplateLoader_private.h in Headers */,
+				DBA8DA49193425EE00E5F93C /* DDASLLogger.h in Headers */,
 				DB83C34E1933DDD1007B86DE /* GBTask.h in Headers */,
 				DB347E171933F539001DE8C1 /* PKTrackException.h in Headers */,
 				DB83C2FA1933DDAF007B86DE /* GBCommentsProcessor.h in Headers */,
@@ -1878,7 +1896,6 @@
 				DB83C3421933DDC9007B86DE /* GRMustacheTemplateLoader_private.h in Headers */,
 				DB347E261933F539001DE8C1 /* MGTemplateEngine.h in Headers */,
 				DB83C2F31933DDA1007B86DE /* GBApplicationSettingsProvider.h in Headers */,
-				DB83C3211933DDBA007B86DE /* DDLog.h in Headers */,
 				DB83C3031933DDB2007B86DE /* GBDataObjects.h in Headers */,
 				DB347E0B1933F538001DE8C1 /* PKSTokenAssembly.h in Headers */,
 				DB347E841933F53B001DE8C1 /* PKNodeVisitor.h in Headers */,
@@ -1920,7 +1937,6 @@
 				DB83C34B1933DDCD007B86DE /* RegexKitLite.h in Headers */,
 				DB83C3311933DDC4007B86DE /* DDXcodeProjectFile.h in Headers */,
 				DB83C34A1933DDCD007B86DE /* timing.h in Headers */,
-				DB83C3201933DDBA007B86DE /* DDFileLogger.h in Headers */,
 				DB347E111933F539001DE8C1 /* PKToken.h in Headers */,
 				DB347E8E1933F53B001DE8C1 /* PKResolutionPhaseVisitor.h in Headers */,
 				DB347E751933F53B001DE8C1 /* PKDelimitDescriptorCollection.h in Headers */,
@@ -2007,6 +2023,7 @@
 			knownRegions = (
 				en,
 				English,
+				Base,
 			);
 			mainGroup = DB83BE071933CC59007B86DE;
 			productRefGroup = DB83BE111933CC59007B86DE /* Products */;
@@ -2084,6 +2101,7 @@
 				DB347EAC1933F53C001DE8C1 /* PKWordState.m in Sources */,
 				DB83C2B41933DD54007B86DE /* GBComment.m in Sources */,
 				DB347E4B1933F53A001DE8C1 /* PKDefinitionNode.m in Sources */,
+				DBA8DA4A193425EE00E5F93C /* DDASLLogger.m in Sources */,
 				DB83C2B51933DD54007B86DE /* GBCommentArgument.m in Sources */,
 				DB83C3591933DEFB007B86DE /* ioapi.c in Sources */,
 				DB83C2B61933DD54007B86DE /* GBCommentComponent.m in Sources */,
@@ -2097,6 +2115,8 @@
 				DB347E4D1933F53A001DE8C1 /* PKDelimitedNode.m in Sources */,
 				DB83C2B91933DD54007B86DE /* GBEnumConstantData.m in Sources */,
 				DB83C2EE1933DD87007B86DE /* GRMustacheTokenizer.m in Sources */,
+				DBA8DA4F193425EE00E5F93C /* DDLog.m in Sources */,
+				DBA8DA4C193425EE00E5F93C /* DDFileLogger.m in Sources */,
 				DB347E9A1933F53B001DE8C1 /* PKSymbol.m in Sources */,
 				DB347E691933F53A001DE8C1 /* PKBaseVisitor.m in Sources */,
 				DB83C2BA1933DD54007B86DE /* GBEnumConstantProvider.m in Sources */,
@@ -2162,7 +2182,6 @@
 				DB347E5B1933F53A001DE8C1 /* NSArray+ParseKitAdditions.m in Sources */,
 				DB83C2A91933DD49007B86DE /* GBDocSetOutputGenerator.m in Sources */,
 				DB347EAB1933F53C001DE8C1 /* PKWord.m in Sources */,
-				DB83C2CA1933DD6D007B86DE /* DDTTYLogger.m in Sources */,
 				DB347E701933F53B001DE8C1 /* PKCompositeParser.m in Sources */,
 				DB83C2AA1933DD49007B86DE /* GBDocSetPublishGenerator.m in Sources */,
 				DB347E7F1933F53B001DE8C1 /* PKLetter.m in Sources */,
@@ -2190,7 +2209,6 @@
 				DB347E891933F53B001DE8C1 /* PKPattern.m in Sources */,
 				DB347E781933F53B001DE8C1 /* PKDelimitState.m in Sources */,
 				DB83C2A01933DD40007B86DE /* GBObjectiveCParser.m in Sources */,
-				DB83C2C81933DD6D007B86DE /* DDFileLogger.m in Sources */,
 				DB347E661933F53A001DE8C1 /* PKAssembly.m in Sources */,
 				DB347E5D1933F53A001DE8C1 /* NSMutableSet+ParseKitAdditions.m in Sources */,
 				DB347E7E1933F53B001DE8C1 /* PKIntersection.m in Sources */,
@@ -2204,7 +2222,6 @@
 				DB347EA71933F53C001DE8C1 /* PKUppercaseWord.m in Sources */,
 				DB347E551933F53A001DE8C1 /* PKPatternNode.m in Sources */,
 				DB347E301933F539001DE8C1 /* NSArray_DeepMutableCopy.m in Sources */,
-				DB83C2C71933DD6D007B86DE /* DDASLLogger.m in Sources */,
 				DB347EA51933F53C001DE8C1 /* PKTrackException.m in Sources */,
 				DB347E871933F53B001DE8C1 /* PKParser.m in Sources */,
 				DB347E471933F53A001DE8C1 /* PKCompositeNode.m in Sources */,
@@ -2214,7 +2231,6 @@
 				DB347E6C1933F53A001DE8C1 /* PKCharacterAssembly.m in Sources */,
 				DB347EA61933F53C001DE8C1 /* PKTwitterState.m in Sources */,
 				DB83C2E61933DD87007B86DE /* GRMustacheElement.m in Sources */,
-				DB83C2C91933DD6D007B86DE /* DDLog.m in Sources */,
 				DB83C2E11933DD87007B86DE /* GRMustache.m in Sources */,
 				DB347E881933F53B001DE8C1 /* PKParserFactory.m in Sources */,
 				DB347E9F1933F53B001DE8C1 /* PKToken.m in Sources */,
@@ -2247,6 +2263,7 @@
 				DB347E5F1933F53A001DE8C1 /* NSString+ParseKitAdditions.m in Sources */,
 				DB83C2D81933DD81007B86DE /* GBTask.m in Sources */,
 				DB347E901933F53B001DE8C1 /* PKSequence.m in Sources */,
+				DBA8DA51193425EE00E5F93C /* DDTTYLogger.m in Sources */,
 				DB347E7C1933F53B001DE8C1 /* PKEmpty.m in Sources */,
 				DB83C29F1933DD13007B86DE /* GBCommentComponentsProvider.m in Sources */,
 			);
